@@ -1,4 +1,4 @@
-﻿using GrapheneCore.Database.Entities;
+﻿    using GrapheneCore.Database.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +15,19 @@ namespace Graphene.Database.Entities
         /// <summary>
         /// 
         /// </summary>
-        [ForeignKey(nameof(UserId))]
+        [ForeignKey(nameof(ByUserId))]
         public User ActionUser { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ForeignKey(nameof(UserId))]
+        public User User { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int UserId { get; set; }
     }
 }

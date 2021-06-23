@@ -36,12 +36,18 @@ namespace Graphene
             services.AddControllers().AddNewtonsoftJson(opt => {
                 opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 opt.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
+                //opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
+            services.AddCors(options => options.AddPolicy(name: "Development",
+                builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+            ));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("Development");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

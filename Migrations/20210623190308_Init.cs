@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Graphene.Database.Migrations
+namespace Graphene.Migrations
 {
     public partial class Init : Migration
     {
@@ -196,22 +196,27 @@ namespace Graphene.Database.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EntityId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    Entity = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ByUserId = table.Column<int>(type: "int", nullable: true),
                     To = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     From = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Event = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InstanceEntityState = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EntityUid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EntityHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EntityHistory_User_ByUserId",
+                        column: x => x.ByUserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_EntityHistory_User_UserId",
                         column: x => x.UserId,
@@ -275,6 +280,11 @@ namespace Graphene.Database.Migrations
                 name: "IX_Employee_UserId",
                 table: "Employee",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityHistory_ByUserId",
+                table: "EntityHistory",
+                column: "ByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EntityHistory_Uid",

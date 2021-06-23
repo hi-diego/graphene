@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Graphene.Database.Migrations
+namespace Graphene.Migrations
 {
     [DbContext(typeof(Context))]
     partial class ContextModelSnapshot : ModelSnapshot
@@ -26,17 +26,14 @@ namespace Graphene.Database.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("ByUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Entity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EntityId")
-                        .HasColumnType("int");
 
                     b.Property<Guid>("EntityUid")
                         .HasColumnType("uniqueidentifier");
@@ -59,10 +56,12 @@ namespace Graphene.Database.Migrations
                     b.Property<Guid>("Uid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ByUserId");
 
                     b.HasIndex("Uid")
                         .IsUnique();
@@ -391,9 +390,17 @@ namespace Graphene.Database.Migrations
                 {
                     b.HasOne("Graphene.Database.Entities.User", "ActionUser")
                         .WithMany("ActionLog")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("ByUserId");
+
+                    b.HasOne("Graphene.Database.Entities.User", "User")
+                        .WithMany("History")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ActionUser");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GrapheneCore.Database.Entities.CompanyRelation", b =>
@@ -481,6 +488,8 @@ namespace Graphene.Database.Migrations
             modelBuilder.Entity("Graphene.Database.Entities.User", b =>
                 {
                     b.Navigation("ActionLog");
+
+                    b.Navigation("History");
 
                     b.Navigation("Jobs");
 

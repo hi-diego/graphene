@@ -16,7 +16,7 @@ namespace Graphene.Database.Entities.Configurations
         public void Configure(EntityTypeBuilder<EntityHistory> builder)
         {
             builder.HasIndex(u => u.Uid).IsUnique();
-            //builder.HasIndex(u => u.Uid).IsUnique();
+            builder.HasOne(h => h.User).WithMany(u => u.History);
             //   builder.HasIndex(u => u.UserName).IsUnique();
         }
     }
