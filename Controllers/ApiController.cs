@@ -1,12 +1,7 @@
 ﻿using Graphene.Database.Entities;
 using GrapheneCore.Database;
-using GrapheneCore.Graph;
 using GrapheneCore.Http.Controllers;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Graphene.Controllers
 {
@@ -26,20 +21,18 @@ namespace Graphene.Controllers
             Database.Context dbContext = (Database.Context) entityRepository.OriginalContext;
             if (dbContext.User.Where(u => u.Email == "crysramyrez@live.com").Count() == 0)
             {
-                User adminUser = new User
-                {
+                var user = new User {
                     Name = "Christian Meza",
-                    // UserName = "DiegoMezaExt",
                     PaternalLastName = "Meza",
                     MaternalLastName = "Ramirez",
                     Email = "crysramyrez@live.com",
                     Password = "123456789",
                     Identifier = "MERC930128HCMZMH09"
                 };
-                dbContext.Add(adminUser);
+                dbContext.Add(user);
+                user.BeforeAdded(entityRepository.DatabaseContext);
                 dbContext.SaveChanges();
             }
-            //new EntityRepository(dbContext, schema).Create(adminUser);
         }
     }
 }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Graphene.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20210623190308_Init")]
+    [Migration("20210623232025_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,7 @@ namespace Graphene.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ByUserId")
+                    b.Property<int>("ByUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -58,7 +58,7 @@ namespace Graphene.Migrations
                     b.Property<Guid>("Uid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -392,13 +392,13 @@ namespace Graphene.Migrations
                 {
                     b.HasOne("Graphene.Database.Entities.User", "ActionUser")
                         .WithMany("ActionLog")
-                        .HasForeignKey("ByUserId");
+                        .HasForeignKey("ByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Graphene.Database.Entities.User", "User")
                         .WithMany("History")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("ActionUser");
 

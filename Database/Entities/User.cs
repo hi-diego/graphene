@@ -9,13 +9,6 @@ using System.Threading.Tasks;
 
 namespace Graphene.Database.Entities
 {
-    //public class Pivot<P, E> : List<E>
-    //{
-    //    public Pivot(IEnumerable<P> childs)
-    //    {
-    //    }
-    //}
-
     /// <summary>
     /// 
     /// </summary>

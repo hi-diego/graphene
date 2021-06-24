@@ -1,6 +1,7 @@
 ﻿using GrapheneCore.Database;
 using GrapheneCore.Graph;
 using GrapheneCore.Http.Controllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -19,7 +20,7 @@ namespace Graphene.Controllers
         /// 
         /// </summary>
         /// <param name="databaseContext"></param>
-        public GraphController(IEntityRepository entityRepository) : base(entityRepository)
+        public GraphController(IEntityRepository entityRepository, IHttpContextAccessor a) : base(entityRepository, a)
         {
             //
         }

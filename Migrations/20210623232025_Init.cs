@@ -196,12 +196,12 @@ namespace Graphene.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ByUserId = table.Column<int>(type: "int", nullable: true),
+                    ByUserId = table.Column<int>(type: "int", nullable: false),
                     To = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     From = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Event = table.Column<string>(type: "nvarchar(max)", nullable: true),

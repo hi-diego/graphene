@@ -28,6 +28,6 @@ namespace Graphene.Database.Entities
         /// <summary>
         /// 
         /// </summary>
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 }
