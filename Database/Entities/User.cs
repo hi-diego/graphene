@@ -28,6 +28,28 @@ namespace Graphene.Database.Entities
         [InverseProperty(nameof(EntityHistory.User))]
         public IEnumerable<EntityHistory> History { get; set; }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [InverseForeignKey(nameof(UserHasPermission.UserId))]
+        [InverseProperty(nameof(UserHasPermission.User))]
+        public IEnumerable<UserHasPermission> UserHasPermissions { get; set; } = new List<UserHasPermission>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [InverseForeignKey(nameof(Bill.UserId))]
+        [InverseProperty(nameof(Bill.User))]
+        public IEnumerable<Bill> Bills { get; set; } = new List<Bill>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [InverseForeignKey(nameof(Order.CreatedById))]
+        [InverseProperty(nameof(Order.CreatedBy))]
+        public IEnumerable<Order> Orders { get; set; } = new List<Order>();
+
         /// <summary>
         /// 
         /// </summary>

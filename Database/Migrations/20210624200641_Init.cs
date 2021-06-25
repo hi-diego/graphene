@@ -1,49 +1,25 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Graphene.Migrations
+namespace Graphene.Database.Migrations
 {
     public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Company",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Sector = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Config = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Company", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Permission",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Entity = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Expression = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Entity = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Expression = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,12 +27,18 @@ namespace Graphene.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Role",
+                name: "Product",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    Stock = table.Column<double>(type: "float", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -64,7 +46,26 @@ namespace Graphene.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Role", x => x.Id);
+                    table.PrimaryKey("PK_Product", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Space",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Space", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -94,13 +95,15 @@ namespace Graphene.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompanyRelation",
+                name: "ProductRelation",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Relation = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false),
                     ParentId = table.Column<int>(type: "int", nullable: false),
-                    ChildId = table.Column<int>(type: "int", nullable: false),
+                    ChilldId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -108,29 +111,32 @@ namespace Graphene.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompanyRelation", x => x.Id);
+                    table.PrimaryKey("PK_ProductRelation", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CompanyRelation_Company_ChildId",
-                        column: x => x.ChildId,
-                        principalTable: "Company",
+                        name: "FK_ProductRelation_Product_ChilldId",
+                        column: x => x.ChilldId,
+                        principalTable: "Product",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CompanyRelation_Company_ParentId",
+                        name: "FK_ProductRelation_Product_ParentId",
                         column: x => x.ParentId,
-                        principalTable: "Company",
+                        principalTable: "Product",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RolePermission",
+                name: "Bill",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    PermissionId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    SpaceId = table.Column<int>(type: "int", nullable: true),
+                    By = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Total = table.Column<double>(type: "float", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -138,52 +144,15 @@ namespace Graphene.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RolePermission", x => x.Id);
+                    table.PrimaryKey("PK_Bill", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RolePermission_Permission_PermissionId",
-                        column: x => x.PermissionId,
-                        principalTable: "Permission",
+                        name: "FK_Bill_Space_SpaceId",
+                        column: x => x.SpaceId,
+                        principalTable: "Space",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_RolePermission_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Role",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Employee",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employee", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employee_Company_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Company",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Employee_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Role",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Employee_User_UserId",
+                        name: "FK_Bill_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
@@ -216,7 +185,7 @@ namespace Graphene.Migrations
                         column: x => x.ByUserId,
                         principalTable: "User",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EntityHistory_User_UserId",
                         column: x => x.UserId,
@@ -226,14 +195,50 @@ namespace Graphene.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserPermission",
+                name: "UserHasPermission",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     PermissionId = table.Column<int>(type: "int", nullable: false),
-                    Denied = table.Column<bool>(type: "bit", nullable: false),
+                    Denied = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserHasPermission", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserHasPermission_Permission_PermissionId",
+                        column: x => x.PermissionId,
+                        principalTable: "Permission",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserHasPermission_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Quantity = table.Column<double>(type: "float", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    For = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SpaceId = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    BillId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -241,44 +246,41 @@ namespace Graphene.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserPermission", x => x.Id);
+                    table.PrimaryKey("PK_Order", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserPermission_Permission_PermissionId",
-                        column: x => x.PermissionId,
-                        principalTable: "Permission",
+                        name: "FK_Order_Bill_BillId",
+                        column: x => x.BillId,
+                        principalTable: "Bill",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserPermission_User_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Order_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_Space_SpaceId",
+                        column: x => x.SpaceId,
+                        principalTable: "Space",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_User_CreatedById",
+                        column: x => x.CreatedById,
                         principalTable: "User",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyRelation_ChildId",
-                table: "CompanyRelation",
-                column: "ChildId");
+                name: "IX_Bill_SpaceId",
+                table: "Bill",
+                column: "SpaceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyRelation_ParentId",
-                table: "CompanyRelation",
-                column: "ParentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employee_CompanyId",
-                table: "Employee",
-                column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employee_RoleId",
-                table: "Employee",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employee_UserId",
-                table: "Employee",
+                name: "IX_Bill_UserId",
+                table: "Bill",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -298,14 +300,34 @@ namespace Graphene.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RolePermission_PermissionId",
-                table: "RolePermission",
-                column: "PermissionId");
+                name: "IX_Order_BillId",
+                table: "Order",
+                column: "BillId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RolePermission_RoleId",
-                table: "RolePermission",
-                column: "RoleId");
+                name: "IX_Order_CreatedById",
+                table: "Order",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_ProductId",
+                table: "Order",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_SpaceId",
+                table: "Order",
+                column: "SpaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductRelation_ChilldId",
+                table: "ProductRelation",
+                column: "ChilldId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductRelation_ParentId",
+                table: "ProductRelation",
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_Email",
@@ -321,41 +343,47 @@ namespace Graphene.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPermission_PermissionId",
-                table: "UserPermission",
+                name: "IX_UserHasPermission_PermissionId",
+                table: "UserHasPermission",
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPermission_UserId",
-                table: "UserPermission",
+                name: "IX_UserHasPermission_Uid",
+                table: "UserHasPermission",
+                column: "Uid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserHasPermission_UserId",
+                table: "UserHasPermission",
                 column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CompanyRelation");
-
-            migrationBuilder.DropTable(
-                name: "Employee");
-
-            migrationBuilder.DropTable(
                 name: "EntityHistory");
 
             migrationBuilder.DropTable(
-                name: "RolePermission");
+                name: "Order");
 
             migrationBuilder.DropTable(
-                name: "UserPermission");
+                name: "ProductRelation");
 
             migrationBuilder.DropTable(
-                name: "Company");
+                name: "UserHasPermission");
 
             migrationBuilder.DropTable(
-                name: "Role");
+                name: "Bill");
+
+            migrationBuilder.DropTable(
+                name: "Product");
 
             migrationBuilder.DropTable(
                 name: "Permission");
+
+            migrationBuilder.DropTable(
+                name: "Space");
 
             migrationBuilder.DropTable(
                 name: "User");
