@@ -36,7 +36,7 @@ To ensure that the Graphene community is welcoming to all, please review and abi
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Graphene, please send an e-mail to Taylor Otwell via [taylor@Graphene.com](mailto:security.graphene.software@freedom.icu). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Graphene, please send an e-mail to Diego Meza via [hi@diego.pro](mailto:hi@diego.pro). All security vulnerabilities will be promptly addressed.
 
 ## License
 
