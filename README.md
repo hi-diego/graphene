@@ -11,7 +11,7 @@
 
 Graphene is a minimalist .NET Core application framework inspired in Laravel, that merges the best of API-REST and GraphQL, usign a Data-First approach and Non-Functional-Requirements philosophy.
 
-We believe that web development must focus more on solving business problems that web technichal issues, so Graphene provides a very simple, minimalistic and generic bases to start working on your busines logic.
+We believe that web development must focus more on solving business problems than web technichal issues, so Graphene provides a very simple, minimalistic and generic bases to start working on your busines logic.
 
 Graphene takes the pain out of development by easing common tasks used in many web projects, such as:
 
