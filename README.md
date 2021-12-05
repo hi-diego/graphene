@@ -65,4 +65,4 @@ If you discover a security vulnerability within Graphene, please send an e-mail 
 
 ## License
 
-The Graphene framework is a Open Source, General Public, Copyleft software licensed under the [GPL.v3 license](https://www.gnu.org/licenses/gpl-3.0.en.html).
+The Graphene framework is a Open Source, Copyleft, Freedom Software licensed under the GNU General Public License [GPL.v3 license](https://www.gnu.org/licenses/gpl-3.0.en.html).
