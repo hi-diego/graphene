@@ -5,6 +5,12 @@ VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphene", "Graphene\Graphene.csproj", "{A7C38016-525B-4D3F-991A-EF209EE5E205}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{ECCCA58D-27AF-40DC-88AB-B4047946201D}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "GrapheneWebUI", "GrapheneWebUI\GrapheneWebUI.esproj", "{87805D09-35B1-44FC-AD38-EEC70DBD663A}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Documentation", "Documentation\Documentation.esproj", "{7877D8D1-C188-4BB5-ADAF-5FD0522D8536}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,22 @@ Global
 		{A7C38016-525B-4D3F-991A-EF209EE5E205}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7C38016-525B-4D3F-991A-EF209EE5E205}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7C38016-525B-4D3F-991A-EF209EE5E205}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECCCA58D-27AF-40DC-88AB-B4047946201D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECCCA58D-27AF-40DC-88AB-B4047946201D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECCCA58D-27AF-40DC-88AB-B4047946201D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECCCA58D-27AF-40DC-88AB-B4047946201D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87805D09-35B1-44FC-AD38-EEC70DBD663A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87805D09-35B1-44FC-AD38-EEC70DBD663A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87805D09-35B1-44FC-AD38-EEC70DBD663A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{87805D09-35B1-44FC-AD38-EEC70DBD663A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87805D09-35B1-44FC-AD38-EEC70DBD663A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87805D09-35B1-44FC-AD38-EEC70DBD663A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{7877D8D1-C188-4BB5-ADAF-5FD0522D8536}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7877D8D1-C188-4BB5-ADAF-5FD0522D8536}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7877D8D1-C188-4BB5-ADAF-5FD0522D8536}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7877D8D1-C188-4BB5-ADAF-5FD0522D8536}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7877D8D1-C188-4BB5-ADAF-5FD0522D8536}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7877D8D1-C188-4BB5-ADAF-5FD0522D8536}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
