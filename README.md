@@ -11,7 +11,7 @@
 
 Graphene is a minimalist .NET Core application framework inspired in Laravel, that merges the best of API-REST and GraphQL, usign a Data-First approach and Non-Functional-Requirements philosophy.
 
-We believe that web development must focus more on solving business problems that web technichal issues, so Graphene provides a very simple, minimalistic and generic bases to start wirking on your busines logic. Graphene takes the pain out of development by easing common tasks used in many web projects, such as:
+We believe that web development must focus more on solving business problems that web technichal issues, so Graphene provides a very simple, minimalistic and generic bases to start working on your busines logic. Graphene takes the pain out of development by easing common tasks used in many web projects, such as:
 
 - Automatic API (https://graphene.software.freedom.icu/docs/authentication).
 - Automatic UI Generation (https://graphene.software.freedom.icu/docs/authentication).
@@ -25,7 +25,7 @@ Graphene is simple, minimalistic, and powerful Framework that provides tools req
 
 ## Learning Graphene
 
-Graphene has the most extensive and thorough [documentation](https://graphene.software.freedom.icu/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Graphene is built in a Test Driven Development and Documentation-First approach, meaning that we first create the docs/tests and then the code, so we have an extensive and thorough [documentation](https://graphene.software.freedom.icu/docs).
 
 <!-- If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Graphene, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library. -->
 
