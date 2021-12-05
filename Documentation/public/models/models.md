@@ -1,6 +1,6 @@
 # Graphene Models
 
-Graphene Framework provides the basic functionality for a Database administration using Entity Framework Core Base Model class called "Entity.cs".
+Graphene Framework provides the basic functionality for a Database administration using Entity-Framework Core Base Model GraphModel.cs class.
 This class contains minimalistic ready to use functionalities including:
 
 - Identification (https://graphene.software.freedom.icu/docs/models#identification).
@@ -8,18 +8,28 @@ This class contains minimalistic ready to use functionalities including:
 - Events (https://graphene.software.freedom.icu/docs/models#events).
 - Aliases (https://graphene.software.freedom.icu/docs/models#aliases).
 
+## Usage
+
+Just Inherit from Entity.cs:
+```c#
+public class User : GraphModel
+{
+	//
+}
+```
+
 ## Identification
 
 Minimalist dynamic .NET Core framework for small applications, the best of API-REST and GraphQL combined.
 
 ## Soft Delete
 
-If it can be dynamic without reinventing Software, will be dynamic.
+
 
 ## Events
 
-If it can be dynamic without reinventing Software, will be dynamic.
+
 
 ## Aliases
 
-If it can be dynamic without reinventing Software, will be dynamic.
+
