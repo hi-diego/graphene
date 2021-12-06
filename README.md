@@ -11,7 +11,8 @@ Graphene takes the pain out of development by easing common tasks used in many w
 - Authentication (https://graphene.software.freedom.icu/docs/authentication).
 - Authorization [including DynamicAuthorization](https://graphene.software.freedom.icu/docs/authorization).
 - Automation [including DynamicAutomation](https://graphene.software.freedom.icu/docs/automation).
-- Model Events (https://graphene.software.freedom.icu/docs/model-events).
+- ModelRepository (https://graphene.software.freedom.icu/docs/models).
+- Models (https://graphene.software.freedom.icu/docs/models).
 - Querying [including DynamicQuerying](https://graphene.software.freedom.icu/docs/querying).
 
 Graphene is simple, minimalistic, and powerful Framework that provides the tools required to build small and simple applications, quickly.
