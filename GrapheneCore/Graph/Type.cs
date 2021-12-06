@@ -1,5 +1,5 @@
-﻿//using Backend.Database.Entities;
-//using Backend.Extensions;
+﻿using GrapheneCore.Extensions;
+using GrapheneCore.Graph.Attributes;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 
-namespace Backend.Database.Graph
+namespace GrapheneCore.Graph
 {
     public class GraphType
     {
@@ -16,7 +16,7 @@ namespace Backend.Database.Graph
         /// 
         /// </summary>
         [JsonIgnore]
-        public Type SystemType { get; set; }
+        public Type? SystemType { get; set; }
 
         /// <summary>
         /// 
@@ -91,7 +91,7 @@ namespace Backend.Database.Graph
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<Rule> Rules { get; set; } = new List<Rule>();
+        //public IEnumerable<Rule> Rules { get; set; } = new List<Rule>();
 
         /// <summary>
         /// 
@@ -108,16 +108,16 @@ namespace Backend.Database.Graph
         /// </summary>
         //public DatabaseContext DatabaseContext { get; }
 
-        public IEnumerable<Rule> DatabaseRules { get; set; } = new List<Rule>();
+        //public IEnumerable<Rule> DatabaseRules { get; set; } = new List<Rule>();
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="value"></param>
-        public GraphType(Type value, IEnumerable<Rule> rules = null)
+        public GraphType(Type value) // , IEnumerable<Rule> rules = null)
         {
             Init(value);
-            if (rules != null) DatabaseRules = rules;
+            //if (rules != null) DatabaseRules = rules;
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Backend.Database.Graph
         /// <summary>
         /// 
         /// </summary>
-        private GraphType Init(Type systemType = null, PropertyInfo property = null)
+        private GraphType Init(Type? systemType = null, PropertyInfo property = null)
         {
             SystemType = systemType ?? property.PropertyType;
             string name = (property?.Name ?? SystemType.Name);
@@ -148,10 +148,10 @@ namespace Backend.Database.Graph
             ForeignKey = property?.GetCustomAttribute<ForeignKeyAttribute>()?.Name.ToCamelCase();
             InverseProperty = property?.GetCustomAttribute<InversePropertyAttribute>()?.Property;
             InverseForeignKey = property?.GetCustomAttribute<InverseForeignKeyAttribute>()?.InverseForeignKey;
-            Rules = property?.GetCustomAttributes<RuleAttribute>().Count() > 0
-                ? new List<Rule>(property.GetCustomAttributes<RuleAttribute>().Select(r => r.ToRule(property.Name)))
-                : new List<Rule>();
-            Rules = Rules.Concat(DatabaseRules);
+            //Rules = property?.GetCustomAttributes<RuleAttribute>().Count() > 0
+            //    ? new List<Rule>(property.GetCustomAttributes<RuleAttribute>().Select(r => r.ToRule(property.Name)))
+            //    : new List<Rule>();
+            //Rules = Rules.Concat(DatabaseRules);
             return this;
         }
 

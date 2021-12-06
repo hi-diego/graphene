@@ -9,7 +9,7 @@ namespace GrapheneCore.Database.Interfaces
     /// <summary>
     /// 
     /// </summary>
-    public  interface IGrapheneDatabaseContext
+    public interface IGrapheneDatabaseContext
     {
         /// <summary>
         /// This is the Declaration of what is going to be accesible by
@@ -22,6 +22,6 @@ namespace GrapheneCore.Database.Interfaces
         /// <param name=""></param>
         /// <param name=""></param>
         /// <returns></returns>
-        public static Dictionary<string, Type> ModelDictionary = new Dictionary<string, Type>();
+        public Dictionary<string, Type> ModelDictionary { get; set; }
     }
 }

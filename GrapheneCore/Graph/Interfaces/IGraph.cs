@@ -14,6 +14,6 @@ namespace GrapheneCore.Graph.Interfaces
         /// <summary>
         /// All the types including the fake ones;
         /// </summary>
-        public IEnumerable<Graph.Type> Type { get; set; }
+        public IEnumerable<GraphType> Types { get; set; }
     }
 }

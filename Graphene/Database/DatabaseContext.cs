@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Graphene.Database
 {
-    public class GrapheneDatabaseContext : DbContext
+    public class DatabaseContext : IGrapheneDatabaseContext
     {
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Post> Posts { get; set; }
@@ -13,7 +13,7 @@ namespace Graphene.Database
         /// <summary>
         /// 
         /// </summary>
-        public GrapheneDatabaseContext()
+        public DatabaseContext()
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
