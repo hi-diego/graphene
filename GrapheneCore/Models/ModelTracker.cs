@@ -17,7 +17,7 @@ namespace GrapheneCore.Models
         /// <param name="entries"></param>
         /// <param name="log"></param>
         /// <returns></returns>
-        public static IEnumerable<T> GenerateGraphModelLogs<T>(IEnumerable<EntityEntry> entries, T log, object user = null) where T : IGraphModelLog, new()
+        public static IEnumerable<T> GenerateModelLogs<T>(IEnumerable<EntityEntry> entries, T log, object user = null) where T : IModelLog, new()
             => entries.Where(e => e.State != EntityState.Unchanged)
                 .Select(entry => (new T()).InitializeGeneric<T>(entry, null))
                 .ToList();

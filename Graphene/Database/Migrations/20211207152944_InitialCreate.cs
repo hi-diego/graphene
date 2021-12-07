@@ -15,7 +15,6 @@ namespace Graphene.Database.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    blog_id = table.Column<int>(type: "int", nullable: false),
                     url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -33,7 +32,6 @@ namespace Graphene.Database.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    post_id = table.Column<int>(type: "int", nullable: false),
                     title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     blog_id = table.Column<int>(type: "int", nullable: false),

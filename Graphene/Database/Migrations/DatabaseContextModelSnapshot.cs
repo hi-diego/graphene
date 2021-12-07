@@ -22,7 +22,7 @@ namespace Graphene.Database.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Graphene.Database.Blog", b =>
+            modelBuilder.Entity("Graphene.Models.Blog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,10 +30,6 @@ namespace Graphene.Database.Migrations
                         .HasColumnName("id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("BlogId")
-                        .HasColumnType("int")
-                        .HasColumnName("blog_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
@@ -65,7 +61,7 @@ namespace Graphene.Database.Migrations
                     b.ToTable("blogs");
                 });
 
-            modelBuilder.Entity("Graphene.Database.Post", b =>
+            modelBuilder.Entity("Graphene.Models.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,10 +91,6 @@ namespace Graphene.Database.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("modified_at");
 
-                    b.Property<int>("PostId")
-                        .HasColumnType("int")
-                        .HasColumnName("post_id");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -119,9 +111,9 @@ namespace Graphene.Database.Migrations
                     b.ToTable("posts");
                 });
 
-            modelBuilder.Entity("Graphene.Database.Post", b =>
+            modelBuilder.Entity("Graphene.Models.Post", b =>
                 {
-                    b.HasOne("Graphene.Database.Blog", "Blog")
+                    b.HasOne("Graphene.Models.Blog", "Blog")
                         .WithMany("Posts")
                         .HasForeignKey("BlogId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -131,7 +123,7 @@ namespace Graphene.Database.Migrations
                     b.Navigation("Blog");
                 });
 
-            modelBuilder.Entity("Graphene.Database.Blog", b =>
+            modelBuilder.Entity("Graphene.Models.Blog", b =>
                 {
                     b.Navigation("Posts");
                 });

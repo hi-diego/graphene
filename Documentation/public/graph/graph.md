@@ -13,7 +13,7 @@ The Graphene Graph contains multiple key parts, if you want to dive deep you mus
 
 ### Steps
 
-1. Inherit your models from GraphModel.cs.
+1. Inherit your models from Model.cs.
 2. Implement IGrapheneDatabaseContext on YourDatabaseContext.cs.
 3. Expose your models on the ModelDictionary on YourDatabaseContext.cs.
 4. Register the necesary Graph services in your App.
@@ -104,7 +104,7 @@ namespace Graphene.Database
     /// <summary>
     /// 
     /// </summary>
-    public class Blog : GraphModel
+    public class Blog : Model
     {
         public int BlogId { get; set; }
         public string Url { get; set; }
@@ -114,7 +114,7 @@ namespace Graphene.Database
     /// <summary>
     /// 
     /// </summary>
-    public class Post : GraphModel
+    public class Post : Model
     {
         public int PostId { get; set; }
         public string Title { get; set; }

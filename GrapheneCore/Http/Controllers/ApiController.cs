@@ -181,7 +181,7 @@ namespace GrapheneCore.Http.Controllers
         public async Task<ActionResult> Edit(string model, int id, [FromBody] JObject request)
         {
             //DatabaseContext.AuthUser = GetUser();
-            GraphModel instance = await ModelRepository.Update(request, model, id, false);
+            Model instance = await ModelRepository.Update(request, model, id, false);
             if (instance == null)
                 return NotFound();
             if (!TryValidateModel(instance, model))

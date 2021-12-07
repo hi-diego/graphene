@@ -42,7 +42,7 @@ namespace GrapheneCore.Models
         public IGrapheneDatabaseContext DatabaseContext { get; private set; }
 
         /// <summary>
-        /// Create a GraphModel from the JObject and add the resource into the DbContext
+        /// Create a Model from the JObject and add the resource into the DbContext
         /// and Persist the changes with SaveChanges if the save flag is provided.
         /// </summary>
         /// <param name="request"></param>
@@ -55,7 +55,7 @@ namespace GrapheneCore.Models
         }
 
         /// <summary>
-        /// Create a GraphModel from the JObject and add the resource into the DbContext
+        /// Create a Model from the JObject and add the resource into the DbContext
         /// and Persist the changes with SaveChanges if the save flag is provided.
         /// </summary>
         /// <param name="request"></param>
@@ -79,7 +79,7 @@ namespace GrapheneCore.Models
         public async Task<object> Create(object instance, bool save = true)
         {
             DatabaseContext.Add(instance);
-            if (save) await Save((GraphModel)instance, false);
+            if (save) await Save((Model)instance, false);
             return instance;
         }
 
@@ -90,10 +90,10 @@ namespace GrapheneCore.Models
         /// <param name="entityName"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<GraphModel> Find(string entityName, int id, bool tracking = true, string[] load = null)
+        public async Task<Model> Find(string entityName, int id, bool tracking = true, string[] load = null)
         {
             if (!DatabaseContext.Exists(ref entityName)) return null;
-            var set = DatabaseContext.GetSet<GraphModel>(entityName)
+            var set = DatabaseContext.GetSet<Model>(entityName)
                 .Where(i => i.Id == id);
             return tracking
                 ? await set.Includes(load).FirstOrDefaultAsync()
@@ -107,10 +107,10 @@ namespace GrapheneCore.Models
         /// <param name="entityName"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public GraphModel FindSync(string entityName, int id, bool tracking = true, string[] load = null)
+        public Model FindSync(string entityName, int id, bool tracking = true, string[] load = null)
         {
             if (!DatabaseContext.Exists(ref entityName)) return null;
-            var set = DatabaseContext.GetSet<GraphModel>(entityName)
+            var set = DatabaseContext.GetSet<Model>(entityName)
                 .Where(i => i.Id == id)
                 .Includes(load);
             return tracking
@@ -138,9 +138,9 @@ namespace GrapheneCore.Models
         /// <param name="instance"></param>
         /// <param name="request"></param>
         /// <param name="id"></param>
-        public async Task<GraphModel> Update(JObject data, string entityName, int id, bool save = true)
+        public async Task<Model> Update(JObject data, string entityName, int id, bool save = true)
         {
-            GraphModel instance = await Find(entityName, id, false);
+            Model instance = await Find(entityName, id, false);
             if (instance == null) return instance;
             return await Update(instance, data, save); ;
         }
@@ -153,9 +153,9 @@ namespace GrapheneCore.Models
         /// <param name="instance"></param>
         /// <param name="request"></param>
         /// <param name="id"></param>
-        public async Task<GraphModel> Update(GraphModel instance, JObject data, bool save = true)
+        public async Task<Model> Update(Model instance, JObject data, bool save = true)
         {
-            GraphModel changed = instance.Update(data);
+            Model changed = instance.Update(data);
             try { DatabaseContext.Update(changed); }
             catch (Exception e) { var f = e; }
             if (save) await Save(changed, false);
@@ -164,14 +164,14 @@ namespace GrapheneCore.Models
 
         /// <summary>
         /// Persist the instance Data using SaveChanges and  Create 
-        /// all the Correspondent GraphModellog records for each operation.
+        /// all the Correspondent Modellog records for each operation.
         /// </summary>
         /// <param name="instance"></param>
         /// <param name="request"></param>
         /// <param name="id"></param>
-        public async Task<GraphModel> Save(GraphModel instance, bool update = true)
+        public async Task<Model> Save(Model instance, bool update = true)
         {
-            IEnumerable<IGraphModelLog> logs = BeforeSave(instance);
+            IEnumerable<IModelLog> logs = BeforeSave(instance);
             if (update) DatabaseContext.Update(instance);
             await DatabaseContext.SaveChangesAsync();
             AfterSave(instance, logs);
@@ -180,36 +180,36 @@ namespace GrapheneCore.Models
 
         /// <summary>
         /// The BeforeCreate logic
-        /// consists in creating all the correspondent GraphModelLog instances 
+        /// consists in creating all the correspondent ModelLog instances 
         /// for each operation that is recorded to perfom
         /// and adding it to the DbContext and Firing all the ModelEvents.
         /// </summary>
         /// <returns></returns>
-        public virtual IEnumerable<IGraphModelLog> BeforeSave(GraphModel instance)
+        public virtual IEnumerable<IModelLog> BeforeSave(Model instance)
         {
-            IEnumerable<IGraphModelLog> logs = LogChanges();
-            FireBeforeGraphModelEvents(logs);
+            IEnumerable<IModelLog> logs = LogChanges();
+            FireBeforeModelEvents(logs);
             return logs;
         }
 
         /// <summary>
         /// The BeforeCreate logic
-        /// consists in creating all the correspondent GraphModelLog instances 
+        /// consists in creating all the correspondent ModelLog instances 
         /// for each operation that is recorded to perfom
         /// and adding it to the DbContext and Firing all the ModelEvents.
         /// </summary>
         /// <returns></returns>
-        public virtual IEnumerable<IGraphModelLog> AfterSave(GraphModel instance, IEnumerable<IGraphModelLog> logs)
+        public virtual IEnumerable<IModelLog> AfterSave(Model instance, IEnumerable<IModelLog> logs)
         {
-            FireAfterGraphModelEvents(logs);
+            FireAfterModelEvents(logs);
             return logs;
         }
 
         /// <summary>
-        /// Excecute the correspondent instance method Event for each GraphModel log.
+        /// Excecute the correspondent instance method Event for each Model log.
         /// </summary>
         /// <param name="logs"></param>
-        public void FireBeforeGraphModelEvents(IEnumerable<IGraphModelLog> logs)
+        public void FireBeforeModelEvents(IEnumerable<IModelLog> logs)
         {
             foreach (var log in logs)
             {
@@ -225,10 +225,10 @@ namespace GrapheneCore.Models
 
 
         /// <summary>
-        /// Excecute the correspondent instance method Event for each GraphModel log.
+        /// Excecute the correspondent instance method Event for each Model log.
         /// </summary>
         /// <param name="logs"></param>
-        public void FireAfterGraphModelEvents(IEnumerable<IGraphModelLog> logs)
+        public void FireAfterModelEvents(IEnumerable<IModelLog> logs)
         {
             foreach (var log in logs)
             {
@@ -246,10 +246,10 @@ namespace GrapheneCore.Models
         /// <summary>
         /// Check if the Proyect needs to store changes .
         /// </summary>
-        public IEnumerable<IGraphModelLog> LogChanges()
+        public IEnumerable<IModelLog> LogChanges()
         {
             var entries = DatabaseContext.ChangeTracker.Entries();
-            var logs = ModelTracker.GenerateGraphModelLogs(entries, new GraphModelLog());
+            var logs = ModelTracker.GenerateModelLogs(entries, new ModelLog());
             // TODO: add a conditional option to store logs
             // DatabaseContext.AddRange(logs);
             return logs;

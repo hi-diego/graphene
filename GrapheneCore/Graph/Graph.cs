@@ -40,7 +40,7 @@ namespace GrapheneCore.Graph
         /// <returns></returns>
         public static IEnumerable<GraphType> GetGraph(IGrapheneDatabaseContext context)
             => context.ModelDictionary.ToList()
-                    .Where(m => !m.Value.IsAbstract && m.Value.IsSubclassOf(typeof(GraphModel)))
+                    .Where(m => !m.Value.IsAbstract && m.Value.IsSubclassOf(typeof(Model)))
                     .Select(m => new GraphType(m.Value)) // until Rules are implemented, context.Rule.Where(r => r.Entity == m.Key).ToList()))
                     .ToList();
 

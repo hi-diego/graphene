@@ -50,9 +50,9 @@ namespace GrapheneCore.Database.Extensions
         public static void SaveAnnotatedGraph(this IGrapheneDatabaseContext dbContext, object rootEntity)
         {
             dbContext.ChangeTracker.TrackGraph(rootEntity, n => {
-                GraphModel entity = (GraphModel)n.Entry.Entity;
+                Model entity = (Model)n.Entry.Entity;
                 n.Entry.State = entity.EntityState;
-                if (entity.EntityState == EntityState.Deleted) GraphModel.SoftDelete(entity, n.Entry);
+                if (entity.EntityState == EntityState.Deleted) Model.SoftDelete(entity, n.Entry);
             });
         }
 
@@ -63,7 +63,7 @@ namespace GrapheneCore.Database.Extensions
         /// <param name="modelBuilder"></param>
         public static void OnModelCreating(this IGrapheneDatabaseContext dbContext, ModelBuilder modelBuilder)
         {
-            foreach (Type entity in dbContext.ModelDictionary.Values) if (entity.BaseType == typeof(GraphModel)) GraphModelConfiguration.Configure(modelBuilder.Entity(entity), entity);
+            foreach (Type entity in dbContext.ModelDictionary.Values) if (entity.BaseType == typeof(Model)) ModelConfiguration.Configure(modelBuilder.Entity(entity), entity);
             dbContext.ModelBuilderToSnakeCase(modelBuilder);
         }
 
@@ -78,7 +78,7 @@ namespace GrapheneCore.Database.Extensions
             foreach (IMutableEntityType entity in builder.Model.GetEntityTypes())
             {
                 // snakify table names
-                if (entity.ClrType.BaseType == typeof(GraphModel)) entity.SetTableName(entity.GetTableName().ToSnakeCase().ToPlural());
+                if (entity.ClrType.BaseType == typeof(Model)) entity.SetTableName(entity.GetTableName().ToSnakeCase().ToPlural());
                 // snakify column names
                 foreach (var property in entity.GetProperties()) property.SetColumnName(property.GetColumnBaseName().ToSnakeCase());
                 // snakify key names

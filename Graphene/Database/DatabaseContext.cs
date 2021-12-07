@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Graphene.Models;
 using GrapheneCore.Database.Extensions;
 using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
@@ -75,27 +76,5 @@ namespace Graphene.Database
             // optionsBuilder.UseMySQL("server=localhost;database=graphene;user=root;password=$torage");
             optionsBuilder.UseSqlServer("Server = localhost\\SQLEXPRESS; Database = graphene; Trusted_Connection = True;");
         }
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    public class Blog : GraphModel
-    {
-        public int BlogId { get; set; }
-        public string Url { get; set; }
-
-        public List<Post> Posts { get; } = new();
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    public class Post : GraphModel
-    {
-        public int PostId { get; set; }
-        public string Title { get; set; }
-        public string Content { get; set; }
-
-        public int BlogId { get; set; }
-        public Blog Blog { get; set; }
     }
 }

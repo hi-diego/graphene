@@ -1,6 +1,6 @@
 # Graphene Models
 
-Graphene Framework provides the basic functionality for a Database administration using Entity-Framework Core Base Model GraphModel.cs class.
+Graphene Framework provides the basic functionality for a Database administration using Entity-Framework Core Base Model Model.cs class.
 This class contains minimalistic ready to use functionalities including:
 
 - Identification (https://graphene.software.freedom.icu/docs/models#identification).
@@ -12,7 +12,7 @@ This class contains minimalistic ready to use functionalities including:
 
 Just Inherit from Entity.cs:
 ```c#
-public class User : GraphModel
+public class User : Model
 {
 	//
 }

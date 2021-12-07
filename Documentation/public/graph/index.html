@@ -1076,7 +1076,7 @@ The Graphene Graph contains multiple key parts, if you want to dive deep you mus
 <h2 id="graph-implementation">Graph Implementation<a class="headerlink" href="#graph-implementation" title="Permanent link"></a></h2>
 <h3 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link"></a></h3>
 <ol>
-<li>Inherit your models from GraphModel.cs.</li>
+<li>Inherit your models from Model.cs.</li>
 <li>Implement IGrapheneDatabaseContext on YourDatabaseContext.cs.</li>
 <li>Expose your models on the ModelDictionary on YourDatabaseContext.cs.</li>
 <li>Register the necesary Graph services in your App.</li>
@@ -1164,7 +1164,7 @@ The Graphene Graph contains multiple key parts, if you want to dive deep you mus
     <span class="c1">/// &lt;summary&gt;</span>
     <span class="c1">/// </span>
     <span class="c1">/// &lt;/summary&gt;</span>
-    <span class="k">public</span> <span class="k">class</span> <span class="nc">Blog</span> <span class="p">:</span> <span class="n">GraphModel</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">Blog</span> <span class="p">:</span> <span class="n">Model</span>
     <span class="p">{</span>
         <span class="k">public</span> <span class="kt">int</span> <span class="n">BlogId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
         <span class="k">public</span> <span class="kt">string</span> <span class="n">Url</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
@@ -1174,7 +1174,7 @@ The Graphene Graph contains multiple key parts, if you want to dive deep you mus
     <span class="c1">/// &lt;summary&gt;</span>
     <span class="c1">/// </span>
     <span class="c1">/// &lt;/summary&gt;</span>
-    <span class="k">public</span> <span class="k">class</span> <span class="nc">Post</span> <span class="p">:</span> <span class="n">GraphModel</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">Post</span> <span class="p">:</span> <span class="n">Model</span>
     <span class="p">{</span>
         <span class="k">public</span> <span class="kt">int</span> <span class="n">PostId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
         <span class="k">public</span> <span class="kt">string</span> <span class="n">Title</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>

@@ -12,7 +12,7 @@ namespace GrapheneCore.Models
     /// <summary>
     /// Generic Model Configuration
     /// </summary>
-    public class GraphModelConfiguration
+    public class ModelConfiguration
     {
         /// <summary>
         /// 
