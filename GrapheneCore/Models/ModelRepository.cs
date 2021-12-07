@@ -21,7 +21,7 @@ using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Models;
 using Graphene.Extensions;
 
-namespace GrapheneCore.Database
+namespace GrapheneCore.Models
 {
     /// <summary>
     /// 
@@ -250,7 +250,8 @@ namespace GrapheneCore.Database
         {
             var entries = DatabaseContext.ChangeTracker.Entries();
             var logs = ModelTracker.GenerateGraphModelLogs(entries, new GraphModelLog());
-            DatabaseContext.AddRange(logs);
+            // TODO: add a conditional option to store logs
+            // DatabaseContext.AddRange(logs);
             return logs;
         }
     }

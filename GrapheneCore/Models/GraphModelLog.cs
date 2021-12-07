@@ -37,7 +37,7 @@ namespace GrapheneCore.Models
         public virtual T InitializeGeneric<T>(EntityEntry entry, int? userId = null) where T : IGraphModelLog, new()
         {
             T log = new T();
-            GraphModel entity = ((GraphModelLog)entry.Entity);
+            GraphModel entity = ((GraphModel)entry.Entity);
             var to = entity.ToJson();
             var copy = entry.OriginalValues.Clone().ToObject();
             var from = ((GraphModel)copy).ToJson();

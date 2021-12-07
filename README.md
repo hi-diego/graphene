@@ -6,6 +6,7 @@ We believe that web development must focus more on solving business problems tha
 
 Graphene takes the pain out of development by easing common tasks used in many web projects, such as:
 
+- Graph (https://graphene.software.freedom.icu/docs/graph).
 - Automatic API (https://graphene.software.freedom.icu/docs/authentication).
 - Automatic UI Generation (https://graphene.software.freedom.icu/docs/authentication).
 - Authentication (https://graphene.software.freedom.icu/docs/authentication).

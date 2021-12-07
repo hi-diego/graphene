@@ -2,7 +2,6 @@ using Graphene.Database;
 using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Graph;
 using GrapheneCore.Graph.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
