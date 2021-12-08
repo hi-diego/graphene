@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Graphene.Models;
 using GrapheneCore.Database.Extensions;
 using GrapheneCore.Database.Interfaces;
@@ -74,7 +75,10 @@ namespace Graphene.Database
             //            you should move it out of source code.See http://go.microsoft.com/fwlink/?LinkId=723263 
             //     for guidance on storing connection strings.
             // optionsBuilder.UseMySQL("server=localhost;database=graphene;user=root;password=$torage");
-            optionsBuilder.UseSqlServer("Server = localhost\\SQLEXPRESS; Database = graphene; Trusted_Connection = True;");
+            optionsBuilder
+                .UseSqlServer("Server = localhost\\SQLEXPRESS; Database = graphene; Trusted_Connection = True;")
+                .EnableSensitiveDataLogging()
+                .LogTo(message => Debug.WriteLine(message));
         }
     }
 }

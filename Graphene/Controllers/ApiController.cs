@@ -9,6 +9,7 @@ using Graphene.Database;
 using System.Linq.Expressions;
 using System.Linq.Dynamic.Core;
 using System.Linq;
+using System.Reflection;
 
 namespace Graphene.Http.Controllers
 {
@@ -30,6 +31,12 @@ namespace Graphene.Http.Controllers
         }
 
         public DatabaseContext Context { get; set; }
+
+        public static readonly MethodInfo IncludeMethodInfo =
+            typeof(EntityFrameworkQueryableExtensions)
+                .GetTypeInfo()
+                .GetDeclaredMethods("Include")
+                .Single((MethodInfo mi) => mi.GetGenericArguments().Count() == 2 && mi.GetParameters().Any((ParameterInfo pi) => pi.Name == "navigationPropertyPath" && pi.ParameterType != typeof(string)));
 
         [HttpGet("/test")]
         public object testInclude([FromQuery] string include)
@@ -62,7 +69,15 @@ namespace Graphene.Http.Controllers
 
             // Try to make a method in each model class that retutn an  Expression<Func<dynamic, dynamic>> 
             // Expression<Func<dynamic, dynamic>> e = x => (x as Blog).Posts.Take(10);
-            return Context.GetSet<Blog>("Blog").Include(e2);
+
+            // Trying to call the Extension Method mmanually
+            var q = Context.GetSet("Blog");
+            var qq = IncludeMethodInfo.MakeGenericMethod(typeof(Blog), typeof(IEnumerable<Post>)).Invoke(null, new object[] { q, e2 });
+            return qq;
+            // return Context.GetSet<Blog>("Blog").Include(e2);
+
+
+            // q = q.Provider.CreateQuery<Blog>(Expression.Call(IncludeMethodInfo.MakeGenericMethod(typeof(Blog), typeof(Post))));
         }
     }
 }
