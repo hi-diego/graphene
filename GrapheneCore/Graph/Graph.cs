@@ -52,5 +52,34 @@ namespace GrapheneCore.Graph
         {
             return Types.FirstOrDefault(t => t.PascalName == name.DbSetName());
         }
+
+        /// <summary>
+        /// Returns the Type of the relation that corresponds to the given path in the given type
+        /// </summary>
+        /// <param name="include"></param>
+        /// <returns></returns>
+        public Type GetRelationType(Type root, string path)
+        {
+            return GetRelationGraphType(root, path);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Type GetRelationGraphType(Type root, string path)
+        {
+            GraphType rootGraphType = Types.Single(t => t.SystemType == root);
+            GraphType graphType = rootGraphType;
+            GraphType prevGraphType = rootGraphType;
+            foreach (var piece in path.Split("."))
+            {
+                prevGraphType = graphType;
+                graphType = graphType.Fields.Single(f => f.PascalName == piece.UcFirst());
+            }
+            return graphType.SystemType;
+            //return prevGraphType.Multiple
+            //    ? typeof(IEnumerable<>).MakeGenericType(graphType.SystemType)
+            //    : graphType.SystemType;
+        }
     }
 }

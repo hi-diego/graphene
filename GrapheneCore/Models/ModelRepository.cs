@@ -20,6 +20,9 @@ using System.Threading.Tasks;
 using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Models;
 using Graphene.Extensions;
+using GrapheneCore.Models.Interfaces;
+using System.Reflection;
+using GrapheneCore.Graph.Interfaces;
 
 namespace GrapheneCore.Models
 {
@@ -31,10 +34,28 @@ namespace GrapheneCore.Models
         /// <summary>
         /// 
         /// </summary>
-        public ModelRepository(IGrapheneDatabaseContext dbContext)
+        public static readonly MethodInfo IncludeMethodInfo =
+            typeof(EntityFrameworkQueryableExtensions)
+                .GetTypeInfo()
+                .GetDeclaredMethods("Include")
+                .Single((MethodInfo mi) => mi.GetGenericArguments().Count() == 2
+                    && mi.GetParameters().Any((ParameterInfo pi) => pi.Name == "navigationPropertyPath"
+                        && pi.ParameterType != typeof(string)
+                    )
+                );
+        /// <summary>
+        /// 
+        /// </summary>
+        public ModelRepository(IGrapheneDatabaseContext dbContext, IGraph graph)
         {
+            Graph = graph;
             DatabaseContext = dbContext;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IGraph Graph { get; }
 
         /// <summary>
         /// 
@@ -84,6 +105,16 @@ namespace GrapheneCore.Models
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="include"></param>
+        /// <returns></returns>
+        public List<string> GetStringExpressions (string include, string root)
+        {
+            return include.Split('.').Select(rel => $"{root} => {root}.{rel}.Take(10)").ToList();
+        }
+
+        /// <summary>
         /// Verify if the Resource Exist in the DbContext
         /// and find it by its Id.
         /// </summary>
@@ -93,11 +124,40 @@ namespace GrapheneCore.Models
         public async Task<Model> Find(string entityName, int id, bool tracking = true, string[] load = null)
         {
             if (!DatabaseContext.Exists(ref entityName)) return null;
-            var set = DatabaseContext.GetSet<Model>(entityName).Where(i => i.Id == id);
+            var set = DatabaseContext.GetSet(entityName); // .Where(i => (i as Model).Id == id);
             Type modelType = DatabaseContext.ModelDictionary[entityName.DbSetName()];
-            return tracking
-                ? await set.Includes(load, modelType).FirstOrDefaultAsync()
-                : await set.AsNoTracking().Includes(load, modelType).AsNoTracking().FirstOrDefaultAsync();
+            IQueryable<dynamic> includeQuery;
+
+
+            foreach (string include in load)
+            {
+                var ttttt = typeof(IEnumerable<>).MakeGenericType(modelType);
+                Type relationType = Graph.GetRelationType(modelType, include);
+                // Type relationType = typeof(IEnumerable<GrapheneCore.Models.Interfaces.IModel>);
+                var stringExpressions = GetStringExpressions(include, entityName);
+
+                foreach (string stringExpression in stringExpressions) { }
+                var methodInfo = typeof(DynamicExpressionParser)
+                    .GetTypeInfo()
+                    .GetDeclaredMethods("ParseLambda")
+                    .Single((MethodInfo mi) =>
+                        mi.GetParameters().Count() == 4 &&
+                        mi.GetGenericArguments().Count() == 2 &&
+                        mi.GetParameters().Any((ParameterInfo pi) =>
+                            pi.Name == "parsingConfig" &&
+                            pi.ParameterType == typeof(ParsingConfig)
+                        )
+                    );
+                var expression = methodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { new ParsingConfig() { }, true, "blog => blog.Posts.Take(10)", new object[] { } });
+                set = (IQueryable<dynamic>) IncludeMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { set, expression });
+            }
+            return await set.Where(i => (i as Model).Id == id).FirstOrDefaultAsync();
+
+
+
+            //return tracking
+            //    ? await set.Includes(load, modelType).FirstOrDefaultAsync()
+            //    : await set.AsNoTracking().Includes(load, modelType).AsNoTracking().FirstOrDefaultAsync();
         }
 
         /// <summary>

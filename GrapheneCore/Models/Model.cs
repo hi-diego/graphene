@@ -1,4 +1,5 @@
 ﻿using GrapheneCore.Database.Interfaces;
+using GrapheneCore.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace GrapheneCore.Models
     /// <summary>
     /// 
     /// </summary>
-    public class Model
+    public class Model : IModel
     {
         /// <summary>
         /// 

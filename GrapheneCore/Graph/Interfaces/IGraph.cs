@@ -14,5 +14,12 @@ namespace GrapheneCore.Graph.Interfaces
         /// All the types including the fake ones;
         /// </summary>
         public IEnumerable<GraphType> Types { get; set; }
+
+        /// <summary>
+        /// Returns the Type of the relation that corresponds to the given path in the given type
+        /// </summary>
+        /// <param name="include"></param>
+        /// <returns></returns>
+        public Type GetRelationType(Type root, string path);
     }
 }

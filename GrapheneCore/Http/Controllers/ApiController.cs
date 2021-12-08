@@ -1,6 +1,7 @@
 ﻿using GrapheneCore.Database.Extensions;
 using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
+using GrapheneCore.Graph.Interfaces;
 using GrapheneCore.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +26,11 @@ namespace GrapheneCore.Http.Controllers
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="configuration"></param>
-        public ApiController(IGrapheneDatabaseContext dbContext, IConfiguration configuration)
+        public ApiController(IGrapheneDatabaseContext dbContext, IConfiguration configuration, IGraph graph)
         {
             Configuration = configuration;
             DatabaseContext = dbContext;
-            ModelRepository = new ModelRepository(dbContext);
+            ModelRepository = new ModelRepository(dbContext, graph);
         }
 
         /// <summary>

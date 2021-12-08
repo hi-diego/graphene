@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Linq.Dynamic.Core;
 using System.Linq;
 using System.Reflection;
+using GrapheneCore.Graph.Interfaces;
 
 namespace Graphene.Http.Controllers
 {
@@ -24,7 +25,7 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         /// <param name="databaseContext"></param>
-        public ApiController(IGrapheneDatabaseContext dbContext, IConfiguration configuration, DatabaseContext context) : base(dbContext, configuration)
+        public ApiController(IGrapheneDatabaseContext dbContext, IConfiguration configuration, IGraph graph, DatabaseContext context) : base(dbContext, configuration, graph)
         {
             //
             this.Context = context;
@@ -60,7 +61,20 @@ namespace Graphene.Http.Controllers
             // );
 
             // var include = "x => x.Posts";
-
+            Type blogType = typeof(Blog);
+            Type postType = typeof(IEnumerable<Post>);
+            var methodInfo = typeof(DynamicExpressionParser)
+                .GetTypeInfo()
+                .GetDeclaredMethods("ParseLambda")
+                .Single((MethodInfo mi) =>
+                    mi.GetParameters().Count() == 4 &&
+                    mi.GetGenericArguments().Count() == 2 &&
+                    mi.GetParameters().Any((ParameterInfo pi) =>
+                        pi.Name == "parsingConfig" &&
+                        pi.ParameterType == typeof(ParsingConfig)
+                    )
+                );
+            var expression = methodInfo.MakeGenericMethod(blogType, postType).Invoke(null, new object[] { new ParsingConfig() { }, true, include, new object[] { } });
             var e2 = DynamicExpressionParser.ParseLambda<Blog, IEnumerable<Post>>(new ParsingConfig() { }, true, include);
             //var de = DynamicExpressionParser.ParseLambda(typeof(IEnumerable<Model>), null, include);
             // var p = Expression.Parameter(typeof(Blog), "x");
@@ -72,7 +86,7 @@ namespace Graphene.Http.Controllers
 
             // Trying to call the Extension Method mmanually
             var q = Context.GetSet("Blog");
-            var qq = IncludeMethodInfo.MakeGenericMethod(typeof(Blog), typeof(IEnumerable<Post>)).Invoke(null, new object[] { q, e2 });
+            var qq = IncludeMethodInfo.MakeGenericMethod(typeof(Blog), typeof(IEnumerable<Post>)).Invoke(null, new object[] { q, expression });
             return qq;
             // return Context.GetSet<Blog>("Blog").Include(e2);
 

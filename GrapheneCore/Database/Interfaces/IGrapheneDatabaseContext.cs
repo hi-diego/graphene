@@ -72,6 +72,13 @@ namespace GrapheneCore.Database.Interfaces
         /// <returns></returns>
         public IQueryable<T> GetSet<T>(string name);
 
+        /// <summary>
+        /// Get a Resource set by its name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public IQueryable<dynamic> GetSet(string name);
+
         //
         // Summary:
         //     Begins tracking the given entity in the Microsoft.EntityFrameworkCore.EntityState.Deleted
