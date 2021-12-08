@@ -93,11 +93,11 @@ namespace GrapheneCore.Models
         public async Task<Model> Find(string entityName, int id, bool tracking = true, string[] load = null)
         {
             if (!DatabaseContext.Exists(ref entityName)) return null;
-            var set = DatabaseContext.GetSet<Model>(entityName)
-                .Where(i => i.Id == id);
+            var set = DatabaseContext.GetSet<Model>(entityName).Where(i => i.Id == id);
+            Type modelType = DatabaseContext.ModelDictionary[entityName.DbSetName()];
             return tracking
-                ? await set.Includes(load).FirstOrDefaultAsync()
-                : await set.AsNoTracking().Includes(load).AsNoTracking().FirstOrDefaultAsync();
+                ? await set.Includes(load, modelType).FirstOrDefaultAsync()
+                : await set.AsNoTracking().Includes(load, modelType).AsNoTracking().FirstOrDefaultAsync();
         }
 
         /// <summary>
