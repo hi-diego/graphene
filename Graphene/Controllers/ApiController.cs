@@ -85,6 +85,7 @@ namespace Graphene.Http.Controllers
             // Expression<Func<dynamic, dynamic>> e = x => (x as Blog).Posts.Take(10);
 
             // Trying to call the Extension Method mmanually
+            Context.Blog.Include(blog => blog.Posts).ThenInclude(posts => posts.Author);
             var q = Context.GetSet("Blog");
             var qq = IncludeMethodInfo.MakeGenericMethod(typeof(Blog), typeof(IEnumerable<Post>)).Invoke(null, new object[] { q, expression });
             return qq;

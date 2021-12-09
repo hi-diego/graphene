@@ -34,6 +34,22 @@ namespace GrapheneCore.Models
         /// <summary>
         /// 
         /// </summary>
+        public static readonly MethodInfo ThenIncludeMethodInfo =
+            typeof(EntityFrameworkQueryableExtensions)
+                .GetTypeInfo()
+                .GetDeclaredMethods("ThenInclude")
+                .Last();
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly MethodInfo ThenIncludeMethodInfoMultiple =
+            typeof(EntityFrameworkQueryableExtensions)
+                .GetTypeInfo()
+                .GetDeclaredMethods("ThenInclude")
+                .First();
+        /// <summary>
+        /// 
+        /// </summary>
         public static readonly MethodInfo IncludeMethodInfo =
             typeof(EntityFrameworkQueryableExtensions)
                 .GetTypeInfo()
@@ -140,18 +156,56 @@ namespace GrapheneCore.Models
         {
             if (!DatabaseContext.Exists(ref entityName)) return null;
             var set = DatabaseContext.GetSet(entityName);
+            // set.Include(x => x).ThenInclude(x => x).
             Type modelType = DatabaseContext.ModelDictionary[entityName.DbSetName()];
-            foreach (string include in load)
+            IEnumerable<IncludeExpression> includeExpressions = Graph.GetIncludeExpressions(modelType, load);
+            foreach (IncludeExpression includeExpression in includeExpressions)
             {
-                var stringExpressions = GetStringExpressions(include, entityName);
-                Type relationType = Graph.GetRelationType(modelType, include);
-                foreach (string stringExpression in stringExpressions) {
-                    var expression = DynamicExpressionMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { new ParsingConfig() { }, true, stringExpression, new object[] { } });
-                    set = (IQueryable<dynamic>) IncludeMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { set, expression });
-                }
+                Type blog = includeExpression.PreviousInclude?.Type.SystemType;
+                Type post = includeExpression.IsPrevMultiple
+                    ? includeExpression?.PreviousInclude?.Relation?.SystemType.GetGenericArguments().First()
+                    : includeExpression?.PreviousInclude?.Relation?.SystemType;
+                Type author = includeExpression?.Relation?.SystemType;
+                var expression = includeExpression.PreviousInclude == null
+                    ? DynamicExpressionMethodInfo.MakeGenericMethod(includeExpression.Type.SystemType, includeExpression.Relation.SystemType).Invoke(null, new object[] { new ParsingConfig() { }, true, includeExpression.IncludeString, new object[] { } })
+                    : DynamicExpressionMethodInfo.MakeGenericMethod(post, author).Invoke(null, new object[] { new ParsingConfig() { }, true, includeExpression.IncludeString, new object[] { } });
+                MethodInfo includeMethod = includeExpression.IsThenInclude
+                    ? includeExpression.IsPrevMultiple
+                        ? ThenIncludeMethodInfoMultiple.MakeGenericMethod(blog, post, author)
+                        : ThenIncludeMethodInfo.MakeGenericMethod(blog, post, author)
+                    : IncludeMethodInfo.MakeGenericMethod(includeExpression.Type.SystemType, includeExpression.Relation.SystemType);
+
+                //if (includeExpression.IsThenInclude)
+                //{
+                //    var expression = DynamicExpressionMethodInfo.MakeGenericMethod(includeExpression.PreviousInclude.Type.SystemType, includeExpression.Relation.SystemType).Invoke(null, new object[] { new ParsingConfig() { }, true, includeExpression.IncludeString, new object[] { } });
+                //    if (includeExpression.IsPrevMultiple)
+                //    {
+
+                //    } else
+                //    {
+
+                //    }
+                //} else
+                //{
+                //    var expression = DynamicExpressionMethodInfo.MakeGenericMethod(includeExpression.Type.SystemType, includeExpression.Relation.SystemType).Invoke(null, new object[] { new ParsingConfig() { }, true, includeExpression.IncludeString, new object[] { } });
+                //}
+
+                var result = (IQueryable<dynamic>) includeMethod.Invoke(null, new object[] { set, expression });
+                set = result;
+                //set = includeExpression.IsThenInclude
+                //    ? (IQueryable<dynamic>) ((IQueryable) includeMethod.Invoke(null, new object[] { set, expression })).AsQueryable()
+                //    : (IQueryable<dynamic>) includeMethod.Invoke(null, new object[] { set, expression });
             }
             return await set.Where(i => (i as Model).Id == id).FirstOrDefaultAsync();
-
+            //foreach (string include in load)
+            //{
+            //    var stringExpressions = GetStringExpressions(include, entityName);
+            //    Type relationType = Graph.GetRelationType(modelType, include);
+            //    //foreach (string stringExpression in stringExpressions) {
+            //        var expression = DynamicExpressionMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { new ParsingConfig() { }, true, include, new object[] { } });
+            //        set = (IQueryable<dynamic>) IncludeMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { set, expression });
+            //    //}
+            //}
 
 
             //return tracking

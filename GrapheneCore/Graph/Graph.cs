@@ -81,5 +81,24 @@ namespace GrapheneCore.Graph
             //    ? typeof(IEnumerable<>).MakeGenericType(graphType.SystemType)
             //    : graphType.SystemType;
         }
+
+        /// <summary>
+        /// Returns the Type of the relation that corresponds to the given path in the given type
+        /// </summary>
+        /// <param name="include"></param>
+        /// <returns></returns>
+        public IEnumerable<IncludeExpression> GetIncludeExpressions(Type root, string[] includes)
+        {
+            GraphType rootGraphType = Types.Single(t => t.SystemType == root);
+            List<IncludeExpression> includeExpressions = new List<IncludeExpression>(); //  = includes.Select(i => new IncludeExpression(rootGraphType, i, this));
+            IncludeExpression prevIncludeExpression = null;
+            foreach (string i in includes) {
+                IncludeExpression includeExpression = new IncludeExpression(rootGraphType, i, this, prevIncludeExpression);
+                prevIncludeExpression = includeExpression;
+                includeExpressions.Add(includeExpression);
+            }
+            //IEnumerable<IncludeExpression> includeExpressions = includes.Select(i => new IncludeExpression(rootGraphType, i, this));
+            return includeExpressions;
+        }
     }
 }
