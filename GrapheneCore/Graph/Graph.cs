@@ -172,29 +172,30 @@ namespace GrapheneCore.Graph
         public IQueryable<dynamic> SetInclude(IQueryable<dynamic> set, IncludeExpression iExpression)
         {
             // Get the correspondent SystemTypes for the "Include/ThenInclude" reflection/dynamic call from the IncludeExpression
-            // thetypes are called A, B, C to follow the EntityFrameworkQueryableExtensions declare the Generic arguments for the method Include and ThenInclude.
-            // the: EntityFrameworkQueryableExtensions.IIncludableQueryable<TEntity, TProperty> ThenInclude<TEntity, TPreviousProperty, TProperty>(this IIncludableQueryable<TEntity, IEnumerable<TPreviousProperty>> source, Expression<Func<TPreviousProperty, TProperty>> navigationPropertyPath) where TEntity : class
-            // as:  EntityFrameworkQueryableExtensions.IIncludableQueryable<A, C> ThenInclude<A, B, C>(this IIncludableQueryable<A, IEnumerable<B>> source, Expression<Func<B, C>> navigationPropertyPath) where A : class
-            Type A = iExpression.PreviousInclude?.Type.SystemType;
+            // thetypes are called TEntity, TPreviousProperty, TProperty to follow the EntityFrameworkQueryableExtensions declare the Generic arguments for the method Include and ThenInclude.
+            // EntityFrameworkQueryableExtensions.IIncludableQueryable<TEntity, TProperty> ThenInclude<TEntity, TPreviousProperty, TProperty>(this IIncludableQueryable<TEntity, IEnumerable<TPreviousProperty>> source, Expression<Func<TPreviousProperty, TProperty>> navigationPropertyPath) where TEntity : class
+            Type TEntity = iExpression.Root.SystemType;
             // If the prev property is a IEnumerable<> we take the Generic argument
             // for example for .Include(blog => blog.Posts.Take(10)).ThenInclude(posts => posts.Author), the type of blog.posts is IEnumerable<Post> so we take only the Post type.
-            Type B = iExpression.IsPrevMultiple
+            Type TPreviousProperty = iExpression.IsPrevMultiple
                 ? iExpression?.PreviousInclude?.Relation?.SystemType.GetGenericArguments().First()
                 : iExpression?.PreviousInclude?.Relation?.SystemType;
-            Type C = iExpression?.Relation?.SystemType;
+            Type TProperty = iExpression?.Relation?.SystemType;
             // Create the Lambda Expression dynamicly from "&load[]=blog=>blog.Post.Take(10)" include string
             // The Expression Generic arguments Arguments differ from Include and thenInclude, thats whay the ternary is there
             var expression = iExpression.PreviousInclude == null
                 // Generic arguments for Include:
-                ? DynamicExpressionMethodInfo.MakeGenericMethod(iExpression.Type.SystemType, iExpression.Relation.SystemType).Invoke(null, new object[] { new ParsingConfig() { }, true, iExpression.IncludeString, new object[] { } })
+                ? DynamicExpressionMethodInfo.MakeGenericMethod(TEntity, TProperty).Invoke(null, new object[] { new ParsingConfig() { }, true, iExpression.IncludeString, new object[] { } })
                 // Generic arguments for ThenInclude:
-                : DynamicExpressionMethodInfo.MakeGenericMethod(B, C).Invoke(null, new object[] { new ParsingConfig() { }, true, iExpression.IncludeString, new object[] { } });
+                : iExpression.IsPrevMultiple
+                    ? DynamicExpressionMethodInfo.MakeGenericMethod(TPreviousProperty, TProperty).Invoke(null, new object[] { new ParsingConfig() { }, true, iExpression.IncludeString, new object[] { } })
+                    : DynamicExpressionMethodInfo.MakeGenericMethod(TPreviousProperty, TProperty).Invoke(null, new object[] { new ParsingConfig() { }, true, iExpression.IncludeString, new object[] { } });
             // Select the correspondent IncludeMethod/ThenIncludeMethod/ThenIncludeMethodMultiple depending on the iExpression.IsPrevMultiple
             MethodInfo includeMethod = iExpression.IsThenInclude
                 ? iExpression.IsPrevMultiple
-                    ? ThenIncludeMethodInfoMultiple.MakeGenericMethod(A, B, C)
-                    : ThenIncludeMethodInfo.MakeGenericMethod(A, B, C)
-                : IncludeMethodInfo.MakeGenericMethod(iExpression.Type.SystemType, iExpression.Relation.SystemType);
+                    ? ThenIncludeMethodInfoMultiple.MakeGenericMethod(TEntity, TPreviousProperty, TProperty)
+                    : ThenIncludeMethodInfo.MakeGenericMethod(TEntity, TPreviousProperty, TProperty)
+                : IncludeMethodInfo.MakeGenericMethod(TEntity, TProperty);
             // Juxtapoze the query with the new included query, executing the static includeMethod from the EntityFrameworkQueryableExtensions.
             return (IQueryable<dynamic>) includeMethod.Invoke(null, new object[] { set, expression });
         }
