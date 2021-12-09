@@ -1,4 +1,5 @@
 ﻿using GrapheneCore.Extensions;
+using GrapheneCore.Graph.Interfaces;
 using GrapheneCore.Http;
 using GrapheneCore.Models;
 using Microsoft.EntityFrameworkCore;
@@ -24,12 +25,6 @@ namespace Graphene.Extensions
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public static IQueryable<dynamic> Includes(this IQueryable<dynamic> query, Pagination pagination)
-            => query.Includes(pagination.Load);
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="query"></param>
         /// <param name="load"></param>
         /// <param name="modelType"></param>
@@ -39,6 +34,17 @@ namespace Graphene.Extensions
             if (load == null) return query;
             foreach (string include in load) query = query.Include(include);
             return query;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="load"></param>
+        /// <param name="modelType"></param>
+        /// <returns></returns>
+        public static IQueryable<dynamic> Includes(this IQueryable<dynamic> query, string[] includes, IGraph graph, Type modelType)
+        {
+            return graph.SetIncludes(query, modelType, includes);
         }
     }
 }

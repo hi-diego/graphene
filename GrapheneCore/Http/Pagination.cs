@@ -1,4 +1,5 @@
 ﻿using Graphene.Extensions;
+using GrapheneCore.Graph.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,79 +21,74 @@ namespace GrapheneCore.Http
         /// </summary>
         // [FromQuery(Name = "where[]")]
         public string Where { get; set; } = "true";
-
         /// <summary>
         /// 
         /// </summary>
         [FromQuery(Name = "load[]")]
         public string[] Load { get; set; } = { };
-
+        /// <summary>
+        /// 
+        /// </summary>
+        [FromQuery(Name = "include[]")]
+        public string[] Include { get; set; } = { };
         /// <summary>
         /// 
         /// </summary>
         //[FromQuery(Name = "page")]
         public int Page { get; set; } = 1;
-
         /// <summary>
         /// 
         /// </summary>
         //[FromQuery(Name = "size")]
         public int Size { get; set; } = 10;
-
         /// <summary>
         /// 
         /// </summary>
         public int Total { get; set; } = 0;
-
         /// <summary>
         /// 
         /// </summary>
         public int Pages { get; set; } = 0;
-
         /// <summary>
         /// 
         /// </summary>
         public object[] Data { get; set; } = { };
-
         /// <summary>
         /// 
         /// </summary>
         public List<object> Erorrs { get; internal set; } = new List<object>();
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public async Task<Pagination> Paginate(IQueryable<dynamic> query, object user = null)
+        public async Task<Pagination> Paginate(IQueryable<dynamic> query, object user = null, IGraph graph = null, Type modelType = null)
         {
-            return await TryPaginate(this, query, user);
+            return await TryPaginate(this, query, user, graph, modelType);
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="pagination"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static async Task<Pagination> Paginate(Pagination pagination, IQueryable<dynamic> query, object user = null)
+        public static async Task<Pagination> Paginate(Pagination pagination, IQueryable<dynamic> query, object user = null, IGraph graph = null, Type modelType = null)
         {
-            query = query.Where(pagination.Where, user).Includes(pagination).AsNoTracking();
+            query = query.Where(pagination.Where, user).Includes(pagination.Load).Includes(pagination.Load, graph, modelType).AsNoTracking();
             pagination.Total = query.Count();
             pagination.Pages = pagination.Total / pagination.Size + (pagination.Total % pagination.Size);
             pagination.Data = await query.Skip((pagination.Page - 1) * pagination.Size).Take(pagination.Size).ToArrayAsync();
             return pagination;
         }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="pagination"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static async Task<Pagination> TryPaginate(Pagination pagination, IQueryable<dynamic> query, object user = null)
+        public static async Task<Pagination> TryPaginate(Pagination pagination, IQueryable<dynamic> query, object user = null, IGraph graph = null, Type modelType = null)
         {
-            try { pagination = await Paginate(pagination, query, user); }
+            try { pagination = await Paginate(pagination, query, user, graph, modelType); }
             catch (Exception e) { pagination.Erorrs.Add(e); }
             return pagination;
         }

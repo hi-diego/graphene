@@ -48,7 +48,13 @@ namespace GrapheneCore.Http.Controllers
         /// </summary>
         public ModelRepository ModelRepository { get; private set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="formFile"></param>
+        /// <param name="model"></param>
+        /// <param name="uid"></param>
+        /// <returns></returns>
         [HttpPost("files/{model}/{uid}")]
         public async Task<IActionResult> OnPostUploadAsync(IFormFile formFile, string model, string uid)
         {
@@ -135,9 +141,8 @@ namespace GrapheneCore.Http.Controllers
         [HttpGet("{model}/{id}")]
         public async Task<ActionResult> Find(string model, int id, [FromQuery] Pagination pagination)
         {
-            object instance = await ModelRepository.Find(model, id, false, pagination.Load);
-            if (instance == null)
-                return NotFound();
+            object instance = await ModelRepository.Find(model, id, false, pagination.Load, pagination.Include);
+            if (instance == null) return NotFound();
             return Ok(instance);
         }
 
@@ -151,8 +156,7 @@ namespace GrapheneCore.Http.Controllers
         public async Task<ActionResult> Delete(string model, int id)
         {
             object instance = await ModelRepository.Find(model, id);
-            if (instance == null)
-                return NotFound();
+            if (instance == null) return NotFound();
             return Ok(ModelRepository.Delete(instance));
         }
 
@@ -200,8 +204,10 @@ namespace GrapheneCore.Http.Controllers
         public async Task<ActionResult> Index([FromQuery] Pagination pagination, string model)
         {
             if (!DatabaseContext.Exists(ref model)) return NotFound();
-            //pagination.Where += GetPermissionsWhere(model, "Index");
-            return Ok(await pagination.Paginate(DatabaseContext.GetSet(model), new { }));
+            Type modelType = DatabaseContext.ModelDictionary[model];
+            // pagination.Where += GetPermissionsWhere(model, "Index");
+            // User Permission not implemented jet so a new {} is given
+            return Ok(await pagination.Paginate(DatabaseContext.GetSet(model), new { }, ModelRepository.Graph, modelType));
         }
 
         /// <summary>

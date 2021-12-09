@@ -89,13 +89,12 @@ namespace GrapheneCore.Models
         /// <summary>
         /// Verify if the Resource Exist in the DbContext
         /// and find it by its Id.
-        /// 
-        /// TODO: move all the logic that correspond to the Dynamic Include to Graph.
+        ///
         /// </summary>
         /// <param name="entityName"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Model> Find(string entityName, int id, bool tracking = true, string[] load = null)
+        public async Task<Model> Find(string entityName, int id, bool tracking = true, string[] load = null, string[] includes = null)
         {
             // Check if the DbSet and the Key in the ModelDictionary exists in DatabaseContext, return if not
             if (!DatabaseContext.Exists(ref entityName)) return null;
@@ -105,7 +104,7 @@ namespace GrapheneCore.Models
             // Get the model SystemType and GraphType in order to follow the graph, this is key to know which method (Include, ThenInclude or ThenIncludeMultiple) is necesary to call.
             Type modelType = DatabaseContext.ModelDictionary[entityName.DbSetName()];
             // Generate and Juxtapoze the dynamic includeds by executing the static includeMethod from the EntityFrameworkQueryableExtensions.
-            set = Graph.SetIncludes(set, modelType, load);
+            set = Graph.SetIncludes(set, modelType, includes);
             // Find instance by Model.Id
             set = set.Where(i => (i as Model).Id == id);
             // Set the AsNoTracking option value.
