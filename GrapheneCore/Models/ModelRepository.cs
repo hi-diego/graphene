@@ -136,20 +136,21 @@ namespace GrapheneCore.Models
                 // Type relationType = typeof(IEnumerable<GrapheneCore.Models.Interfaces.IModel>);
                 var stringExpressions = GetStringExpressions(include, entityName);
 
-                foreach (string stringExpression in stringExpressions) { }
-                var methodInfo = typeof(DynamicExpressionParser)
-                    .GetTypeInfo()
-                    .GetDeclaredMethods("ParseLambda")
-                    .Single((MethodInfo mi) =>
-                        mi.GetParameters().Count() == 4 &&
-                        mi.GetGenericArguments().Count() == 2 &&
-                        mi.GetParameters().Any((ParameterInfo pi) =>
-                            pi.Name == "parsingConfig" &&
-                            pi.ParameterType == typeof(ParsingConfig)
-                        )
-                    );
-                var expression = methodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { new ParsingConfig() { }, true, "blog => blog.Posts.Take(10)", new object[] { } });
-                set = (IQueryable<dynamic>) IncludeMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { set, expression });
+                foreach (string stringExpression in stringExpressions) {
+                    var methodInfo = typeof(DynamicExpressionParser)
+                        .GetTypeInfo()
+                        .GetDeclaredMethods("ParseLambda")
+                        .Single((MethodInfo mi) =>
+                            mi.GetParameters().Count() == 4 &&
+                            mi.GetGenericArguments().Count() == 2 &&
+                            mi.GetParameters().Any((ParameterInfo pi) =>
+                                pi.Name == "parsingConfig" &&
+                                pi.ParameterType == typeof(ParsingConfig)
+                            )
+                        );
+                    var expression = methodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { new ParsingConfig() { }, true, stringExpression, new object[] { } });
+                    set = (IQueryable<dynamic>) IncludeMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { set, expression });
+                }
             }
             return await set.Where(i => (i as Model).Id == id).FirstOrDefaultAsync();
 
