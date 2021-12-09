@@ -109,8 +109,8 @@ namespace GrapheneCore.Models
             set = set.Where(i => (i as Model).Id == id);
             // Set the AsNoTracking option value.
             return tracking
-                ? await set.FirstOrDefaultAsync()
-                : await set.AsNoTracking().FirstOrDefaultAsync();
+                ? await set.Includes(load).FirstOrDefaultAsync()
+                : await set.AsNoTracking().Includes(load).FirstOrDefaultAsync();
         }
 
         /// <summary>
