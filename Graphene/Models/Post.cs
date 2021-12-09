@@ -23,5 +23,13 @@ namespace Graphene.Models
         /// 
         /// </summary>
         public Blog? Blog { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int AuthorId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Author? Author { get; set; }
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Graphene.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20211207152944_InitialCreate")]
+    [Migration("20211209012338_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,45 @@ namespace Graphene.Database.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Graphene.Models.Author", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("modified_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("Uid")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("uid");
+
+                    b.HasKey("Id")
+                        .HasName("pk_authors");
+
+                    b.HasIndex("Uid")
+                        .IsUnique();
+
+                    b.ToTable("authors");
+                });
 
             modelBuilder.Entity("Graphene.Models.Blog", b =>
                 {
@@ -72,6 +111,10 @@ namespace Graphene.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int")
+                        .HasColumnName("author_id");
+
                     b.Property<int>("BlogId")
                         .HasColumnType("int")
                         .HasColumnName("blog_id");
@@ -105,6 +148,8 @@ namespace Graphene.Database.Migrations
                     b.HasKey("Id")
                         .HasName("pk_posts");
 
+                    b.HasIndex("AuthorId");
+
                     b.HasIndex("BlogId");
 
                     b.HasIndex("Uid")
@@ -115,6 +160,13 @@ namespace Graphene.Database.Migrations
 
             modelBuilder.Entity("Graphene.Models.Post", b =>
                 {
+                    b.HasOne("Graphene.Models.Author", "Author")
+                        .WithMany("Posts")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_posts_authors_author_id");
+
                     b.HasOne("Graphene.Models.Blog", "Blog")
                         .WithMany("Posts")
                         .HasForeignKey("BlogId")
@@ -122,7 +174,14 @@ namespace Graphene.Database.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_posts_blogs_blog_id");
 
+                    b.Navigation("Author");
+
                     b.Navigation("Blog");
+                });
+
+            modelBuilder.Entity("Graphene.Models.Author", b =>
+                {
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Graphene.Models.Blog", b =>

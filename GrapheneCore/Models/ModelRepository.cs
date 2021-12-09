@@ -46,6 +46,21 @@ namespace GrapheneCore.Models
         /// <summary>
         /// 
         /// </summary>
+        public static readonly MethodInfo DynamicExpressionMethodInfo = 
+            typeof(DynamicExpressionParser)
+                .GetTypeInfo()
+                .GetDeclaredMethods("ParseLambda")
+                .Single((MethodInfo mi) =>
+                    mi.GetParameters().Count() == 4 &&
+                    mi.GetGenericArguments().Count() == 2 &&
+                    mi.GetParameters().Any((ParameterInfo pi) =>
+                        pi.Name == "parsingConfig" &&
+                        pi.ParameterType == typeof(ParsingConfig)
+                    )
+                );
+        /// <summary>
+        /// 
+        /// </summary>
         public ModelRepository(IGrapheneDatabaseContext dbContext, IGraph graph)
         {
             Graph = graph;
@@ -124,31 +139,14 @@ namespace GrapheneCore.Models
         public async Task<Model> Find(string entityName, int id, bool tracking = true, string[] load = null)
         {
             if (!DatabaseContext.Exists(ref entityName)) return null;
-            var set = DatabaseContext.GetSet(entityName); // .Where(i => (i as Model).Id == id);
+            var set = DatabaseContext.GetSet(entityName);
             Type modelType = DatabaseContext.ModelDictionary[entityName.DbSetName()];
-            IQueryable<dynamic> includeQuery;
-
-
             foreach (string include in load)
             {
-                var ttttt = typeof(IEnumerable<>).MakeGenericType(modelType);
-                Type relationType = Graph.GetRelationType(modelType, include);
-                // Type relationType = typeof(IEnumerable<GrapheneCore.Models.Interfaces.IModel>);
                 var stringExpressions = GetStringExpressions(include, entityName);
-
+                Type relationType = Graph.GetRelationType(modelType, include);
                 foreach (string stringExpression in stringExpressions) {
-                    var methodInfo = typeof(DynamicExpressionParser)
-                        .GetTypeInfo()
-                        .GetDeclaredMethods("ParseLambda")
-                        .Single((MethodInfo mi) =>
-                            mi.GetParameters().Count() == 4 &&
-                            mi.GetGenericArguments().Count() == 2 &&
-                            mi.GetParameters().Any((ParameterInfo pi) =>
-                                pi.Name == "parsingConfig" &&
-                                pi.ParameterType == typeof(ParsingConfig)
-                            )
-                        );
-                    var expression = methodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { new ParsingConfig() { }, true, stringExpression, new object[] { } });
+                    var expression = DynamicExpressionMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { new ParsingConfig() { }, true, stringExpression, new object[] { } });
                     set = (IQueryable<dynamic>) IncludeMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { set, expression });
                 }
             }

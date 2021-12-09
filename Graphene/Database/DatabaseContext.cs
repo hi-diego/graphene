@@ -25,6 +25,10 @@ namespace Graphene.Database
         /// </summary>
         public DbSet<Post> Post { get; set; }
         /// <summary>
+        /// 
+        /// </summary>
+        public DbSet<Author> Author { get; set; }
+        /// <summary>
         /// This is the Declaration of what is going to be accesible by
         /// the API Interface, all the entities that are declared here are going
         /// to beaccesible through the ApiController and GraphController.
@@ -34,6 +38,7 @@ namespace Graphene.Database
         public Dictionary<string, Type> ModelDictionary { get; set; }
             = new Dictionary<string, Type> {
                 { "Blog", typeof(Blog) },
+                { "Author", typeof(Author) },
                 { "Post", typeof(Post) }
             };
         /// <summary>
