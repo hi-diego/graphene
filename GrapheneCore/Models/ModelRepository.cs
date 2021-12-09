@@ -3,12 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using GrapheneCore.Database.Models;
-//using GrapheneCore.Database.Entities.Abstractions;
 using GrapheneCore.Extensions;
-//using GrapheneCore.Http.Exceptions;
-//using GrapheneCore.Services;
-//using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json.Linq;
@@ -31,49 +26,6 @@ namespace GrapheneCore.Models
     /// </summary>
     public class ModelRepository
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public static readonly MethodInfo ThenIncludeMethodInfo =
-            typeof(EntityFrameworkQueryableExtensions)
-                .GetTypeInfo()
-                .GetDeclaredMethods("ThenInclude")
-                .Last();
-        /// <summary>
-        /// 
-        /// </summary>
-        public static readonly MethodInfo ThenIncludeMethodInfoMultiple =
-            typeof(EntityFrameworkQueryableExtensions)
-                .GetTypeInfo()
-                .GetDeclaredMethods("ThenInclude")
-                .First();
-        /// <summary>
-        /// 
-        /// </summary>
-        public static readonly MethodInfo IncludeMethodInfo =
-            typeof(EntityFrameworkQueryableExtensions)
-                .GetTypeInfo()
-                .GetDeclaredMethods("Include")
-                .Single((MethodInfo mi) => mi.GetGenericArguments().Count() == 2
-                    && mi.GetParameters().Any((ParameterInfo pi) => pi.Name == "navigationPropertyPath"
-                        && pi.ParameterType != typeof(string)
-                    )
-                );
-        /// <summary>
-        /// 
-        /// </summary>
-        public static readonly MethodInfo DynamicExpressionMethodInfo = 
-            typeof(DynamicExpressionParser)
-                .GetTypeInfo()
-                .GetDeclaredMethods("ParseLambda")
-                .Single((MethodInfo mi) =>
-                    mi.GetParameters().Count() == 4 &&
-                    mi.GetGenericArguments().Count() == 2 &&
-                    mi.GetParameters().Any((ParameterInfo pi) =>
-                        pi.Name == "parsingConfig" &&
-                        pi.ParameterType == typeof(ParsingConfig)
-                    )
-                );
         /// <summary>
         /// 
         /// </summary>
@@ -134,83 +86,32 @@ namespace GrapheneCore.Models
             if (save) await Save((Model)instance, false);
             return instance;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="include"></param>
-        /// <returns></returns>
-        public List<string> GetStringExpressions (string include, string root)
-        {
-            return include.Split('.').Select(rel => $"{root} => {root}.{rel}.Take(10)").ToList();
-        }
-
         /// <summary>
         /// Verify if the Resource Exist in the DbContext
         /// and find it by its Id.
+        /// 
+        /// TODO: move all the logic that correspond to the Dynamic Include to Graph.
         /// </summary>
         /// <param name="entityName"></param>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Model> Find(string entityName, int id, bool tracking = true, string[] load = null)
         {
+            // Check if the DbSet and the Key in the ModelDictionary exists in DatabaseContext, return if not
             if (!DatabaseContext.Exists(ref entityName)) return null;
+            // Get the Set as var becuse (IQueryable<dynamic>) but the ModelType will be calculated at runtime and thats necesary for the 
+            // dynamic excecution of "Include" and "IhenInclude" methods, if a (IQueryable<object>, IQueryable<Model> IQueryable<any>) is given the dynamic excution by reflectrion will crash.
             var set = DatabaseContext.GetSet(entityName);
-            // set.Include(x => x).ThenInclude(x => x).
+            // Get the model SystemType and GraphType in order to follow the graph, this is key to know which method (Include, ThenInclude or ThenIncludeMultiple) is necesary to call.
             Type modelType = DatabaseContext.ModelDictionary[entityName.DbSetName()];
-            IEnumerable<IncludeExpression> includeExpressions = Graph.GetIncludeExpressions(modelType, load);
-            foreach (IncludeExpression includeExpression in includeExpressions)
-            {
-                Type blog = includeExpression.PreviousInclude?.Type.SystemType;
-                Type post = includeExpression.IsPrevMultiple
-                    ? includeExpression?.PreviousInclude?.Relation?.SystemType.GetGenericArguments().First()
-                    : includeExpression?.PreviousInclude?.Relation?.SystemType;
-                Type author = includeExpression?.Relation?.SystemType;
-                var expression = includeExpression.PreviousInclude == null
-                    ? DynamicExpressionMethodInfo.MakeGenericMethod(includeExpression.Type.SystemType, includeExpression.Relation.SystemType).Invoke(null, new object[] { new ParsingConfig() { }, true, includeExpression.IncludeString, new object[] { } })
-                    : DynamicExpressionMethodInfo.MakeGenericMethod(post, author).Invoke(null, new object[] { new ParsingConfig() { }, true, includeExpression.IncludeString, new object[] { } });
-                MethodInfo includeMethod = includeExpression.IsThenInclude
-                    ? includeExpression.IsPrevMultiple
-                        ? ThenIncludeMethodInfoMultiple.MakeGenericMethod(blog, post, author)
-                        : ThenIncludeMethodInfo.MakeGenericMethod(blog, post, author)
-                    : IncludeMethodInfo.MakeGenericMethod(includeExpression.Type.SystemType, includeExpression.Relation.SystemType);
-
-                //if (includeExpression.IsThenInclude)
-                //{
-                //    var expression = DynamicExpressionMethodInfo.MakeGenericMethod(includeExpression.PreviousInclude.Type.SystemType, includeExpression.Relation.SystemType).Invoke(null, new object[] { new ParsingConfig() { }, true, includeExpression.IncludeString, new object[] { } });
-                //    if (includeExpression.IsPrevMultiple)
-                //    {
-
-                //    } else
-                //    {
-
-                //    }
-                //} else
-                //{
-                //    var expression = DynamicExpressionMethodInfo.MakeGenericMethod(includeExpression.Type.SystemType, includeExpression.Relation.SystemType).Invoke(null, new object[] { new ParsingConfig() { }, true, includeExpression.IncludeString, new object[] { } });
-                //}
-
-                var result = (IQueryable<dynamic>) includeMethod.Invoke(null, new object[] { set, expression });
-                set = result;
-                //set = includeExpression.IsThenInclude
-                //    ? (IQueryable<dynamic>) ((IQueryable) includeMethod.Invoke(null, new object[] { set, expression })).AsQueryable()
-                //    : (IQueryable<dynamic>) includeMethod.Invoke(null, new object[] { set, expression });
-            }
-            return await set.Where(i => (i as Model).Id == id).FirstOrDefaultAsync();
-            //foreach (string include in load)
-            //{
-            //    var stringExpressions = GetStringExpressions(include, entityName);
-            //    Type relationType = Graph.GetRelationType(modelType, include);
-            //    //foreach (string stringExpression in stringExpressions) {
-            //        var expression = DynamicExpressionMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { new ParsingConfig() { }, true, include, new object[] { } });
-            //        set = (IQueryable<dynamic>) IncludeMethodInfo.MakeGenericMethod(modelType, relationType).Invoke(null, new object[] { set, expression });
-            //    //}
-            //}
-
-
-            //return tracking
-            //    ? await set.Includes(load, modelType).FirstOrDefaultAsync()
-            //    : await set.AsNoTracking().Includes(load, modelType).AsNoTracking().FirstOrDefaultAsync();
+            // Generate and Juxtapoze the dynamic includeds by executing the static includeMethod from the EntityFrameworkQueryableExtensions.
+            set = Graph.SetIncludes(set, modelType, load);
+            // Find instance by Model.Id
+            set = set.Where(i => (i as Model).Id == id);
+            // Set the AsNoTracking option value.
+            return tracking
+                ? await set.FirstOrDefaultAsync()
+                : await set.AsNoTracking().FirstOrDefaultAsync();
         }
 
         /// <summary>

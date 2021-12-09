@@ -2,6 +2,9 @@
 using GrapheneCore.Extensions;
 using GrapheneCore.Graph.Interfaces;
 using GrapheneCore.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
+using System.Reflection;
 
 namespace GrapheneCore.Graph
 {
@@ -10,6 +13,49 @@ namespace GrapheneCore.Graph
     /// </summary>
     public class Graph : IGraph
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly MethodInfo ThenIncludeMethodInfo =
+            typeof(EntityFrameworkQueryableExtensions)
+                .GetTypeInfo()
+                .GetDeclaredMethods("ThenInclude")
+                .Last();
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly MethodInfo ThenIncludeMethodInfoMultiple =
+            typeof(EntityFrameworkQueryableExtensions)
+                .GetTypeInfo()
+                .GetDeclaredMethods("ThenInclude")
+                .First();
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly MethodInfo IncludeMethodInfo =
+            typeof(EntityFrameworkQueryableExtensions)
+                .GetTypeInfo()
+                .GetDeclaredMethods("Include")
+                .Single((MethodInfo mi) => mi.GetGenericArguments().Count() == 2
+                    && mi.GetParameters().Any((ParameterInfo pi) => pi.Name == "navigationPropertyPath"
+                        && pi.ParameterType != typeof(string)
+                    )
+                );
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly MethodInfo DynamicExpressionMethodInfo =
+            typeof(DynamicExpressionParser)
+                .GetTypeInfo()
+                .GetDeclaredMethods("ParseLambda")
+                .Single((MethodInfo mi) =>
+                    mi.GetParameters().Count() == 4 &&
+                    mi.GetGenericArguments().Count() == 2 &&
+                    mi.GetParameters().Any((ParameterInfo pi) =>
+                        pi.Name == "parsingConfig" &&
+                        pi.ParameterType == typeof(ParsingConfig)
+                    )
+                );
         /// <summary>
         /// All the types including the fake ones;
         /// </summary>
@@ -43,7 +89,6 @@ namespace GrapheneCore.Graph
                     .Where(m => !m.Value.IsAbstract && m.Value.IsSubclassOf(typeof(Model)))
                     .Select(m => new GraphType(m.Value)) // until Rules are implemented, context.Rule.Where(r => r.Entity == m.Key).ToList()))
                     .ToList();
-
         /// <summary>
         /// 
         /// </summary>
@@ -52,7 +97,6 @@ namespace GrapheneCore.Graph
         {
             return Types.FirstOrDefault(t => t.PascalName == name.DbSetName());
         }
-
         /// <summary>
         /// Returns the Type of the relation that corresponds to the given path in the given type
         /// </summary>
@@ -99,6 +143,60 @@ namespace GrapheneCore.Graph
             }
             //IEnumerable<IncludeExpression> includeExpressions = includes.Select(i => new IncludeExpression(rootGraphType, i, this));
             return includeExpressions;
+        }
+        /// <summary>
+        // Set The dynamic includes to the given
+        /// </summary>
+        /// <param name="set"></param>
+        /// <param name="modelType"></param>
+        /// <param name="load"></param>
+        /// <returns></returns>
+        public IQueryable<dynamic> SetIncludes(IQueryable<dynamic> set, Type rootModelType, string[] load)
+        {
+            // Deconstruct the request query params from "&load[]=blog=>blog.Post.Take(10)" to the
+            // correspondent IncludeExpression structure using the Graph.
+            IEnumerable<IncludeExpression> iExpressions = GetIncludeExpressions(rootModelType, load);
+            // Add each Include to the IQueryable<dynamic> DbSet
+            foreach (IncludeExpression iExpression in iExpressions)
+            {
+                set = SetInclude(set, iExpression);
+            }
+            return set;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="set"></param>
+        /// <param name="iExpression"></param>
+        /// <returns></returns>
+        public IQueryable<dynamic> SetInclude(IQueryable<dynamic> set, IncludeExpression iExpression)
+        {
+            // Get the correspondent SystemTypes for the "Include/ThenInclude" reflection/dynamic call from the IncludeExpression
+            // thetypes are called A, B, C to follow the EntityFrameworkQueryableExtensions declare the Generic arguments for the method Include and ThenInclude.
+            // the: EntityFrameworkQueryableExtensions.IIncludableQueryable<TEntity, TProperty> ThenInclude<TEntity, TPreviousProperty, TProperty>(this IIncludableQueryable<TEntity, IEnumerable<TPreviousProperty>> source, Expression<Func<TPreviousProperty, TProperty>> navigationPropertyPath) where TEntity : class
+            // as:  EntityFrameworkQueryableExtensions.IIncludableQueryable<A, C> ThenInclude<A, B, C>(this IIncludableQueryable<A, IEnumerable<B>> source, Expression<Func<B, C>> navigationPropertyPath) where A : class
+            Type A = iExpression.PreviousInclude?.Type.SystemType;
+            // If the prev property is a IEnumerable<> we take the Generic argument
+            // for example for .Include(blog => blog.Posts.Take(10)).ThenInclude(posts => posts.Author), the type of blog.posts is IEnumerable<Post> so we take only the Post type.
+            Type B = iExpression.IsPrevMultiple
+                ? iExpression?.PreviousInclude?.Relation?.SystemType.GetGenericArguments().First()
+                : iExpression?.PreviousInclude?.Relation?.SystemType;
+            Type C = iExpression?.Relation?.SystemType;
+            // Create the Lambda Expression dynamicly from "&load[]=blog=>blog.Post.Take(10)" include string
+            // The Expression Generic arguments Arguments differ from Include and thenInclude, thats whay the ternary is there
+            var expression = iExpression.PreviousInclude == null
+                // Generic arguments for Include:
+                ? DynamicExpressionMethodInfo.MakeGenericMethod(iExpression.Type.SystemType, iExpression.Relation.SystemType).Invoke(null, new object[] { new ParsingConfig() { }, true, iExpression.IncludeString, new object[] { } })
+                // Generic arguments for ThenInclude:
+                : DynamicExpressionMethodInfo.MakeGenericMethod(B, C).Invoke(null, new object[] { new ParsingConfig() { }, true, iExpression.IncludeString, new object[] { } });
+            // Select the correspondent IncludeMethod/ThenIncludeMethod/ThenIncludeMethodMultiple depending on the iExpression.IsPrevMultiple
+            MethodInfo includeMethod = iExpression.IsThenInclude
+                ? iExpression.IsPrevMultiple
+                    ? ThenIncludeMethodInfoMultiple.MakeGenericMethod(A, B, C)
+                    : ThenIncludeMethodInfo.MakeGenericMethod(A, B, C)
+                : IncludeMethodInfo.MakeGenericMethod(iExpression.Type.SystemType, iExpression.Relation.SystemType);
+            // Juxtapoze the query with the new included query, executing the static includeMethod from the EntityFrameworkQueryableExtensions.
+            return (IQueryable<dynamic>) includeMethod.Invoke(null, new object[] { set, expression });
         }
     }
 }
