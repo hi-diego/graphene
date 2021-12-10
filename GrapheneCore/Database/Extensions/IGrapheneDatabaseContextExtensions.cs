@@ -32,16 +32,24 @@ namespace GrapheneCore.Database.Extensions
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static IQueryable<T> GetSet<T>(this IGrapheneDatabaseContext dbContext, string name)
-            => (IQueryable<T>) dbContext.GetType().GetProperty(name.DbSetName()).GetValue(dbContext);
+        public static IQueryable<T>? GetSet<T>(this IGrapheneDatabaseContext dbContext, string name)
+            => (IQueryable<T>?) dbContext.Set(name.DbSetName());
+
+        /// <summary>
+        /// Get a Resource set by its name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static object? Set(this IGrapheneDatabaseContext dbContext, string name)
+            => dbContext.GetType().GetProperty(name.DbSetName())?.GetValue(dbContext);
 
         /// <summary>
         /// Get a Dynamic Resource set by its name.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static IQueryable<dynamic> GetSet(this IGrapheneDatabaseContext dbContext, string name)
-            => (IQueryable<dynamic>) dbContext.GetType().GetProperty(name.DbSetName()).GetValue(dbContext);
+        public static IQueryable<dynamic>? GetSet(this IGrapheneDatabaseContext dbContext, string name)
+            => (IQueryable<dynamic>?) dbContext.Set(name.DbSetName());
 
         /// <summary>
         /// 
@@ -78,15 +86,15 @@ namespace GrapheneCore.Database.Extensions
             foreach (IMutableEntityType entity in builder.Model.GetEntityTypes())
             {
                 // snakify table names
-                if (entity.ClrType.BaseType == typeof(Model)) entity.SetTableName(entity.GetTableName().ToSnakeCase().ToPlural());
+                if (entity.ClrType.BaseType == typeof(Model)) entity.SetTableName(entity.GetTableName()?.ToSnakeCase().ToPlural());
                 // snakify column names
                 foreach (var property in entity.GetProperties()) property.SetColumnName(property.GetColumnBaseName().ToSnakeCase());
                 // snakify key names
-                foreach (var key in entity.GetKeys()) key.SetName(key.GetName().ToSnakeCase());
+                foreach (var key in entity.GetKeys()) key.SetName(key.GetName()?.ToSnakeCase());
                 // snakify foreignkeys names
-                foreach (var key in entity.GetForeignKeys()) key.SetConstraintName(key.GetConstraintName().ToSnakeCase());
+                foreach (var key in entity.GetForeignKeys()) key.SetConstraintName(key.GetConstraintName()?.ToSnakeCase());
                 // snakify index names
-                foreach (var index in entity.GetIndexes()) index.SetName(index.Name.ToSnakeCase());
+                foreach (var index in entity.GetIndexes()) index.SetDatabaseName(index.Name?.ToSnakeCase());
             }
         }
     }

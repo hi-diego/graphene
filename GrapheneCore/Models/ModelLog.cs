@@ -9,25 +9,50 @@ using System.Threading.Tasks;
 
 namespace GrapheneCore.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ModelLog: Model, IModelLog
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public int ModelId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public int? UserId { get; set; }
-
         //[ForeignKey(nameof(UserId))]
         //public User User { get; set; }
-
-        public string Model { get; set; }
-        public string To { get; set; }
-        public string From { get; set; }
-        public string Event { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Model { get; set; } = String.Empty;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string To { get; set; } = String.Empty;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string From { get; set; } = String.Empty;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Event { get; set; } = EntityState.Unchanged.ToString();
+        /// <summary>
+        /// 
+        /// </summary>
         public EntityState InstanceEntityState { get; set; }
-        public DateTime CreatedAt { get; set; }
-
+        /// <summary>
+        /// 
+        /// </summary>
         [NotMapped]
-        public Model Instance { get; set; }
+        public Model? Instance { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public Guid ModelUid { get; set; }
-
         /// <summary>
         /// 
         /// </summary>
