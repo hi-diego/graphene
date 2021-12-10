@@ -41,6 +41,24 @@ namespace GrapheneCore.Extensions
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public static string RemovePrefix(this string s, string prefix)
+            => s.StartsWith(prefix)
+                ? RemovePrefix(s.Substring(1), prefix)
+                : s;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static string RemoveSuffix(this string s, string prefix)
+            => s.StartsWith(prefix)
+                ? RemovePrefix(s.Substring(s.Length - 1, 1), prefix)
+                : s;
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
         public static string ToCamelCase(this string s, bool pascal = false, bool keepSpaces = false)

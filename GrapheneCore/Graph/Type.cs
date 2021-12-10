@@ -16,7 +16,7 @@ namespace GrapheneCore.Graph
         /// 
         /// </summary>
         [JsonIgnore]
-        public Type? SystemType { get; set; }
+        public Type SystemType { get; set; } = typeof(GraphType);
 
         /// <summary>
         /// 

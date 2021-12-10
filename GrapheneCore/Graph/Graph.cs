@@ -121,9 +121,6 @@ namespace GrapheneCore.Graph
                 graphType = graphType.Fields.Single(f => f.PascalName == piece.UcFirst());
             }
             return graphType.SystemType;
-            //return prevGraphType.Multiple
-            //    ? typeof(IEnumerable<>).MakeGenericType(graphType.SystemType)
-            //    : graphType.SystemType;
         }
 
         /// <summary>
@@ -134,14 +131,13 @@ namespace GrapheneCore.Graph
         public IEnumerable<IncludeExpression> GetIncludeExpressions(Type root, string[] includes)
         {
             GraphType rootGraphType = Types.Single(t => t.SystemType == root);
-            List<IncludeExpression> includeExpressions = new List<IncludeExpression>(); //  = includes.Select(i => new IncludeExpression(rootGraphType, i, this));
+            List<IncludeExpression> includeExpressions = new List<IncludeExpression>(); 
             IncludeExpression prevIncludeExpression = null;
             foreach (string i in includes) {
                 IncludeExpression includeExpression = new IncludeExpression(rootGraphType, i, this, prevIncludeExpression);
                 prevIncludeExpression = includeExpression;
                 includeExpressions.Add(includeExpression);
             }
-            //IEnumerable<IncludeExpression> includeExpressions = includes.Select(i => new IncludeExpression(rootGraphType, i, this));
             return includeExpressions;
         }
         /// <summary>

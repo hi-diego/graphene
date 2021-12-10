@@ -47,8 +47,8 @@ namespace GrapheneCore.Graph
         public IncludeExpression(GraphType root, string raw, IGraph? graph = null, IncludeExpression? prevInclude = null)
         {
             Root = root;
-            IsThenInclude = raw.StartsWith(".");
-            IncludeString = IsThenInclude ? raw.Substring(1) : raw;
+            IsThenInclude = raw.StartsWith("_");
+            IncludeString = IsThenInclude ? raw.RemovePrefix("_") : raw;
             PreviousInclude = prevInclude;
             string TypeName = IncludeString.Split("=>")[0].Trim().UcFirst();
             GraphType PrevField = PreviousInclude?.Type.Fields.Single(f => f.PascalName == TypeName);
