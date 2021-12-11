@@ -19,15 +19,23 @@ namespace Graphene.Database
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Blog> Blog { get; set; }
+        public DbSet<Blog> Blog => Set<Blog>();
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Post> Post { get; set; }
+        public DbSet<Post> Post => Set<Post>();
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Author> Author { get; set; }
+        public DbSet<Author> Author => Set<Author>();
+        /// <summary>
+        /// This is the Declaration of what is going to be accesible by
+        /// the API Interface, all the entities that are declared here are going
+        /// to beaccesible through the ApiController and GraphController.
+        /// If the resource is not declared here the ApiController and GraphController
+        /// will return a 404 error.
+        /// </summary>
+        public Dictionary<string, Func<IQueryable<dynamic>>> SetDictionary { get; set; }
         /// <summary>
         /// This is the Declaration of what is going to be accesible by
         /// the API Interface, all the entities that are declared here are going
@@ -41,6 +49,18 @@ namespace Graphene.Database
                 { "Author", typeof(Author) },
                 { "Post", typeof(Post) }
             };
+        /// <summary>
+        /// 
+        /// </summary>
+        public DatabaseContext()
+        {
+            SetDictionary = new Dictionary<string, Func<IQueryable<dynamic>>> {
+                { "PopularBlog", () => Blog.Where(b => b.Posts.Count() > 100) },
+                { "Blog", () => Blog },
+                { "Author", () => Author },
+                { "Post", () => Post }
+            };
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -69,7 +89,10 @@ namespace Graphene.Database
         /// 
         /// </summary>
         /// <param name="modelBuilder"></param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder) => GrapheneDatabaseContextExtensions.OnModelCreating(this, modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            GrapheneDatabaseContextExtensions.OnModelCreating(this, modelBuilder);
+        }
         /// <summary>
         /// 
         /// </summary>

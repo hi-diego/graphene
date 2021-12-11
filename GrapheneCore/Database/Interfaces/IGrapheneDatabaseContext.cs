@@ -14,6 +14,11 @@ namespace GrapheneCore.Database.Interfaces
     public interface IGrapheneDatabaseContext
     {
         /// <summary>
+        /// 
+        /// </summary>
+        public Dictionary<string, Func<IQueryable<dynamic>>> SetDictionary { get; set; }
+
+        /// <summary>
         /// This is the Declaration of what is going to be accesible by
         /// the API Interface, all the entities that are declared here are going
         /// to beaccesible through the ApiController.
