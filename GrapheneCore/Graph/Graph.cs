@@ -252,14 +252,14 @@ namespace GrapheneCore.Graph
         /// </summary>
         /// <param name="entityName"></param>
         /// <returns></returns>
-        public static Type GetSetType(object set) => set.GetType().GetGenericArguments().First();
+        public static Type GetSetType(IQueryable<dynamic> set) => set.GetType().GetGenericArguments().First();
 
         /// <summary>
         /// Verify if the resource Exist in the dictionary.
         /// </summary>
         /// <param name="entityName"></param>
         /// <returns></returns>
-        public static string GetSetTypeName(object set) => GetSetType(set).Name;
+        public static string GetSetTypeName(IQueryable<dynamic> set) => GetSetType(set).Name;
 
         /// <summary>
         /// 

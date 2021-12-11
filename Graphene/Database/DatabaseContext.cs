@@ -19,15 +19,15 @@ namespace Graphene.Database
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Blog> Blog => Set<Blog>();
+        public DbSet<Blog> Blog { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Post> Post => Set<Post>();
+        public DbSet<Post> Post { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Author> Author => Set<Author>();
+        public DbSet<Author> Author { get; set; }
         /// <summary>
         /// This is the Declaration of what is going to be accesible by
         /// the API Interface, all the entities that are declared here are going
@@ -43,7 +43,7 @@ namespace Graphene.Database
         {
             //
             SetDictionary = new Dictionary<string, Func<IQueryable<dynamic>>> {
-                { "PopularBlog", () => Blog.Where(b => b.Posts.Count() > 100) },
+                //{ "PopularBlog", () => Blog.Where(b => b.Posts.Count() > 100) },
                 { "Blog", () => Blog },
                 { "Author", () => Author },
                 { "Post", () => Post }

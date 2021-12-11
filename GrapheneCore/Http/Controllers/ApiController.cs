@@ -205,7 +205,7 @@ namespace GrapheneCore.Http.Controllers
         {
             if (!GrapheneCore.Graph.Graph.Exists(DatabaseContext, ref model)) return NotFound();
             var set = GrapheneCore.Graph.Graph.GetSet(DatabaseContext, model);
-            Type modelType = GrapheneCore.Graph.Graph.GetSetType(model);
+            Type modelType = GrapheneCore.Graph.Graph.GetSetType(set);
             // pagination.Where += GetPermissionsWhere(model, "Index");
             // User Permission not implemented jet so a new {} is given
             return Ok(await pagination.Paginate(set, new { }, ModelRepository.Graph, modelType));
