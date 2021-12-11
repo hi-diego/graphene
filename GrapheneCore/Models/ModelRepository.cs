@@ -54,7 +54,7 @@ namespace GrapheneCore.Models
         /// <returns></returns>
         public async Task<object> Create(string entityName, JObject data, bool save = true)
         {
-            dynamic instance = data.ToObject(DatabaseContext.ModelDictionary[entityName.DbSetName()]);
+            dynamic instance = data.ToObject(GrapheneCore.Graph.Graph.GetSetType(DatabaseContext.SetDictionary[entityName.DbSetName()]()));
             return save ? await Create(instance) : instance;
         }
 
@@ -102,7 +102,7 @@ namespace GrapheneCore.Models
             // dynamic excecution of "Include" and "IhenInclude" methods, if a (IQueryable<object>, IQueryable<Model> IQueryable<any>) is given the dynamic excution by reflectrion will crash.
             var set = GrapheneCore.Graph.Graph.GetSet(DatabaseContext, entityName);
             // Get the model SystemType and GraphType in order to follow the graph, this is key to know which method (Include, ThenInclude or ThenIncludeMultiple) is necesary to call.
-            Type modelType = DatabaseContext.ModelDictionary[entityName.DbSetName()];
+            Type modelType = GrapheneCore.Graph.Graph.GetSetType(DatabaseContext.SetDictionary[entityName.DbSetName()]);
             // Generate and Juxtapoze the dynamic includeds by executing the static includeMethod from the EntityFrameworkQueryableExtensions.
             set = Graph.SetIncludes(set, modelType, includes);
             // Find instance by Model.Id

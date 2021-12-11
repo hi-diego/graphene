@@ -4,8 +4,11 @@ using GrapheneCore.Extensions;
 using GrapheneCore.Graph.Interfaces;
 using GrapheneCore.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
+//using Newtonsoft.Json;
 
 namespace GrapheneCore.Graph
 {
@@ -263,5 +266,21 @@ namespace GrapheneCore.Graph
         /// </summary>
         /// <param name="rootEntity"></param>
         public static void SaveAnnotatedGraph(IGrapheneDatabaseContext dbContext, object rootEntity) => GrapheneDatabaseContextExtensions.SaveAnnotatedGraph(dbContext, rootEntity);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="services"></param>
+        public static void RegisterServices<T>(IServiceCollection services) where T : class, IGrapheneDatabaseContext, new()
+        {
+            services.AddScoped<IGrapheneDatabaseContext>((IServiceProvider provider) => provider.GetService<T>());
+            services.AddSingleton<IGraph>((IServiceProvider provider) => new Graph(new T()));
+            services.AddMvc(options => {
+                // options.Filters.Add(typeof(DefaultExceptionFilter));
+            }).AddNewtonsoftJson(opt => {
+                opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                opt.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
+            });
+        }
     }
 }
