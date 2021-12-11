@@ -54,7 +54,7 @@ namespace GrapheneCore.Models
         /// <returns></returns>
         public async Task<object> Create(string entityName, JObject data, bool save = true)
         {
-            dynamic instance = data.ToObject(GrapheneCore.Graph.Graph.GetSetType(DatabaseContext.SetDictionary[entityName.DbSetName()]()));
+            dynamic instance = data.ToObject(Graph.Find(entityName.DbSetName()).SystemType);
             return save ? await Create(instance) : instance;
         }
 
@@ -97,12 +97,12 @@ namespace GrapheneCore.Models
         public async Task<Model> Find(string entityName, int id, bool tracking = true, string[] load = null, string[] includes = null)
         {
             // Check if the DbSet and the Key in the ModelDictionary exists in DatabaseContext, return if not
-            if (!GrapheneCore.Graph.Graph.Exists(DatabaseContext, ref entityName)) return null;
+            if (!Graph.Exists(DatabaseContext, ref entityName)) return null;
             // Get the Set as var becuse (IQueryable<dynamic>) but the ModelType will be calculated at runtime and thats necesary for the 
             // dynamic excecution of "Include" and "IhenInclude" methods, if a (IQueryable<object>, IQueryable<Model> IQueryable<any>) is given the dynamic excution by reflectrion will crash.
-            var set = GrapheneCore.Graph.Graph.GetSet(DatabaseContext, entityName);
+            var set = Graph.GetSet(DatabaseContext, entityName);
             // Get the model SystemType and GraphType in order to follow the graph, this is key to know which method (Include, ThenInclude or ThenIncludeMultiple) is necesary to call.
-            Type modelType = GrapheneCore.Graph.Graph.GetSetType(DatabaseContext.SetDictionary[entityName.DbSetName()]());
+            Type modelType = Graph.Find(entityName.DbSetName()).SystemType;
             // Generate and Juxtapoze the dynamic includeds by executing the static includeMethod from the EntityFrameworkQueryableExtensions.
             set = Graph.SetIncludes(set, modelType, includes);
             // Find instance by Model.Id
@@ -122,8 +122,8 @@ namespace GrapheneCore.Models
         /// <returns></returns>
         public Model FindSync(string entityName, int id, bool tracking = true, string[] load = null)
         {
-            if (!GrapheneCore.Graph.Graph.Exists(DatabaseContext, ref entityName)) return null;
-            var set = GrapheneCore.Graph.Graph.GetSet<Model>(DatabaseContext, entityName)
+            if (!Graph.Exists(DatabaseContext, ref entityName)) return null;
+            var set = Graph.GetSet<Model>(DatabaseContext, entityName)
                 .Where(i => i.Id == id)
                 .Includes(load);
             return tracking

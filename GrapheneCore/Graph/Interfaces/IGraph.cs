@@ -1,4 +1,5 @@
-﻿using GrapheneCore.Extensions;
+﻿using GrapheneCore.Database.Interfaces;
+using GrapheneCore.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,5 +44,36 @@ namespace GrapheneCore.Graph.Interfaces
         /// <param name="load"></param>
         /// <returns></returns>
         public IQueryable<dynamic> SetIncludes(IQueryable<dynamic> set, Type modelType, string[] load);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        public GraphType? Find(string name);
+        /// <summary>
+        /// Verify if the resource Exist in the dictionary.
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
+        public bool Exists(IGrapheneDatabaseContext dbContext, ref string entityName);
+        /// <summary>
+        /// Verify if the resource Exist in the dictionary.
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
+        public bool ItExists(IGrapheneDatabaseContext dbContext, string entityName);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public IQueryable<T> GetSet<T>(IGrapheneDatabaseContext dbContext, string name);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public IQueryable<dynamic> GetSet(IGrapheneDatabaseContext dbContext, string name);
     }
 }

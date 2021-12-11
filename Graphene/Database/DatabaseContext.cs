@@ -35,18 +35,17 @@ namespace Graphene.Database
         /// If the resource is not declared here the ApiController and GraphController
         /// will return a 404 error.
         /// </summary>
-        public Dictionary<string, Func<IQueryable<dynamic>>> SetDictionary { get; set; }
+        public Dictionary<Type, Func<IQueryable<dynamic>>> SetDictionary { get; set; }
         /// <summary>
         /// 
         /// </summary>
         public DatabaseContext()
         {
-            //
-            SetDictionary = new Dictionary<string, Func<IQueryable<dynamic>>> {
-                { "PopularBlog", () => Blog.Where(b => b.Posts.Count() > 100) },
-                { "Blog", () => Blog },
-                { "Author", () => Author },
-                { "Post", () => Post }
+            // Declare the models that you want to expose in the API.
+            SetDictionary = new Dictionary<Type, Func<IQueryable<dynamic>>> {
+                { typeof(Blog), () => Blog },
+                { typeof(Author), () => Author },
+                { typeof(Post), () => Post }
             };
         }
         /// <summary>

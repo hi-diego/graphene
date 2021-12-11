@@ -16,7 +16,7 @@ namespace GrapheneCore.Database.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        public Dictionary<string, Func<IQueryable<dynamic>>> SetDictionary { get; set; }
+        public Dictionary<Type, Func<IQueryable<dynamic>>> SetDictionary { get; set; }
 
         //
         // Summary:

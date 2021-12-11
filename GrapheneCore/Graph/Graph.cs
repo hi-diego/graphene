@@ -206,10 +206,10 @@ namespace GrapheneCore.Graph
         /// </summary>
         /// <param name="entityName"></param>
         /// <returns></returns>
-        public static bool Exists(IGrapheneDatabaseContext dbContext, ref string entityName)
+        public bool Exists(IGrapheneDatabaseContext dbContext, ref string entityName)
         {
             entityName = entityName.DbSetName();
-            return dbContext.SetDictionary.ContainsKey(entityName);
+            return Find(entityName) != null;
         }
 
         /// <summary>
@@ -217,8 +217,8 @@ namespace GrapheneCore.Graph
         /// </summary>
         /// <param name="entityName"></param>
         /// <returns></returns>
-        public static bool ItExists(IGrapheneDatabaseContext dbContext, string entityName)
-            => dbContext.SetDictionary.ContainsKey(entityName);
+        public bool ItExists(IGrapheneDatabaseContext dbContext, string entityName)
+            => Find(entityName) != null;
 
         /// <summary>
         /// 
@@ -227,7 +227,7 @@ namespace GrapheneCore.Graph
         /// <param name="name"></param>
         /// <returns></returns>
         public static IQueryable<T> GetSet<T>(IGrapheneDatabaseContext dbContext) 
-            => (IQueryable<T>) dbContext.SetDictionary[typeof(T).Name]();
+            => (IQueryable<T>) dbContext.SetDictionary[typeof(T)]();
 
         /// <summary>
         /// 
@@ -235,8 +235,8 @@ namespace GrapheneCore.Graph
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static IQueryable<T> GetSet<T>(IGrapheneDatabaseContext dbContext, string name)
-            => (IQueryable<T>) dbContext.SetDictionary[name]();
+        public  IQueryable<T> GetSet<T>(IGrapheneDatabaseContext dbContext, string name)
+            => (IQueryable<T>) dbContext.SetDictionary[Find(name).SystemType]();
 
         /// <summary>
         /// 
@@ -244,8 +244,8 @@ namespace GrapheneCore.Graph
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static IQueryable<dynamic> GetSet(IGrapheneDatabaseContext dbContext, string name)
-            => dbContext.SetDictionary[name]();
+        public IQueryable<dynamic> GetSet(IGrapheneDatabaseContext dbContext, string name)
+            => dbContext.SetDictionary[Find(name).SystemType]();
 
         /// <summary>
         /// Verify if the resource Exist in the dictionary.
