@@ -37,12 +37,6 @@ namespace GrapheneCore.Database.Interfaces
         //     is tracking.
         public  ChangeTracker ChangeTracker { get; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="rootEntity"></param>
-        public void SaveAnnotatedGraph(object rootEntity);
-
         //
         // Summary:
         //     Begins tracking the given entity, and any other reachable entities that are not
@@ -61,28 +55,6 @@ namespace GrapheneCore.Database.Interfaces
         //     The entry provides access to change tracking information and operations for the
         //     entity.
         public EntityEntry Add([NotNullAttribute] object entity);
-
-
-        /// <summary>
-        /// Verify if the resource Exist in the dictionary.
-        /// </summary>
-        /// <param name="entityName"></param>
-        /// <returns></returns>
-        public bool Exists(ref string entityName);
-
-        /// <summary>
-        /// Get a Resource set by its name.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public IQueryable<T> GetSet<T>(string name);
-
-        /// <summary>
-        /// Get a Resource set by its name.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public IQueryable<dynamic> GetSet(string name);
 
         //
         // Summary:

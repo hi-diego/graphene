@@ -1,4 +1,5 @@
-﻿using GrapheneCore.Database.Interfaces;
+﻿using GrapheneCore.Database.Extensions;
+using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
 using GrapheneCore.Graph.Interfaces;
 using GrapheneCore.Models;
@@ -195,5 +196,71 @@ namespace GrapheneCore.Graph
             // Juxtapoze the query with the new included query, executing the static includeMethod from the EntityFrameworkQueryableExtensions.
             return (IQueryable<dynamic>) includeMethod.Invoke(null, new object[] { set, expression });
         }
+
+        /// <summary>
+        /// Verify if the resource Exist in the dictionary.
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
+        public static bool Exists(IGrapheneDatabaseContext dbContext, ref string entityName)
+        {
+            entityName = entityName.DbSetName();
+            return dbContext.SetDictionary.ContainsKey(entityName);
+        }
+
+        /// <summary>
+        /// Verify if the resource Exist in the dictionary.
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
+        public static bool ItExists(IGrapheneDatabaseContext dbContext, string entityName)
+            => dbContext.SetDictionary.ContainsKey(entityName);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IQueryable<T> GetSet<T>(IGrapheneDatabaseContext dbContext) 
+            => (IQueryable<T>) dbContext.SetDictionary[typeof(T).Name]();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IQueryable<T> GetSet<T>(IGrapheneDatabaseContext dbContext, string name)
+            => (IQueryable<T>) dbContext.SetDictionary[name]();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IQueryable<dynamic> GetSet(IGrapheneDatabaseContext dbContext, string name)
+            => dbContext.SetDictionary[name]();
+
+        /// <summary>
+        /// Verify if the resource Exist in the dictionary.
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
+        public static Type GetSetType(object set) => set.GetType().GetGenericArguments().First();
+
+        /// <summary>
+        /// Verify if the resource Exist in the dictionary.
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
+        public static string GetSetTypeName(object set) => GetSetType(set).Name;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rootEntity"></param>
+        public static void SaveAnnotatedGraph(IGrapheneDatabaseContext dbContext, object rootEntity) => GrapheneDatabaseContextExtensions.SaveAnnotatedGraph(dbContext, rootEntity);
     }
 }

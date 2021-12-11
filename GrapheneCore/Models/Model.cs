@@ -58,7 +58,6 @@ namespace GrapheneCore.Models
         [NotMapped]
         public EntityState EntityState { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -92,7 +91,6 @@ namespace GrapheneCore.Models
                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             });
         }
-
 
         /// <summary>
         /// 

@@ -64,30 +64,6 @@ namespace Graphene.Database
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="entityName"></param>
-        /// <returns></returns>
-        public bool Exists(ref string entityName) => GrapheneDatabaseContextExtensions.Exists(this, ref entityName);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public IQueryable<T> GetSet<T>(string name) => GrapheneDatabaseContextExtensions.GetSet<T>(this, name);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public IQueryable<dynamic> GetSet(string name) => GrapheneDatabaseContextExtensions.GetSet(this, name);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="rootEntity"></param>
-        public void SaveAnnotatedGraph(object rootEntity) => GrapheneDatabaseContextExtensions.SaveAnnotatedGraph(this, rootEntity);
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

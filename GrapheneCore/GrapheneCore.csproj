@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Database\Extensions\IGrapheneDatabaseContextExtensions.cs~RF4830780.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="6.2.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0" />
