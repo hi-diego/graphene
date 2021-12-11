@@ -43,7 +43,7 @@ namespace Graphene.Database
         {
             //
             SetDictionary = new Dictionary<string, Func<IQueryable<dynamic>>> {
-                //{ "PopularBlog", () => Blog.Where(b => b.Posts.Count() > 100) },
+                { "PopularBlog", () => Blog.Where(b => b.Posts.Count() > 100) },
                 { "Blog", () => Blog },
                 { "Author", () => Author },
                 { "Post", () => Post }
