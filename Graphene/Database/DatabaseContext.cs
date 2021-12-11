@@ -37,23 +37,11 @@ namespace Graphene.Database
         /// </summary>
         public Dictionary<string, Func<IQueryable<dynamic>>> SetDictionary { get; set; }
         /// <summary>
-        /// This is the Declaration of what is going to be accesible by
-        /// the API Interface, all the entities that are declared here are going
-        /// to beaccesible through the ApiController and GraphController.
-        /// If the resource is not declared here the ApiController and GraphController
-        /// will return a 404 error.
-        /// </summary>
-        public Dictionary<string, Type> ModelDictionary { get; set; }
-            = new Dictionary<string, Type> {
-                { "Blog", typeof(Blog) },
-                { "Author", typeof(Author) },
-                { "Post", typeof(Post) }
-            };
-        /// <summary>
         /// 
         /// </summary>
         public DatabaseContext()
         {
+            //
             SetDictionary = new Dictionary<string, Func<IQueryable<dynamic>>> {
                 { "PopularBlog", () => Blog.Where(b => b.Posts.Count() > 100) },
                 { "Blog", () => Blog },

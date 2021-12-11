@@ -17,33 +17,6 @@ namespace GrapheneCore.Database.Extensions
     public static class GrapheneDatabaseContextExtensions
     {
         /// <summary>
-        /// Verify if the resource Exist in the dictionary.
-        /// </summary>
-        /// <param name="entityName"></param>
-        /// <returns></returns>
-        public static bool Exists(this IGrapheneDatabaseContext dbContext, ref string entityName)
-        {
-            entityName = entityName.DbSetName();
-            return dbContext.ModelDictionary.ContainsKey(entityName);
-        }
-
-        /// <summary>
-        /// Get a Resource set by its name.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static IQueryable<T> GetSet<T>(this IGrapheneDatabaseContext dbContext, string name)
-            => (IQueryable<T>) dbContext.GetType().GetProperty(name.DbSetName()).GetValue(dbContext);
-
-        /// <summary>
-        /// Get a Dynamic Resource set by its name.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static IQueryable<dynamic> GetSet(this IGrapheneDatabaseContext dbContext, string name)
-            => (IQueryable<dynamic>) dbContext.GetType().GetProperty(name.DbSetName()).GetValue(dbContext);
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="rootEntity"></param>
@@ -63,7 +36,8 @@ namespace GrapheneCore.Database.Extensions
         /// <param name="modelBuilder"></param>
         public static void OnModelCreating(this IGrapheneDatabaseContext dbContext, ModelBuilder modelBuilder)
         {
-            foreach (Type entity in dbContext.ModelDictionary.Values) if (entity.BaseType == typeof(Model)) ModelConfiguration.Configure(modelBuilder.Entity(entity), entity);
+            foreach (Type entity in dbContext.SetDictionary.Values.Select(GrapheneCore.Graph.Graph.GetSetType)) 
+                if (entity.BaseType == typeof(Model)) ModelConfiguration.Configure(modelBuilder.Entity(entity), entity);
             dbContext.ModelBuilderToSnakeCase(modelBuilder);
         }
 

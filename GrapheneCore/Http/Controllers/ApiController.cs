@@ -169,7 +169,7 @@ namespace GrapheneCore.Http.Controllers
         [HttpPost("{model}")]
         public async Task<ActionResult> Add(string model, [FromBody] JObject request)
         {
-            if (!DatabaseContext.Exists(ref model)) return NotFound();
+            if (!GrapheneCore.Graph.Graph.Exists(DatabaseContext, ref model)) return NotFound();
             object instance = await ModelRepository.Create(model, request, false);
             if (!TryValidateModel(instance, model))
                 return BadRequest(ModelState);
@@ -203,11 +203,12 @@ namespace GrapheneCore.Http.Controllers
         [HttpGet("{model}")]
         public async Task<ActionResult> Index([FromQuery] Pagination pagination, string model)
         {
-            if (!DatabaseContext.Exists(ref model)) return NotFound();
-            Type modelType = DatabaseContext.ModelDictionary[model];
+            if (!GrapheneCore.Graph.Graph.Exists(DatabaseContext, ref model)) return NotFound();
+            var set = GrapheneCore.Graph.Graph.GetSet(DatabaseContext, model);
+            Type modelType = GrapheneCore.Graph.Graph.GetSetType(model);
             // pagination.Where += GetPermissionsWhere(model, "Index");
             // User Permission not implemented jet so a new {} is given
-            return Ok(await pagination.Paginate(DatabaseContext.GetSet(model), new { }, ModelRepository.Graph, modelType));
+            return Ok(await pagination.Paginate(set, new { }, ModelRepository.Graph, modelType));
         }
 
         /// <summary>
