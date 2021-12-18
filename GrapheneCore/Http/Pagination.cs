@@ -62,9 +62,9 @@ namespace GrapheneCore.Http
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public async Task<Pagination> Paginate(IQueryable<dynamic> query, object user = null, IGraph graph = null, Type modelType = null)
+        public async Task<Pagination> Paginate(IQueryable<dynamic> query, object user = null, IGraph graph = null, Type entityType = null)
         {
-            return await TryPaginate(this, query, user, graph, modelType);
+            return await TryPaginate(this, query, user, graph, entityType);
         }
         /// <summary>
         /// 
@@ -72,9 +72,9 @@ namespace GrapheneCore.Http
         /// <param name="pagination"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static async Task<Pagination> Paginate(Pagination pagination, IQueryable<dynamic> query, object user = null, IGraph graph = null, Type modelType = null)
+        public static async Task<Pagination> Paginate(Pagination pagination, IQueryable<dynamic> query, object user = null, IGraph graph = null, Type entityType = null)
         {
-            query = query.Where(pagination.Where, user).Includes(pagination.Load).Includes(pagination.Load, graph, modelType).AsNoTracking();
+            query = query.Where(pagination.Where, user).Includes(pagination.Load).Includes(pagination.Load, graph, entityType).AsNoTracking();
             pagination.Total = query.Count();
             pagination.Pages = pagination.Total / pagination.Size + (pagination.Total % pagination.Size);
             pagination.Data = await query.Skip((pagination.Page - 1) * pagination.Size).Take(pagination.Size).ToArrayAsync();
@@ -86,9 +86,9 @@ namespace GrapheneCore.Http
         /// <param name="pagination"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static async Task<Pagination> TryPaginate(Pagination pagination, IQueryable<dynamic> query, object user = null, IGraph graph = null, Type modelType = null)
+        public static async Task<Pagination> TryPaginate(Pagination pagination, IQueryable<dynamic> query, object user = null, IGraph graph = null, Type entityType = null)
         {
-            try { pagination = await Paginate(pagination, query, user, graph, modelType); }
+            try { pagination = await Paginate(pagination, query, user, graph, entityType); }
             catch (Exception e) { pagination.Erorrs.Add(e); }
             return pagination;
         }

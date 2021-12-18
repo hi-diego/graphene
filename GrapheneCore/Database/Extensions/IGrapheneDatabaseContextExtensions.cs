@@ -34,12 +34,12 @@ namespace GrapheneCore.Database.Extensions
         /// All the API Fluent configurations are placed
         /// on the Database\Entities\Configurations Folder.
         /// </summary>
-        /// <param name="modelBuilder"></param>
-        public static void OnModelCreating(this IGrapheneDatabaseContext dbContext, ModelBuilder modelBuilder)
+        /// <param name="entityBuilder"></param>
+        public static void OnModelCreating(this IGrapheneDatabaseContext dbContext, ModelBuilder entityBuilder)
         {
             foreach (Type entity in dbContext.SetDictionary.Values.Select(kv => GrapheneCore.Graph.Graph.GetSetType(kv())))
-                if (entity.BaseType == typeof(Entity)) ModelConfiguration.Configure(modelBuilder.Entity(entity), entity);
-            dbContext.ModelBuilderToSnakeCase(modelBuilder);
+                if (entity.BaseType == typeof(Entity)) ModelConfiguration.Configure(entityBuilder.Entity(entity), entity);
+            dbContext.ModelBuilderToSnakeCase(entityBuilder);
         }
 
         /// <summary>

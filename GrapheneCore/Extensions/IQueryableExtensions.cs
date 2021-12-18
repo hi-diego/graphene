@@ -27,9 +27,9 @@ namespace Graphene.Extensions
         /// </summary>
         /// <param name="query"></param>
         /// <param name="load"></param>
-        /// <param name="modelType"></param>
+        /// <param name="entityType"></param>
         /// <returns></returns>
-        public static IQueryable<dynamic> Includes(this IQueryable<dynamic> query, string[] load, Type? modelType = null)
+        public static IQueryable<dynamic> Includes(this IQueryable<dynamic> query, string[] load, Type? entityType = null)
         {
             if (load == null) return query;
             foreach (string include in load) query = query.Include(include);
@@ -40,11 +40,11 @@ namespace Graphene.Extensions
         /// </summary>
         /// <param name="query"></param>
         /// <param name="load"></param>
-        /// <param name="modelType"></param>
+        /// <param name="entityType"></param>
         /// <returns></returns>
-        public static IQueryable<dynamic> Includes(this IQueryable<dynamic> query, string[] includes, IGraph graph, Type modelType)
+        public static IQueryable<dynamic> Includes(this IQueryable<dynamic> query, string[] includes, IGraph graph, Type entityType)
         {
-            return graph.SetIncludes(query, modelType, includes);
+            return graph.SetIncludes(query, entityType, includes);
         }
     }
 }

@@ -98,13 +98,13 @@ namespace GrapheneCore.Entities
         {
             // Check if the DbSet and the Key in the ModelDictionary exists in DatabaseContext, return if not
             if (!Graph.Exists(DatabaseContext, ref entityName)) return null;
-            // Get the Set as var becuse (IQueryable<dynamic>) but the ModelType will be calculated at runtime and thats necesary for the 
+            // Get the Set as var becuse (IQueryable<dynamic>) but the entityType will be calculated at runtime and thats necesary for the 
             // dynamic excecution of "Include" and "IhenInclude" methods, if a (IQueryable<object>, IQueryable<Entity> IQueryable<any>) is given the dynamic excution by reflectrion will crash.
             var set = Graph.GetSet(DatabaseContext, entityName);
-            // Get the model SystemType and GraphType in order to follow the graph, this is key to know which method (Include, ThenInclude or ThenIncludeMultiple) is necesary to call.
-            Type modelType = Graph.Find(entityName.DbSetName()).SystemType;
+            // Get the entity SystemType and GraphType in order to follow the graph, this is key to know which method (Include, ThenInclude or ThenIncludeMultiple) is necesary to call.
+            Type entityType = Graph.Find(entityName.DbSetName()).SystemType;
             // Generate and Juxtapoze the dynamic includeds by executing the static includeMethod from the EntityFrameworkQueryableExtensions.
-            set = Graph.SetIncludes(set, modelType, includes);
+            set = Graph.SetIncludes(set, entityType, includes);
             // Find instance by Entity.Id
             set = set.Where(i => (i as Entity).Id == id);
             // Set the AsNoTracking option value.

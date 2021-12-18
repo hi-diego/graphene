@@ -172,14 +172,14 @@ namespace GrapheneCore.Graph
         // Set The dynamic includes to the given
         /// </summary>
         /// <param name="set"></param>
-        /// <param name="modelType"></param>
+        /// <param name="entityType"></param>
         /// <param name="load"></param>
         /// <returns></returns>
-        public IQueryable<dynamic> SetIncludes(IQueryable<dynamic> set, Type rootModelType, string[] load)
+        public IQueryable<dynamic> SetIncludes(IQueryable<dynamic> set, Type rootentityType, string[] load)
         {
             // Deconstruct the request query params from "&load[]=blog=>blog.Post.Take(10)" to the
             // correspondent IncludeExpression structure using the Graph.
-            IEnumerable<IncludeExpression> iExpressions = GetIncludeExpressions(rootModelType, load);
+            IEnumerable<IncludeExpression> iExpressions = GetIncludeExpressions(rootentityType, load);
             // Add each Include to the IQueryable<dynamic> DbSet
             foreach (IncludeExpression iExpression in iExpressions)
             {

@@ -57,8 +57,8 @@ namespace GrapheneCore.Http.Controllers
         public ActionResult Graph([FromBody] JObject request)
         {
             // User user = ApiController.GetUser(User);
-            Entity model = request.ToObject<Entity>();
-            GraphType graphType = EntityRepository.Graph.Find(model._Entity);
+            Entity entity = request.ToObject<Entity>();
+            GraphType graphType = EntityRepository.Graph.Find(entity._Entity);
             if (graphType == null) return NotFound();
             dynamic instance = request.ToObject(graphType.SystemType);
             if (!TryValidateModel(instance, graphType.PascalName)) return BadRequest(ModelState);

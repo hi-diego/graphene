@@ -48,10 +48,10 @@ namespace GrapheneCore.Graph.Interfaces
         /// 
         /// </summary>
         /// <param name="set"></param>
-        /// <param name="modelType"></param>
+        /// <param name="entityType"></param>
         /// <param name="load"></param>
         /// <returns></returns>
-        public IQueryable<dynamic> SetIncludes(IQueryable<dynamic> set, Type modelType, string[] load);
+        public IQueryable<dynamic> SetIncludes(IQueryable<dynamic> set, Type entityType, string[] load);
         /// <summary>
         /// 
         /// </summary>

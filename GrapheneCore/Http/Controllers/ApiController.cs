@@ -57,15 +57,15 @@ namespace GrapheneCore.Http.Controllers
         /// 
         /// </summary>
         /// <param name="formFile"></param>
-        /// <param name="model"></param>
+        /// <param name="entity"></param>
         /// <param name="uid"></param>
         /// <returns></returns>
-        [HttpPost("files/{model}/{uid}")]
-        public async Task<IActionResult> OnPostUploadAsync(IFormFile formFile, string model, string uid)
+        [HttpPost("files/{entity}/{uid}")]
+        public async Task<IActionResult> OnPostUploadAsync(IFormFile formFile, string entity, string uid)
         {
             if (formFile.Length > 0)
             {
-                string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", model.DbSetName(), uid + ".jpg");
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", entity.DbSetName(), uid + ".jpg");
                 System.IO.FileInfo file = new System.IO.FileInfo(path);
                 file.Directory.Create();
                 using (var stream = System.IO.File.Create(path))
@@ -140,13 +140,13 @@ namespace GrapheneCore.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="entity"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{model}/{id}")]
-        public async Task<ActionResult> Find(string model, int id, [FromQuery] Pagination pagination)
+        [HttpGet("{entity}/{id}")]
+        public async Task<ActionResult> Find(string entity, int id, [FromQuery] Pagination pagination)
         {
-            object instance = await ModelRepository.Find(model, id, false, pagination.Load, pagination.Include);
+            object instance = await ModelRepository.Find(entity, id, false, pagination.Load, pagination.Include);
             if (instance == null) return NotFound();
             return Ok(instance);
         }
@@ -154,13 +154,13 @@ namespace GrapheneCore.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="entity"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{model}/{id}")]
-        public async Task<ActionResult> Delete(string model, int id)
+        [HttpDelete("{entity}/{id}")]
+        public async Task<ActionResult> Delete(string entity, int id)
         {
-            object instance = await ModelRepository.Find(model, id);
+            object instance = await ModelRepository.Find(entity, id);
             if (instance == null) return NotFound();
             return Ok(ModelRepository.Delete(instance));
         }
@@ -168,15 +168,15 @@ namespace GrapheneCore.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="entity"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("{model}")]
-        public async Task<ActionResult> Add(string model, [FromBody] JObject request)
+        [HttpPost("{entity}")]
+        public async Task<ActionResult> Add(string entity, [FromBody] JObject request)
         {
-            if (!Graph.Exists(DatabaseContext, ref model)) return NotFound();
-            object instance = await ModelRepository.Create(model, request, false);
-            if (!TryValidateModel(instance, model))
+            if (!Graph.Exists(DatabaseContext, ref entity)) return NotFound();
+            object instance = await ModelRepository.Create(entity, request, false);
+            if (!TryValidateModel(instance, entity))
                 return BadRequest(ModelState);
             return Ok(await ModelRepository.Create(instance, true));
         }
@@ -184,17 +184,17 @@ namespace GrapheneCore.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="entity"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPatch("{model}/{id}")]
-        public async Task<ActionResult> Edit(string model, int id, [FromBody] JObject request)
+        [HttpPatch("{entity}/{id}")]
+        public async Task<ActionResult> Edit(string entity, int id, [FromBody] JObject request)
         {
             //DatabaseContext.AuthUser = GetUser();
-            Entity instance = await ModelRepository.Update(request, model, id, false);
+            Entity instance = await ModelRepository.Update(request, entity, id, false);
             if (instance == null)
                 return NotFound();
-            if (!TryValidateModel(instance, model))
+            if (!TryValidateModel(instance, entity))
                 return BadRequest(ModelState);
             return Ok(await ModelRepository.Save(instance));
         }
@@ -203,17 +203,17 @@ namespace GrapheneCore.Http.Controllers
         /// 
         /// </summary>
         /// <param name="pagination"></param>
-        /// <param name="model"></param>
+        /// <param name="entity"></param>
         /// <returns></returns>
-        [HttpGet("{model}")]
-        public async Task<ActionResult> Index([FromQuery] Pagination pagination, string model)
+        [HttpGet("{entity}")]
+        public async Task<ActionResult> Index([FromQuery] Pagination pagination, string entity)
         {
-            if (!Graph.Exists(DatabaseContext, ref model)) return NotFound();
-            var set = Graph.GetSet(DatabaseContext, model);
-            Type modelType = GrapheneCore.Graph.Graph.GetSetType(set);
-            // pagination.Where += GetPermissionsWhere(model, "Index");
+            if (!Graph.Exists(DatabaseContext, ref entity)) return NotFound();
+            var set = Graph.GetSet(DatabaseContext, entity);
+            Type entityType = GrapheneCore.Graph.Graph.GetSetType(set);
+            // pagination.Where += GetPermissionsWhere(entity, "Index");
             // User Permission not implemented jet so a new {} is given
-            return Ok(await pagination.Paginate(set, new { }, ModelRepository.Graph, modelType));
+            return Ok(await pagination.Paginate(set, new { }, ModelRepository.Graph, entityType));
         }
 
         /// <summary>
@@ -234,10 +234,10 @@ namespace GrapheneCore.Http.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        //private string GetPermissionsWhere(string model, string actionName)
+        //private string GetPermissionsWhere(string entity, string actionName)
         //{
         //    string[] wheres = DatabaseContext.Permission
-        //        .Where(p => p.Entity == model && actionName == p.Name)
+        //        .Where(p => p.Entity == entity && actionName == p.Name)
         //        .Select(p => p.Expression)
         //        .ToArray();
         //    string where = wheres.Length > 0
