@@ -1,6 +1,7 @@
 ﻿using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
 using GrapheneCore.Models;
+using GrapheneCore.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;

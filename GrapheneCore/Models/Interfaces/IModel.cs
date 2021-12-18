@@ -46,5 +46,10 @@ namespace GrapheneCore.Models.Interfaces
         /// 
         /// </summary>
         public EntityState EntityState { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string ToJson();
     }
 }

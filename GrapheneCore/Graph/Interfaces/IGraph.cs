@@ -1,5 +1,6 @@
 ﻿using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
+using GrapheneCore.Models.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,13 @@ namespace GrapheneCore.Graph.Interfaces
         /// <param name="iExpression"></param>
         /// <returns></returns>
         public IQueryable<dynamic> SetInclude(IQueryable<dynamic> set, IncludeExpression iExpression);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="includes"></param>
+        /// <returns></returns>
+        public Task<IAuthenticable> GetIAuthenticable(IGrapheneDatabaseContext dbContext, string email, string[] includes);
         /// <summary>
         /// 
         /// </summary>

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using GrapheneCore.Models.Interfaces;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -23,7 +24,6 @@ namespace GrapheneCore.Database.Interfaces
         //     Provides access to information and operations for entity instances this context
         //     is tracking.
         public  ChangeTracker ChangeTracker { get; }
-
         //
         // Summary:
         //     Begins tracking the given entity, and any other reachable entities that are not

@@ -1,14 +1,21 @@
-﻿using GrapheneCore.Database.Extensions;
+﻿using Graphene.Extensions;
+using GrapheneCore.Database.Extensions;
 using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
 using GrapheneCore.Graph.Interfaces;
+using GrapheneCore.Http.Filter;
 using GrapheneCore.Models;
+using GrapheneCore.Models.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
-//using Newtonsoft.Json;
+using System.Text;
 
 namespace GrapheneCore.Graph
 {
@@ -17,6 +24,17 @@ namespace GrapheneCore.Graph
     /// </summary>
     public class Graph : IGraph
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="includes"></param>
+        /// <returns></returns>
+        public async Task<IAuthenticable?> GetIAuthenticable(IGrapheneDatabaseContext dbContext, string email, string[] includes)
+            =>  await GetSet<IAuthenticable>(dbContext)
+                .Where(u => u.Identifier == email)
+                .Includes(includes)
+                .FirstOrDefaultAsync();
         /// <summary>
         /// 
         /// </summary>
@@ -271,15 +289,32 @@ namespace GrapheneCore.Graph
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="services"></param>
-        public static void RegisterServices<T>(IServiceCollection services) where T : class, IGrapheneDatabaseContext, new()
+        public static void RegisterServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, new()
         {
-            services.AddScoped<IGrapheneDatabaseContext>((IServiceProvider provider) => provider.GetService<T>());
-            services.AddSingleton<IGraph>((IServiceProvider provider) => new Graph(new T()));
-            services.AddMvc(options => {
-                // options.Filters.Add(typeof(DefaultExceptionFilter));
+            builder.Services.AddScoped<IGrapheneDatabaseContext>((IServiceProvider provider) => provider.GetService<T>());
+            builder.Services.AddSingleton<IGraph>((IServiceProvider provider) => new Graph(new T()));
+            builder.Services.AddMvc(options => {
+                options.Filters.Add(typeof(DefaultExceptionFilter));
             }).AddNewtonsoftJson(opt => {
                 opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 opt.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
+            });
+            var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JWT").GetValue<string>("Key"));
+            builder.Services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
             });
         }
     }
