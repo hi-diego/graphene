@@ -20,8 +20,6 @@ namespace GrapheneCore.Http.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [ApiController]
-    [Route("/[controller]/")]
     public class AuthController : ControllerBase
     {
         /// <summary>
@@ -56,7 +54,7 @@ namespace GrapheneCore.Http.Controllers
         {
             if (!TryValidateModel(request)) return BadRequest(ModelState);
             IAuthenticable? user = await (new AuthenticationService(DatabaseContext, Configuration, Graph))
-                .Auth(request.Email, request.Password, request.Includes);
+                .Auth(request.Email, request.Password, request.Load);
             if (user == null) return Unauthorized();
             return Ok(user);
         }
@@ -98,7 +96,8 @@ namespace GrapheneCore.Http.Controllers
             /// <summary>
             /// 
             /// </summary>
-            public string[] Includes { get; set; }
+            [FromQuery(Name = "load[]")]
+            public string[]? Load { get; set; } = { };
         }
     }
 }

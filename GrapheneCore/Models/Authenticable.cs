@@ -21,16 +21,16 @@ namespace GrapheneCore.Models
         /// 
         /// </summary>
         [NotMapped]
-        public string Identifier { get; set; }
+        public virtual string Identifier { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public string Password { get; set; } = "secret";
+        public virtual string Password { get; set; } = "secret";
         /// <summary>
         /// 
         /// </summary>
         [NotMapped]
-        public string Token { get; set; }
+        public virtual string Token { get; set; }
         /// <summary>
         /// 
         /// </summary>

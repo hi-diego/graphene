@@ -16,7 +16,7 @@ namespace Graphene.Models
         /// 
         /// </summary>
         [NotMapped]
-        public string Identifier { get => Email; set { Email = value; } }
+        public override string Identifier { get => Email; set { Email = value; } }
         /// <summary>
         /// 
         /// </summary>

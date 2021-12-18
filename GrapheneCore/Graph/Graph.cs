@@ -32,7 +32,7 @@ namespace GrapheneCore.Graph
         /// <returns></returns>
         public async Task<IAuthenticable?> GetIAuthenticable(IGrapheneDatabaseContext dbContext, string email, string[] includes)
             =>  await GetSet<IAuthenticable>(dbContext)
-                .Where(u => u.Identifier == email)
+                .Where("u => u.Email == email")
                 .Includes(includes)
                 .FirstOrDefaultAsync();
         /// <summary>

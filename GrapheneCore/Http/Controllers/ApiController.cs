@@ -18,7 +18,6 @@ namespace GrapheneCore.Http.Controllers
     /// <summary>
     /// 
     /// </summary>
-    // [NonController]
     public abstract class ApiController : ControllerBase
     {
         /// <summary>
