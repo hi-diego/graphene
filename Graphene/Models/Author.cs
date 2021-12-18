@@ -11,12 +11,13 @@ namespace Graphene.Models
         /// <summary>
         /// 
         /// </summary>
+        [NotMapped]
         public string Email { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        [NotMapped]
-        public override string Identifier { get => Email; set { Email = value; } }
+        [Column("email")]
+        public override string Identifier { get; set; }
         /// <summary>
         /// 
         /// </summary>

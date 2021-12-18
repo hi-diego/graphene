@@ -20,7 +20,6 @@ namespace GrapheneCore.Models
         /// <summary>
         /// 
         /// </summary>
-        [NotMapped]
         public virtual string Identifier { get; set; }
         /// <summary>
         /// 

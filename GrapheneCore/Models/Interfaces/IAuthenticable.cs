@@ -18,7 +18,6 @@ namespace GrapheneCore.Models.Interfaces
         /// 
         /// </summary>
         [Required]
-        [StringLength(25, MinimumLength = 3)]
         public string Identifier { get; set; }
         /// <summary>
         /// 
