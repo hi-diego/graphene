@@ -124,6 +124,11 @@ namespace Graphene.Database.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("deleted_at");
 
+                    b.Property<string>("Entity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("entity");
+
                     b.Property<string>("Event")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -138,18 +143,13 @@ namespace Graphene.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("instance_entity_state");
 
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("model");
-
-                    b.Property<int>("ModelId")
+                    b.Property<int>("InstanceId")
                         .HasColumnType("int")
-                        .HasColumnName("model_id");
+                        .HasColumnName("instance_id");
 
-                    b.Property<Guid>("ModelUid")
+                    b.Property<Guid>("InstanceUid")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("model_uid");
+                        .HasColumnName("instance_uid");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2")
@@ -216,10 +216,6 @@ namespace Graphene.Database.Migrations
                     b.Property<Guid>("Uid")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("uid");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
 
                     b.HasKey("Id")
                         .HasName("pk_posts");

@@ -1,6 +1,6 @@
 ﻿using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
-using GrapheneCore.Models.Interfaces;
+using GrapheneCore.Entities.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,13 +19,13 @@ namespace GrapheneCore.Graph.Interfaces
         /// </summary>
         public IEnumerable<GraphType> Types { get; set; }
         /// <summary>
-        /// Returns the Type of the relation that corresponds to the given path in the given type
+        /// Returns the _Entity of the relation that corresponds to the given path in the given type
         /// </summary>
         /// <param name="include"></param>
         /// <returns></returns>
         public Type GetRelationType(Type root, string path);
         /// <summary>
-        /// Returns the Type of the relation that corresponds to the given path in the given type
+        /// Returns the _Entity of the relation that corresponds to the given path in the given type
         /// </summary>
         /// <param name="include"></param>
         /// <returns></returns>

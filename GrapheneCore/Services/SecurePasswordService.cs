@@ -1,4 +1,4 @@
-﻿using GrapheneCore.Models.Interfaces;
+﻿using GrapheneCore.Entities.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using GrapheneCore.Models;
+﻿using GrapheneCore.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 

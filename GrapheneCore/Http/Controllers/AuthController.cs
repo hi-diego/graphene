@@ -1,7 +1,7 @@
 ﻿using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Graph.Interfaces;
-using GrapheneCore.Models;
-using GrapheneCore.Models.Interfaces;
+using GrapheneCore.Entities;
+using GrapheneCore.Entities.Interfaces;
 using GrapheneCore.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

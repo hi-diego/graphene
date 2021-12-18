@@ -1,8 +1,8 @@
-﻿using GrapheneCore.Models;
+﻿using GrapheneCore.Entities;
 
 namespace Graphene.Models
 {
-    public class Log : ModelLog
+    public class Log : InstanceLog
     {
     }
 }

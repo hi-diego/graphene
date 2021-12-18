@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GrapheneCore.Database.Interfaces;
-using GrapheneCore.Models;
+using GrapheneCore.Entities;
 using GrapheneCore.Extensions;
 using Graphene.Extensions;
 using Microsoft.EntityFrameworkCore;

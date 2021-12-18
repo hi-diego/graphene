@@ -1,7 +1,7 @@
 ﻿using GrapheneCore.Extensions;
 using GrapheneCore.Graph.Interfaces;
 using GrapheneCore.Http;
-using GrapheneCore.Models;
+using GrapheneCore.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;

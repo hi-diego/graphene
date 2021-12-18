@@ -3,7 +3,7 @@ using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Graph;
 using GrapheneCore.Graph.Interfaces;
 using GrapheneCore.Http.Exceptions;
-using GrapheneCore.Models;
+using GrapheneCore.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -29,7 +29,7 @@ namespace GrapheneCore.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        public ModelRepository EntityRepository { get; }
+        public EntityRepository EntityRepository { get; }
 
         /// <summary>
         /// 
@@ -38,7 +38,7 @@ namespace GrapheneCore.Http.Controllers
         public GraphController(IGrapheneDatabaseContext databaseContext, IGraph graph)
         {
             DatabaseContext = databaseContext;
-            EntityRepository = new ModelRepository(databaseContext, graph);
+            EntityRepository = new EntityRepository(databaseContext, graph);
         }
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace GrapheneCore.Http.Controllers
         public ActionResult Graph([FromBody] JObject request)
         {
             // User user = ApiController.GetUser(User);
-            Model model = request.ToObject<Model>();
-            GraphType graphType = EntityRepository.Graph.Find(model.Type);
+            Entity model = request.ToObject<Entity>();
+            GraphType graphType = EntityRepository.Graph.Find(model._Entity);
             if (graphType == null) return NotFound();
             dynamic instance = request.ToObject(graphType.SystemType);
             if (!TryValidateModel(instance, graphType.PascalName)) return BadRequest(ModelState);

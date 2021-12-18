@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Graphene.Database.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,11 +15,13 @@ namespace Graphene.Database.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    deleted_at = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    password = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -41,6 +43,30 @@ namespace Graphene.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_blogs", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "logs",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    instance_id = table.Column<int>(type: "int", nullable: false),
+                    user_id = table.Column<int>(type: "int", nullable: true),
+                    entity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    to = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    from = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    @event = table.Column<string>(name: "event", type: "nvarchar(max)", nullable: false),
+                    instance_entity_state = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    instance_uid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_logs", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,12 +102,6 @@ namespace Graphene.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_authors_uid",
-                table: "authors",
-                column: "uid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_blogs_uid",
                 table: "blogs",
                 column: "uid",
@@ -106,6 +126,9 @@ namespace Graphene.Database.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "logs");
+
             migrationBuilder.DropTable(
                 name: "posts");
 

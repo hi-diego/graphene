@@ -4,8 +4,8 @@ using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
 using GrapheneCore.Graph.Interfaces;
 using GrapheneCore.Http.Filter;
-using GrapheneCore.Models;
-using GrapheneCore.Models.Interfaces;
+using GrapheneCore.Entities;
+using GrapheneCore.Entities.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -102,14 +102,14 @@ namespace GrapheneCore.Graph
         }
 
         /// <summary>
-        /// Converts every Model from the project namespace (classes that implements IEntity)
+        /// Converts every Entity from the project namespace (classes that implements IEntity)
         /// to IEntityDescriptor and concatenates the Custom Entities descriptors from the database
         /// </summary>
         /// <returns></returns>
         public static IEnumerable<GraphType> GetGraph(IGrapheneDatabaseContext context)
             => context.SetDictionary.ToList()
-                    //.Where(m => !m.Value.IsAbstract && m.Value.IsSubclassOf(typeof(Model)))
-                    .Where(m => Graph.GetSetType(m.Value()).IsSubclassOf(typeof(Model)))
+                    //.Where(m => !m.Value.IsAbstract && m.Value.IsSubclassOf(typeof(Entity)))
+                    .Where(m => Graph.GetSetType(m.Value()).IsSubclassOf(typeof(Entity)))
                     .Select(m => new GraphType(Graph.GetSetType(m.Value()))) // until Rules are implemented, context.Rule.Where(r => r.Entity == m.Key).ToList()))
                     .ToList();
         /// <summary>
@@ -126,7 +126,7 @@ namespace GrapheneCore.Graph
         /// <param name="context"></param>
         public GraphType? Find<T>() => Types.FirstOrDefault(t => typeof(T).IsAssignableFrom(t.SystemType));
         /// <summary>
-        /// Returns the Type of the relation that corresponds to the given path in the given type
+        /// Returns the _Entity of the relation that corresponds to the given path in the given type
         /// </summary>
         /// <param name="include"></param>
         /// <returns></returns>
@@ -152,7 +152,7 @@ namespace GrapheneCore.Graph
         }
 
         /// <summary>
-        /// Returns the Type of the relation that corresponds to the given path in the given type
+        /// Returns the _Entity of the relation that corresponds to the given path in the given type
         /// </summary>
         /// <param name="include"></param>
         /// <returns></returns>

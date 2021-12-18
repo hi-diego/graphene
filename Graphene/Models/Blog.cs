@@ -1,11 +1,11 @@
-﻿using GrapheneCore.Models;
+﻿using GrapheneCore.Entities;
 
 namespace Graphene.Models
 {
     /// <summary>
     /// 
     /// </summary>
-    public class Blog : Model
+    public class Blog : Entity
     {
         /// <summary>
         /// 

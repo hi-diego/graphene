@@ -1,7 +1,7 @@
 ﻿using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
-using GrapheneCore.Models;
-using GrapheneCore.Models.Interfaces;
+using GrapheneCore.Entities;
+using GrapheneCore.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
@@ -24,9 +24,9 @@ namespace GrapheneCore.Database.Extensions
         public static void SaveAnnotatedGraph(this IGrapheneDatabaseContext dbContext, object rootEntity)
         {
             dbContext.ChangeTracker.TrackGraph(rootEntity, n => {
-                Model entity = (Model)n.Entry.Entity;
+                Entity entity = (Entity)n.Entry.Entity;
                 n.Entry.State = entity.EntityState;
-                if (entity.EntityState == EntityState.Deleted) Model.SoftDelete(entity, n.Entry);
+                if (entity.EntityState == EntityState.Deleted) Entity.SoftDelete(entity, n.Entry);
             });
         }
 
@@ -38,7 +38,7 @@ namespace GrapheneCore.Database.Extensions
         public static void OnModelCreating(this IGrapheneDatabaseContext dbContext, ModelBuilder modelBuilder)
         {
             foreach (Type entity in dbContext.SetDictionary.Values.Select(kv => GrapheneCore.Graph.Graph.GetSetType(kv())))
-                if (entity.BaseType == typeof(Model)) ModelConfiguration.Configure(modelBuilder.Entity(entity), entity);
+                if (entity.BaseType == typeof(Entity)) ModelConfiguration.Configure(modelBuilder.Entity(entity), entity);
             dbContext.ModelBuilderToSnakeCase(modelBuilder);
         }
 
@@ -53,7 +53,7 @@ namespace GrapheneCore.Database.Extensions
             foreach (IMutableEntityType entity in builder.Model.GetEntityTypes())
             {
                 // snakify table names
-                if (!typeof(Model).IsAssignableFrom(entity.ClrType.BaseType)) continue;
+                if (!typeof(Entity).IsAssignableFrom(entity.ClrType.BaseType)) continue;
                 entity.SetTableName(entity.GetTableName().ToSnakeCase().ToPlural());
                 // snakify column names
                 foreach (var property in entity.GetProperties()) property.SetColumnName(property.GetColumnBaseName().ToSnakeCase());

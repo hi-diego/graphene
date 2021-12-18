@@ -2,7 +2,7 @@
 using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
 using GrapheneCore.Graph.Interfaces;
-using GrapheneCore.Models;
+using GrapheneCore.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +29,7 @@ namespace GrapheneCore.Http.Controllers
         {
             Configuration = configuration;
             DatabaseContext = dbContext;
-            ModelRepository = new ModelRepository(dbContext, graph);
+            ModelRepository = new EntityRepository(dbContext, graph);
             Graph = graph;
         }
 
@@ -46,7 +46,7 @@ namespace GrapheneCore.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        public ModelRepository ModelRepository { get; private set; }
+        public EntityRepository ModelRepository { get; private set; }
 
         /// <summary>
         /// 
@@ -191,7 +191,7 @@ namespace GrapheneCore.Http.Controllers
         public async Task<ActionResult> Edit(string model, int id, [FromBody] JObject request)
         {
             //DatabaseContext.AuthUser = GetUser();
-            Model instance = await ModelRepository.Update(request, model, id, false);
+            Entity instance = await ModelRepository.Update(request, model, id, false);
             if (instance == null)
                 return NotFound();
             if (!TryValidateModel(instance, model))
