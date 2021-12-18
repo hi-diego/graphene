@@ -7,6 +7,7 @@ using GrapheneCore.Database.Interfaces;
 using GrapheneCore.Extensions;
 using GrapheneCore.Graph;
 using GrapheneCore.Models;
+using GrapheneCore.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Graphene.Database
@@ -43,6 +44,7 @@ namespace Graphene.Database
         {
             // Declare the models that you want to expose in the API.
             SetDictionary = new Dictionary<Type, Func<IQueryable<dynamic>>> {
+                { typeof(IAuthenticable), () => Author },
                 { typeof(Blog), () => Blog },
                 { typeof(Author), () => Author },
                 { typeof(Post), () => Post }

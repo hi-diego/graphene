@@ -53,7 +53,8 @@ namespace GrapheneCore.Database.Extensions
             foreach (IMutableEntityType entity in builder.Model.GetEntityTypes())
             {
                 // snakify table names
-                if (entity.ClrType.BaseType == typeof(Model)) entity.SetTableName(entity.GetTableName().ToSnakeCase().ToPlural());
+                if (!typeof(Model).IsAssignableFrom(entity.ClrType.BaseType)) continue;
+                entity.SetTableName(entity.GetTableName().ToSnakeCase().ToPlural());
                 // snakify column names
                 foreach (var property in entity.GetProperties()) property.SetColumnName(property.GetColumnBaseName().ToSnakeCase());
                 // snakify key names

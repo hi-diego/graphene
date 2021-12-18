@@ -26,6 +26,10 @@ namespace Graphene.Models
         /// <summary>
         /// 
         /// </summary>
+        public int UserId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public int AuthorId { get; set; }
         /// <summary>
         /// 

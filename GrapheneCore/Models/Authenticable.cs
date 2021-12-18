@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -17,6 +18,7 @@ namespace GrapheneCore.Models
         /// <summary>
         /// 
         /// </summary>
+        [NotMapped]
         public string Identifier { get; set; }
         /// <summary>
         /// 
@@ -25,6 +27,7 @@ namespace GrapheneCore.Models
         /// <summary>
         /// 
         /// </summary>
+        [NotMapped]
         public string Token { get; set; }
         /// <summary>
         /// 
