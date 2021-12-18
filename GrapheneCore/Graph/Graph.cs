@@ -121,6 +121,11 @@ namespace GrapheneCore.Graph
             return Types.FirstOrDefault(t => t.PascalName == name.DbSetName());
         }
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        public GraphType? Find<T>() => Types.FirstOrDefault(t => typeof(T).IsAssignableFrom(t.SystemType));
+        /// <summary>
         /// Returns the Type of the relation that corresponds to the given path in the given type
         /// </summary>
         /// <param name="include"></param>
@@ -228,6 +233,16 @@ namespace GrapheneCore.Graph
         {
             entityName = entityName.DbSetName();
             return Find(entityName) != null;
+        }
+
+        /// <summary>
+        /// Verify if the resource Exist in the dictionary.
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
+        public bool Exists<T>(IGrapheneDatabaseContext dbContext)
+        {
+            return Find<T>() != null;
         }
 
         /// <summary>

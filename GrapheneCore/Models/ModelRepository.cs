@@ -261,11 +261,24 @@ namespace GrapheneCore.Models
         /// </summary>
         public IEnumerable<IModelLog> LogChanges()
         {
+            Type? logType = Graph.Find<IModelLog>()?.SystemType;
+            if (logType == null) return new List<ModelLog>();
             var entries = DatabaseContext.ChangeTracker.Entries();
-            var logs = ModelTracker.GenerateModelLogs(entries, new ModelLog());
+            var set = GrapheneCore.Graph.Graph.GetSet<IModelLog>(DatabaseContext);
+            IEnumerable<IModelLog> logs = set.CreateAndAddEntries(entries, logType);
+            DatabaseContext.AddRange(logs);
             // TODO: add a conditional option to store logs
-            // DatabaseContext.AddRange(logs);
             return logs;
+        }
+    }
+    public static class IQueryableModelLogExtensions
+    {
+        public static IEnumerable<IModelLog> CreateAndAddEntries<T>(this IQueryable<T> set, IEnumerable<EntityEntry> entries, Type logType)
+        {
+            return entries.Where(e => e.State != EntityState.Unchanged)
+                // TODO: Replace null for the current auth user
+                .Select(entry => ((IModelLog)Activator.CreateInstance(logType)).Init(entry, null))
+                .ToList();
         }
     }
 }

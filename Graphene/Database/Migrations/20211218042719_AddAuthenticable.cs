@@ -34,10 +34,6 @@ namespace Graphene.Database.Migrations
             migrationBuilder.DropColumn(
                 name: "password",
                 table: "authors");
-
-            migrationBuilder.DropColumn(
-                name: "token",
-                table: "authors");
         }
     }
 }

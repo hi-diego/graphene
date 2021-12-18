@@ -70,6 +70,6 @@ namespace GrapheneCore.Models
         /// <typeparam name="T"></typeparam>
         /// <param name="entry"></param>
         /// <returns></returns>
-        T InitializeGeneric<T>(EntityEntry entry, int? userId = null) where T : IModelLog, new();
+        IModelLog Init(EntityEntry entry, int? userId = null);
     }
 }
