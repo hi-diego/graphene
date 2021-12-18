@@ -11,6 +11,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq;
 using System.Reflection;
 using GrapheneCore.Graph.Interfaces;
+using GrapheneCore.Services;
 
 namespace Graphene.Http.Controllers
 {

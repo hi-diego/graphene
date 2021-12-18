@@ -1,4 +1,6 @@
-﻿using GrapheneCore.Models.Interfaces;
+﻿using GrapheneCore.Database.Interfaces;
+using GrapheneCore.Models.Interfaces;
+using GrapheneCore.Services;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,7 @@ namespace GrapheneCore.Models
         /// <summary>
         /// 
         /// </summary>
-        public string Password { get; set; }
+        public string Password { get; set; } = "secret";
         /// <summary>
         /// 
         /// </summary>
@@ -41,6 +43,15 @@ namespace GrapheneCore.Models
             Claim claim = identity.Claims.Where(c => c.Type == ClaimTypes.UserData).FirstOrDefault();
             if (claim == null) return null;
             return JObject.Parse(claim.Value).ToObject<Authenticable>();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Database"></param>
+        public override void BeforeAdded(IGrapheneDatabaseContext database)
+        {
+            base.BeforeAdded(database);
+            if (Id == 0) Password = new SecurePasswordService().Hash(Password);
         }
     }
 }
