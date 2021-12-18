@@ -1,5 +1,6 @@
 ﻿using GrapheneCore.Models;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Graphene.Models
 {
@@ -12,7 +13,7 @@ namespace Graphene.Models
         /// 
         /// </summary>
         [NotMapped]
-        public string Email { get; set; }
+        public string Email { get => Identifier; }
         /// <summary>
         /// 
         /// </summary>

@@ -48,7 +48,7 @@ namespace GrapheneCore.Services
         /// <param name="password"></param>
         /// <param name="includes"></param>
         /// <returns></returns>
-        public async Task<IAuthenticable?> Auth(string email, string password, string[] includes = null)
+        public async Task<IAuthenticable?> Auth(string email, string password, string[]? includes = null)
         {
             includes ??= Includes;
             var hasher = new SecurePasswordService();

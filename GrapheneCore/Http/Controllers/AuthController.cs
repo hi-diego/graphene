@@ -69,7 +69,7 @@ namespace GrapheneCore.Http.Controllers
             ClaimsIdentity? identity = (ClaimsIdentity?) User.Identity;
             Claim? claim = identity?.Claims.Where(c => c.Type == ClaimTypes.UserData).FirstOrDefault();
             Authenticable? user = JObject.Parse(claim?.Value ?? "{}")?.ToObject<Authenticable>();
-            return Ok(Graph.GetIAuthenticable(DatabaseContext, user.Identifier, pagination.Include));
+            return Ok(Graph.GetIAuthenticable(DatabaseContext, user.Identifier, pagination.Load));
         }
         /// <summary>
         /// 
@@ -97,7 +97,7 @@ namespace GrapheneCore.Http.Controllers
             /// 
             /// </summary>
             [FromQuery(Name = "load[]")]
-            public string[]? Load { get; set; } = { };
+            public string[] Load { get; set; } = { };
         }
     }
 }

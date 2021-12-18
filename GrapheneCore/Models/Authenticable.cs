@@ -52,5 +52,15 @@ namespace GrapheneCore.Models
             base.BeforeAdded(database);
             if (Id == 0) Password = new SecurePasswordService().Hash(Password);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializePassword() => false;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeIdentifier() => false;
     }
 }
