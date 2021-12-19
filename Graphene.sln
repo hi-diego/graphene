@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphene", "Graphene\Graphene.csproj", "{A7C38016-525B-4D3F-991A-EF209EE5E205}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrapheneTemplate", "GrapheneTemplate\GrapheneTemplate.csproj", "{A7C38016-525B-4D3F-991A-EF209EE5E205}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{ECCCA58D-27AF-40DC-88AB-B4047946201D}"
 EndProject
@@ -11,7 +11,7 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "GrapheneWebUI", "GrapheneWe
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Documentation", "Documentation\Documentation.esproj", "{7877D8D1-C188-4BB5-ADAF-5FD0522D8536}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrapheneCore", "GrapheneCore\GrapheneCore.csproj", "{3AEBE311-2F06-4B5D-B6AC-C779679C8519}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphene", "Graphene\Graphene.csproj", "{3AEBE311-2F06-4B5D-B6AC-C779679C8519}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
