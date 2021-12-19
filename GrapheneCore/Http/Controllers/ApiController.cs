@@ -29,7 +29,7 @@ namespace GrapheneCore.Http.Controllers
         {
             Configuration = configuration;
             DatabaseContext = dbContext;
-            ModelRepository = new EntityRepository(dbContext, graph);
+            EntityRepository = new EntityRepository(dbContext, graph);
             Graph = graph;
         }
 
@@ -46,7 +46,7 @@ namespace GrapheneCore.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        public EntityRepository ModelRepository { get; private set; }
+        public EntityRepository EntityRepository { get; private set; }
 
         /// <summary>
         /// 
@@ -146,7 +146,7 @@ namespace GrapheneCore.Http.Controllers
         [HttpGet("{entity}/{id}")]
         public async Task<ActionResult> Find(string entity, int id, [FromQuery] Pagination pagination)
         {
-            object instance = await ModelRepository.Find(entity, id, false, pagination.Load, pagination.Include);
+            object instance = await EntityRepository.Find(entity, id, false, pagination.Load, pagination.Include);
             if (instance == null) return NotFound();
             return Ok(instance);
         }
@@ -160,9 +160,9 @@ namespace GrapheneCore.Http.Controllers
         [HttpDelete("{entity}/{id}")]
         public async Task<ActionResult> Delete(string entity, int id)
         {
-            object instance = await ModelRepository.Find(entity, id);
+            object instance = await EntityRepository.Find(entity, id);
             if (instance == null) return NotFound();
-            return Ok(ModelRepository.Delete(instance));
+            return Ok(EntityRepository.Delete(instance));
         }
 
         /// <summary>
@@ -175,10 +175,10 @@ namespace GrapheneCore.Http.Controllers
         public async Task<ActionResult> Add(string entity, [FromBody] JObject request)
         {
             if (!Graph.Exists(DatabaseContext, ref entity)) return NotFound();
-            object instance = await ModelRepository.Create(entity, request, false);
+            object instance = await EntityRepository.Create(entity, request, false);
             if (!TryValidateModel(instance, entity))
                 return BadRequest(ModelState);
-            return Ok(await ModelRepository.Create(instance, true));
+            return Ok(await EntityRepository.Create(instance, true));
         }
 
         /// <summary>
@@ -191,12 +191,12 @@ namespace GrapheneCore.Http.Controllers
         public async Task<ActionResult> Edit(string entity, int id, [FromBody] JObject request)
         {
             //DatabaseContext.AuthUser = GetUser();
-            Entity instance = await ModelRepository.Update(request, entity, id, false);
+            Entity instance = await EntityRepository.Update(request, entity, id, false);
             if (instance == null)
                 return NotFound();
             if (!TryValidateModel(instance, entity))
                 return BadRequest(ModelState);
-            return Ok(await ModelRepository.Save(instance));
+            return Ok(await EntityRepository.Save(instance));
         }
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace GrapheneCore.Http.Controllers
             Type entityType = GrapheneCore.Graph.Graph.GetSetType(set);
             // pagination.Where += GetPermissionsWhere(entity, "Index");
             // User Permission not implemented jet so a new {} is given
-            return Ok(await pagination.Paginate(set, new { }, ModelRepository.Graph, entityType));
+            return Ok(await pagination.Paginate(set, new { }, EntityRepository.Graph, entityType));
         }
 
         /// <summary>

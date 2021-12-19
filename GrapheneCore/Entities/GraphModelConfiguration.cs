@@ -12,7 +12,7 @@ namespace GrapheneCore.Entities
     /// <summary>
     /// Generic Entity Configuration
     /// </summary>
-    public class ModelConfiguration
+    public class EntityConfiguration
     {
         /// <summary>
         /// 

@@ -96,7 +96,7 @@ namespace GrapheneCore.Entities
         /// <returns></returns>
         public async Task<Entity> Find(string entityName, int id, bool tracking = true, string[] load = null, string[] includes = null)
         {
-            // Check if the DbSet and the Key in the ModelDictionary exists in DatabaseContext, return if not
+            // Check if the DbSet and the Key in the EntityDictionary exists in DatabaseContext, return if not
             if (!Graph.Exists(DatabaseContext, ref entityName)) return null;
             // Get the Set as var becuse (IQueryable<dynamic>) but the entityType will be calculated at runtime and thats necesary for the 
             // dynamic excecution of "Include" and "IhenInclude" methods, if a (IQueryable<object>, IQueryable<Entity> IQueryable<any>) is given the dynamic excution by reflectrion will crash.
@@ -177,7 +177,7 @@ namespace GrapheneCore.Entities
 
         /// <summary>
         /// Persist the instance Data using SaveChanges and  Create 
-        /// all the Correspondent Modellog records for each operation.
+        /// all the Correspondent Entitylog records for each operation.
         /// </summary>
         /// <param name="instance"></param>
         /// <param name="request"></param>
@@ -195,13 +195,13 @@ namespace GrapheneCore.Entities
         /// The BeforeCreate logic
         /// consists in creating all the correspondent InstanceLog instances 
         /// for each operation that is recorded to perfom
-        /// and adding it to the DbContext and Firing all the ModelEvents.
+        /// and adding it to the DbContext and Firing all the EntityEvents.
         /// </summary>
         /// <returns></returns>
         public virtual IEnumerable<IInstanceLog> BeforeSave(Entity instance)
         {
             IEnumerable<IInstanceLog> logs = LogChanges();
-            FireBeforeModelEvents(logs);
+            FireBeforeEntityEvents(logs);
             return logs;
         }
 
@@ -209,12 +209,12 @@ namespace GrapheneCore.Entities
         /// The BeforeCreate logic
         /// consists in creating all the correspondent InstanceLog instances 
         /// for each operation that is recorded to perfom
-        /// and adding it to the DbContext and Firing all the ModelEvents.
+        /// and adding it to the DbContext and Firing all the EntityEvents.
         /// </summary>
         /// <returns></returns>
         public virtual IEnumerable<IInstanceLog> AfterSave(Entity instance, IEnumerable<IInstanceLog> logs)
         {
-            FireAfterModelEvents(logs);
+            FireAfterEntityEvents(logs);
             return logs;
         }
 
@@ -222,7 +222,7 @@ namespace GrapheneCore.Entities
         /// Excecute the correspondent instance method Event for each Entity log.
         /// </summary>
         /// <param name="logs"></param>
-        public void FireBeforeModelEvents(IEnumerable<IInstanceLog> logs)
+        public void FireBeforeEntityEvents(IEnumerable<IInstanceLog> logs)
         {
             foreach (var log in logs)
             {
@@ -241,7 +241,7 @@ namespace GrapheneCore.Entities
         /// Excecute the correspondent instance method Event for each Entity log.
         /// </summary>
         /// <param name="logs"></param>
-        public void FireAfterModelEvents(IEnumerable<IInstanceLog> logs)
+        public void FireAfterEntityEvents(IEnumerable<IInstanceLog> logs)
         {
             foreach (var log in logs)
             {
@@ -271,7 +271,7 @@ namespace GrapheneCore.Entities
             return logs;
         }
     }
-    public static class IQueryableModelLogExtensions
+    public static class IQueryableEntityLogExtensions
     {
         public static IEnumerable<IInstanceLog> CreateAndAddEntries<T>(this IQueryable<T> set, IEnumerable<EntityEntry> entries, Type logType)
         {

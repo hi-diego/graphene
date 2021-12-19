@@ -38,7 +38,7 @@ namespace GrapheneCore.Database.Extensions
         public static void OnModelCreating(this IGrapheneDatabaseContext dbContext, ModelBuilder entityBuilder)
         {
             foreach (Type entity in dbContext.SetDictionary.Values.Select(kv => GrapheneCore.Graph.Graph.GetSetType(kv())))
-                if (entity.BaseType == typeof(Entity)) ModelConfiguration.Configure(entityBuilder.Entity(entity), entity);
+                if (entity.BaseType == typeof(Entity)) EntityConfiguration.Configure(entityBuilder.Entity(entity), entity);
             dbContext.ModelBuilderToSnakeCase(entityBuilder);
         }
 
