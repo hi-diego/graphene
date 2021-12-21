@@ -7,7 +7,7 @@ namespace GrapheneTemplate.Models
     /// <summary>
     /// 
     /// </summary>
-    public class Permission : Entity, IAuthorizator
+    public class Permission : Authorizator
     {
         /// <summary>
         /// 
@@ -31,5 +31,10 @@ namespace GrapheneTemplate.Models
         /// 
         /// </summary>
         public string Entity { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IEnumerable<AuthorPermission> AuthorPermissions { get; set; } = Enumerable.Empty<AuthorPermission>();
     }
 }

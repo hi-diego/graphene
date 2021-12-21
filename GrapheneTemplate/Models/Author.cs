@@ -27,5 +27,9 @@ namespace GrapheneTemplate.Models
         /// 
         /// </summary>
         public IEnumerable<Post> Posts { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public IEnumerable<Permission> Permission { get; set; }
     }
 }

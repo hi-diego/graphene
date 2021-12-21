@@ -7,8 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Graphene.Entities
+namespace Graphene.Entities.Interfaces
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IInstanceLog
     {
         /// <summary>

@@ -146,5 +146,37 @@ namespace Graphene.Entities
             entity.DeletedAt = DateTime.Now;
             entry.State = EntityState.Modified;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IQueryable<T> QueryableOf<T>(T Entity)
+        {
+            return (new List<T>() { Entity }).AsQueryable();
+        }
+        /// <summary>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public IQueryable<dynamic> QueryableOf<T>() where T : class
+        {
+            var Object = Activator.CreateInstance(typeof(T), new object[] { });
+            return (new List<T>() { ((T)Object) }).AsQueryable();
+        }
+
+        /// <summary>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IQueryable<dynamic> DynamicQueryableOf<T>(T instance) where T : class
+        {
+            return (new List<T>() { instance }).AsQueryable();
+        }
     }
 }

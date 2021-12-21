@@ -37,12 +37,12 @@ namespace Graphene.Services
         /// <summary>
         /// 
         /// </summary>
-        public IGraph Graph { get; }
+        public IGraph Graph { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public IGrapheneDatabaseContext DatabaseContext { get; }
+        public IGrapheneDatabaseContext DatabaseContext { get; set; }
 
         /// <summary>
         /// 
@@ -56,23 +56,14 @@ namespace Graphene.Services
         /// <param name="resource"></param>
         /// <param name="policyName"></param>
         /// <returns></returns>
-        //public static async Task<bool> IsAuthorizedByExpression(dynamic instance, IAuthenticable user, Permission permission, IGrapheneDatabaseContext databaseContext)
-        //{
-        //    if (permission != null && permission.NeedNestedAuthorization) return await IsNestedAuthorized(instance, permission.Name, user, databaseContext);
-        //    return await Permission.IsAuthorized(permission, instance, user, databaseContext);
-        //}
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="resource"></param>
-        /// <param name="policyName"></param>
-        /// <returns></returns>
-        //public static async Task<bool> IsAuthorizedByExpression(IEntityRequest r, IGrapheneDatabaseContext context)
-        //{
-        //    return await IsAuthorizedByExpression(r.Instance, r.IAuthorizable, r.Permission, context);
-        //}
+        public async Task<bool> IsAuthorizedByExpression(dynamic instance, IAuthorizable user, string action, string entityName)
+        {
+            IAuthorizator authorizator = (IAuthorizator) Graphene.Graph.Graph
+                .GetSet<IAuthorizator>(DatabaseContext)
+                .First(a => a.Action == action && a.Entity == entityName);
+            // if (authorizator != null && authorizator.NeedNestedAuthorization) return await IsNestedAuthorized(instance, authorizator.Name, user, databaseContext);
+            return await authorizator.IsAuthorized(instance, user, DatabaseContext);
+        }
 
         /// <summary>
         /// 
@@ -136,27 +127,15 @@ namespace Graphene.Services
         /// <returns></returns>
         public async Task<bool> IsAuthorized(ActionExecutingContext context)
         {
-            var ActionContext = context;
-            var Action = ((ControllerActionDescriptor)context.ActionDescriptor).ActionName;
-            var EntityName = ((string) context.ActionArguments["entity"]).DbSetName();
-            var Entity = Graph.Find(EntityName);
-            IAuthorizable User = Authenticable.Transform(((ClaimsIdentity) context.HttpContext.User.Identity));
+            var action = ((ControllerActionDescriptor)context.ActionDescriptor).ActionName;
+            var entityName = ((string) context.ActionArguments["entity"]).DbSetName();
+            var instance = Graph.Find(entityName);
+            IAuthorizable user = Authenticable.Transform((ClaimsIdentity) context.HttpContext.User.Identity);
             // Return true if the user is Authorized explicitly (has the IAuthorizablePermission)
-            return await HasIAuthorizator(User, Action, EntityName);
-            //if (await HasIAuthorizablePermision(ERequest.IAuthorizable, ERequest.Action, ERequest.EntityName)) return true;
-            //return await AuthorizeByPermissionExpression();
+            // return await HasIAuthorizator(User, Action, EntityName);
+            return (await HasIAuthorizator(user, action, entityName))
+                || (await IsAuthorizedByExpression(instance, user, action, entityName));
         }
-        /// <summary>
-        ///  Authorize the Action by excecuting the Database Permission Expression.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="action"></param>
-        /// <param name="entityName"></param>
-        /// <returns></returns>
-        //private async Task<bool> AuthorizeByPermissionExpression()
-        //{
-        //    return await AuthorizationService.IsAuthorizedByExpression(ERequest, DatabaseContext);
-        //}
         /// <summary>
         /// Check in the database if the user has the IAuthorizablePermission.
         /// </summary>
@@ -165,12 +144,12 @@ namespace Graphene.Services
         /// <param name="entityName"></param>
         /// <returns></returns>
         private async Task<bool> HasIAuthorizator(IAuthorizable user, string action, string entityName)
-            => await Graphene.Graph.Graph.GetSet<IAuthorizator>(DatabaseContext)
-                .Where(up =>
-                    up.AuthorizedId == user.Id &&
-                    up.Action == action &&
-                    up.Entity == entityName &&
-                    !up.Denied
+            => await Graphene.Graph.Graph.GetSet<IAuthorization>(DatabaseContext)
+                .Where(a =>
+                    a.AuthorizableId == user.Id &&
+                    a.Authorizator.Action == action &&
+                    a.Authorizator.Entity == entityName &&
+                    !a.Denied
                 ).AsNoTracking()
                 .CountAsync() > 0;
         /// <summary>
@@ -196,27 +175,5 @@ namespace Graphene.Services
         {
             throw new NotImplementedException();
         }
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IAuthorizator
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public int AuthorizedId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Action { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool Denied { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        string Entity { get; set; }
     }
 }
