@@ -11,6 +11,9 @@ using System.Linq;
 using System.Reflection;
 using Graphene.Graph.Interfaces;
 using Graphene.Services;
+using Microsoft.AspNetCore.Authorization;
+using Graphene.Http.Filter;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace GrapheneTemplate.Http.Controllers
 {
@@ -18,6 +21,8 @@ namespace GrapheneTemplate.Http.Controllers
     /// 
     /// </summary>
     [ApiController]
+    [Authorize]
+    [ServiceFilter(typeof(AuthorizeActionFilter))]
     [Route("/graphene/api/")]
     public class ApiController : Graphene.Http.Controllers.ApiController
     {

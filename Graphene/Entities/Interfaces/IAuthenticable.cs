@@ -12,7 +12,7 @@ namespace Graphene.Entities.Interfaces
     /// <summary>
     /// 
     /// </summary>
-    public interface IAuthenticable : IEntity
+    public interface IAuthenticable : IEntity, IAuthorizable
     {
         /// <summary>
         /// 

@@ -16,6 +16,8 @@ using Newtonsoft.Json;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
+using Graphene.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Graphene.Graph
 {
@@ -304,16 +306,40 @@ namespace Graphene.Graph
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="services"></param>
-        public static void RegisterServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, new()
+        public static void RegisterServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, IDisposable, new()
+        {
+            RegisterGraphServices<T>(builder);
+            RegisterMCVServices(builder);
+            RegisterAuthenticationServices(builder);
+            RegisterAuthorizationServices<T>(builder);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        private static void RegisterAuthorizationServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, IDisposable, new()
+        {
+            builder.Services.AddScoped<AuthorizationService>();
+            builder.Services.AddScoped<AuthorizeActionFilter>();
+            // TODO USE AuthorizationService or IAuthorizationHandler
+            // builder.Services.AddSingleton<IAuthorizationHandler, MyHandler1>();
+            //builder.Services.AddScoped<IAuthorizationService, AuthorizationService<T>>();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        public static void RegisterGraphServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, new()
         {
             builder.Services.AddScoped<IGrapheneDatabaseContext>((IServiceProvider provider) => provider.GetService<T>());
             builder.Services.AddSingleton<IGraph>((IServiceProvider provider) => new Graph(new T()));
-            builder.Services.AddMvc(options => {
-                options.Filters.Add(typeof(DefaultExceptionFilter));
-            }).AddNewtonsoftJson(opt => {
-                opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                opt.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
-            });
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        public static void RegisterAuthenticationServices(WebApplicationBuilder builder)
+        {
             var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JWT").GetValue<string>("Key"));
             builder.Services.AddAuthentication(x =>
             {
@@ -330,6 +356,19 @@ namespace Graphene.Graph
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
+            });
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        public static void RegisterMCVServices(WebApplicationBuilder builder)
+        {
+            builder.Services.AddMvc(options => {
+                options.Filters.Add(typeof(DefaultExceptionFilter));
+            }).AddNewtonsoftJson(opt => {
+                opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                opt.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
             });
         }
     }

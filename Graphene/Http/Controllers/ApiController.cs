@@ -12,12 +12,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Graphene.Http.Controllers
 {
     /// <summary>
     /// 
     /// </summary>
+    [Authorize]
     public abstract class ApiController : ControllerBase
     {
         /// <summary>
@@ -190,7 +192,7 @@ namespace Graphene.Http.Controllers
         [HttpPatch("{entity}/{id}")]
         public async Task<ActionResult> Edit(string entity, int id, [FromBody] JObject request)
         {
-            //DatabaseContext.AuthUser = GetUser();
+            // DatabaseContext.AuthUser = GetUser();
             Entity instance = await EntityRepository.Update(request, entity, id, false);
             if (instance == null)
                 return NotFound();

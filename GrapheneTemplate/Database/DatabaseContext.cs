@@ -9,6 +9,7 @@ using Graphene.Graph;
 using Graphene.Entities;
 using Graphene.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Graphene.Services;
 
 namespace GrapheneTemplate.Database
 {
@@ -34,6 +35,10 @@ namespace GrapheneTemplate.Database
         /// </summary>
         public DbSet<Models.Log> Log { get; set; }
         /// <summary>
+        /// 
+        /// </summary>
+        public DbSet<Permission> Permission { get; set; }
+        /// <summary>
         /// This is the Declaration of what is going to be accesible by
         /// the API Interface, all the entities that are declared here are going
         /// to beaccesible through the ApiController and GraphController.
@@ -49,6 +54,7 @@ namespace GrapheneTemplate.Database
             // Declare the models that you want to expose in the API.
             SetDictionary = new Dictionary<Type, Func<IQueryable<dynamic>>> {
                 { typeof(IAuthenticable), () => Author },
+                { typeof(IAuthorizator), () => Permission },
                 { typeof(IInstanceLog), () => Log },
                 { typeof(Blog), () => Blog },
                 { typeof(Author), () => Author },
