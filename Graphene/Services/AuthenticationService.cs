@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace Graphene.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class AuthenticationService
     {
         /// <summary>

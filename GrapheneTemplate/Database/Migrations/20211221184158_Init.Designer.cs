@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GrapheneTemplate.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20211218222040_Init")]
+    [Migration("20211221184158_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -68,6 +68,53 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasName("pk_authors");
 
                     b.ToTable("authors");
+                });
+
+            modelBuilder.Entity("GrapheneTemplate.Models.AuthorPermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int")
+                        .HasColumnName("author_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("Denied")
+                        .HasColumnType("bit")
+                        .HasColumnName("denied");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("modified_at");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int")
+                        .HasColumnName("permission_id");
+
+                    b.Property<Guid>("Uid")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("uid");
+
+                    b.HasKey("Id")
+                        .HasName("pk_author_permissions");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("author_permissions");
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Models.Blog", b =>
@@ -176,6 +223,66 @@ namespace GrapheneTemplate.Database.Migrations
                     b.ToTable("logs");
                 });
 
+            modelBuilder.Entity("GrapheneTemplate.Models.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("action");
+
+                    b.Property<int?>("AuthorId1")
+                        .HasColumnType("int")
+                        .HasColumnName("author_id1");
+
+                    b.Property<int>("AuthorizedId")
+                        .HasColumnType("int")
+                        .HasColumnName("author_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<bool>("Denied")
+                        .HasColumnType("bit")
+                        .HasColumnName("denied");
+
+                    b.Property<string>("Entity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("entity");
+
+                    b.Property<string>("Expression")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("expression");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("modified_at");
+
+                    b.Property<Guid>("Uid")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("uid");
+
+                    b.HasKey("Id")
+                        .HasName("pk_permissions");
+
+                    b.HasIndex("AuthorId1");
+
+                    b.ToTable("permissions");
+                });
+
             modelBuilder.Entity("GrapheneTemplate.Models.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -232,6 +339,35 @@ namespace GrapheneTemplate.Database.Migrations
                     b.ToTable("posts");
                 });
 
+            modelBuilder.Entity("GrapheneTemplate.Models.AuthorPermission", b =>
+                {
+                    b.HasOne("GrapheneTemplate.Models.Author", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_author_permissions_authors_author_id");
+
+                    b.HasOne("GrapheneTemplate.Models.Permission", "Permission")
+                        .WithMany("AuthorPermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_author_permissions_permission_permission_id");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Permission");
+                });
+
+            modelBuilder.Entity("GrapheneTemplate.Models.Permission", b =>
+                {
+                    b.HasOne("GrapheneTemplate.Models.Author", null)
+                        .WithMany("Permission")
+                        .HasForeignKey("AuthorId1")
+                        .HasConstraintName("fk_permissions_authors_author_id1");
+                });
+
             modelBuilder.Entity("GrapheneTemplate.Models.Post", b =>
                 {
                     b.HasOne("GrapheneTemplate.Models.Author", "Author")
@@ -255,12 +391,19 @@ namespace GrapheneTemplate.Database.Migrations
 
             modelBuilder.Entity("GrapheneTemplate.Models.Author", b =>
                 {
+                    b.Navigation("Permission");
+
                     b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Models.Blog", b =>
                 {
                     b.Navigation("Posts");
+                });
+
+            modelBuilder.Entity("GrapheneTemplate.Models.Permission", b =>
+                {
+                    b.Navigation("AuthorPermissions");
                 });
 #pragma warning restore 612, 618
         }

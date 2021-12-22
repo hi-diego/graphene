@@ -62,7 +62,7 @@ namespace Graphene.Services
                 .GetSet<IAuthorizator>(DatabaseContext)
                 .First(a => a.Action == action && a.Entity == entityName);
             // if (authorizator != null && authorizator.NeedNestedAuthorization) return await IsNestedAuthorized(instance, authorizator.Name, user, databaseContext);
-            return await authorizator.IsAuthorized(instance, user, DatabaseContext);
+            return await authorizator.IsAuthorized(instance, user, DatabaseContext, Graph);
         }
 
         /// <summary>
@@ -143,15 +143,22 @@ namespace Graphene.Services
         /// <param name="action"></param>
         /// <param name="entityName"></param>
         /// <returns></returns>
-        private async Task<bool> HasIAuthorizator(IAuthorizable user, string action, string entityName)
-            => await Graphene.Graph.Graph.GetSet<IAuthorization>(DatabaseContext)
-                .Where(a =>
-                    a.AuthorizableId == user.Id &&
-                    a.Authorizator.Action == action &&
-                    a.Authorizator.Entity == entityName &&
-                    !a.Denied
-                ).AsNoTracking()
-                .CountAsync() > 0;
+        public async Task<bool> HasIAuthorizator(IAuthorizable user, string action, string entityName)
+            => await GetAuthorizeQueryable(user, action, entityName).AsNoTracking().CountAsync() > 0;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="action"></param>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
+        public IQueryable<IAuthorization> GetAuthorizeQueryable(IAuthorizable user, string action, string entityName)
+            => Graphene.Graph.Graph.GetSet<IAuthorization>(DatabaseContext).Where(a =>
+                a.AuthorizableId == user.Id &&
+                a.Authorizator.Action == action &&
+                a.Authorizator.Entity == entityName &&
+                !a.Denied
+            );
         /// <summary>
         /// 
         /// </summary>

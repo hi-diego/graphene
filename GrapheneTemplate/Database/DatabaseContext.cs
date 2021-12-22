@@ -39,6 +39,10 @@ namespace GrapheneTemplate.Database
         /// </summary>
         public DbSet<Permission> Permission { get; set; }
         /// <summary>
+        /// 
+        /// </summary>
+        public DbSet<AuthorPermission> AuthorPermission { get; set; }
+        /// <summary>
         /// This is the Declaration of what is going to be accesible by
         /// the API Interface, all the entities that are declared here are going
         /// to beaccesible through the ApiController and GraphController.
@@ -55,6 +59,7 @@ namespace GrapheneTemplate.Database
             SetDictionary = new Dictionary<Type, Func<IQueryable<dynamic>>> {
                 { typeof(IAuthenticable), () => Author },
                 { typeof(IAuthorizator), () => Permission },
+                { typeof(IAuthorization), () => AuthorPermission },
                 { typeof(IInstanceLog), () => Log },
                 { typeof(Blog), () => Blog },
                 { typeof(Author), () => Author },

@@ -37,6 +37,6 @@ namespace Graphene.Entities.Interfaces
         /// <param name="context"></param>
         /// <param name="graph"></param>
         /// <returns></returns>
-        public Task<bool> IsAuthorized(Entity entityInstance, IAuthorizable user, IGrapheneDatabaseContext context);
+        public Task<bool> IsAuthorized(Entity entityInstance, IAuthorizable user, IGrapheneDatabaseContext context, IGraph graph);
     }
 }

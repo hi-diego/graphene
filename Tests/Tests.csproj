@@ -21,4 +21,13 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\" />
+    <Folder Include="Graph\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Graphene\Graphene.csproj" />
+  </ItemGroup>
+
 </Project>

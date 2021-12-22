@@ -1,4 +1,5 @@
 ﻿using Graphene.Entities.Interfaces;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GrapheneTemplate.Models
 {
@@ -10,18 +11,22 @@ namespace GrapheneTemplate.Models
         /// <summary>
         /// 
         /// </summary>
+        [NotMapped]
         public override IAuthorizator Authorizator { get => Permission; set => Permission = (Permission) value; }
         /// <summary>
         /// 
         /// </summary>
+        [NotMapped]
         public override int AuthorizatorId { get => PermissionId; set => PermissionId = value; }
         /// <summary>
         /// 
         /// </summary>
+        [NotMapped]
         public override IAuthorizable Authorizable { get => Author; set => Author = (Author) value; }
         /// <summary>
         /// 
         /// </summary>
+        [NotMapped]
         public override int AuthorizableId { get => AuthorId; set => AuthorId = value; }
         /// <summary>
         /// 

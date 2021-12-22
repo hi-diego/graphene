@@ -20,15 +20,6 @@ namespace Graphene.Http.Filter
         /// 
         /// </summary>
         public AuthorizationService AuthorizationService { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        //public AuthorizeActionFilter()
-        //{
-        //    //
-        //}
-
         /// <summary>
         /// 
         /// </summary>
@@ -36,7 +27,6 @@ namespace Graphene.Http.Filter
         {
             AuthorizationService = authorizationService;
         }
-
         /// <summary>
         /// Authorize every action before excuting.
         /// </summary>
@@ -45,7 +35,6 @@ namespace Graphene.Http.Filter
         {
             if (!(AuthorizationService.IsAuthorized(context)).GetAwaiter().GetResult()) throw new StatusCodeException(new UnauthorizedResult());
         }
-
         /// <summary>
         /// 
         /// </summary>
