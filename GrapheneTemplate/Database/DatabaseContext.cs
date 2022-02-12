@@ -85,7 +85,7 @@ namespace GrapheneTemplate.Database
             //     for guidance on storing connection strings.
             // optionsBuilder.UseMySQL("server=localhost;database=graphene;user=root;password=$torage");
             optionsBuilder
-                .UseSqlServer("Server = localhost\\SQLEXPRESS; Database = graphene; Trusted_Connection = True;")
+                .UseSqlServer("Server = localhost\\SQLEXPRESS; Database = samueldemoda; Trusted_Connection = True;")
                 .EnableSensitiveDataLogging()
                 .LogTo(message => Debug.WriteLine(message));
         }
