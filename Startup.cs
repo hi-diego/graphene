@@ -38,8 +38,8 @@ namespace Graphene
             services.AddSingleton<ISchema, Schema<Database.Context>>();
             services.AddScoped<IEntityRepository, EntityRepository<Database.Context>>();
             services.AddControllers().AddNewtonsoftJson(opt => {
-                opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 opt.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
+                opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 //opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
             services.AddCors(options => options.AddPolicy(name: "Development",
@@ -71,7 +71,7 @@ namespace Graphene
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
