@@ -31,4 +31,8 @@
     <ProjectReference Include="..\Graphene\Graphene.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Database\Migrations\" />
+  </ItemGroup>
+
 </Project>
