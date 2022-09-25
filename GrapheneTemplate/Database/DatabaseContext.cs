@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using GrapheneTemplate.Models;
+using GrapheneTemplate.Database.Models;
 using Graphene.Database.Extensions;
 using Graphene.Database.Interfaces;
 using Graphene.Extensions;
@@ -53,10 +53,27 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
-        public DatabaseContext()
+        //public DatabaseContext()
+        //{
+        //    // Declare the models that you want to expose in the API.
+        //    SetDictionary = GetSets();
+        //}
+        /// <summary>
+        /// 
+        /// </summary>
+        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
             // Declare the models that you want to expose in the API.
-            SetDictionary = new Dictionary<Type, Func<IQueryable<dynamic>>> {
+            SetDictionary = GetSets();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<Type, Func<IQueryable<dynamic>>> GetSets ()
+        {
+            // Declare the models that you want to expose in the API.
+            return new Dictionary<Type, Func<IQueryable<dynamic>>> {
                 { typeof(IAuthenticable), () => Author },
                 { typeof(IAuthorizator), () => Permission },
                 { typeof(IAuthorization), () => AuthorPermission },
@@ -74,20 +91,20 @@ namespace GrapheneTemplate.Database
         {
             GrapheneDatabaseContextExtensions.OnModelCreating(this, modelBuilder);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="optionsBuilder"></param>
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //#warning To protect potentially sensitive information in your connection string, 
-            //            you should move it out of source code.See http://go.microsoft.com/fwlink/?LinkId=723263 
-            //     for guidance on storing connection strings.
-            // optionsBuilder.UseMySQL("server=localhost;database=graphene;user=root;password=$torage");
-            optionsBuilder
-                .UseSqlServer("Server = localhost\\SQLEXPRESS; Database = samueldemoda; Trusted_Connection = True;")
-                .EnableSensitiveDataLogging()
-                .LogTo(message => Debug.WriteLine(message));
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="optionsBuilder"></param>
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    //#warning To protect potentially sensitive information in your connection string, 
+        //    //            you should move it out of source code.See http://go.microsoft.com/fwlink/?LinkId=723263 
+        //    //     for guidance on storing connection strings.
+        //    // optionsBuilder.UseMySQL("server=localhost;database=graphene;user=root;password=$torage");
+        //    optionsBuilder
+        //        .UseSqlServer("Server = localhost\\SQLEXPRESS; Database = samueldemoda; Trusted_Connection = True;")
+        //        .EnableSensitiveDataLogging()
+        //        .LogTo(message => Debug.WriteLine(message));
+        //}
     }
 }

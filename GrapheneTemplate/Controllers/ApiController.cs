@@ -3,7 +3,7 @@ using Graphene.Database.Interfaces;
 using Graphene.Entities;
 using Graphene.Extensions;
 using Microsoft.EntityFrameworkCore;
-using GrapheneTemplate.Models;
+using GrapheneTemplate.Database.Models;
 using GrapheneTemplate.Database;
 using System.Linq.Expressions;
 using System.Linq.Dynamic.Core;
@@ -20,9 +20,9 @@ namespace GrapheneTemplate.Http.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [ApiController]
-    [Authorize]
-    [ServiceFilter(typeof(AuthorizeActionFilter))]
+    //[ApiController]
+    //[Authorize]
+    //[ServiceFilter(typeof(AuthorizeActionFilter))]
     [Route("/graphene/api/")]
     public class ApiController : Graphene.Http.Controllers.ApiController
     {

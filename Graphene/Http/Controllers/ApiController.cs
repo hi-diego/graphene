@@ -19,7 +19,7 @@ namespace Graphene.Http.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Authorize]
+    //[Authorize]
     public abstract class ApiController : ControllerBase
     {
         /// <summary>
@@ -217,35 +217,5 @@ namespace Graphene.Http.Controllers
             // User Permission not implemented jet so a new {} is given
             return Ok(await pagination.Paginate(set, new { }, EntityRepository.Graph, entityType));
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        //public User GetUser() =>
-        //    ApiController.GetUser(User);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        //public static User GetUser(ClaimsPrincipal claims) =>
-        //    Backend.Database.Entities.User.Transform((ClaimsIdentity)claims.Identity);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        //private string GetPermissionsWhere(string entity, string actionName)
-        //{
-        //    string[] wheres = DatabaseContext.Permission
-        //        .Where(p => p.Entity == entity && actionName == p.Name)
-        //        .Select(p => p.Expression)
-        //        .ToArray();
-        //    string where = wheres.Length > 0
-        //        ? " && " + string.Join(" && ", wheres)
-        //        : "";
-        //    return where;
-        //}
     }
 }

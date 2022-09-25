@@ -29,7 +29,7 @@ namespace Graphene.Entities
         /// 
         /// </summary>
         [NotMapped]
-        public virtual string Token { get; set; }
+        public virtual string? Token { get; set; }
         /// <summary>
         /// 
         /// </summary>

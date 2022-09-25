@@ -160,8 +160,10 @@ namespace Graphene.Graph
         /// <returns></returns>
         public IEnumerable<IncludeExpression> GetIncludeExpressions(Type root, string[] includes)
         {
-            GraphType rootGraphType = Types.Single(t => t.SystemType == root);
-            List<IncludeExpression> includeExpressions = new List<IncludeExpression>(); 
+            //return includes;
+            GraphType? rootGraphType = Types.FirstOrDefault(t => t.SystemType == root);
+            List<IncludeExpression> includeExpressions = new List<IncludeExpression>();
+            if (rootGraphType == null) return includeExpressions;
             IncludeExpression prevIncludeExpression = null;
             foreach (string i in includes) {
                 IncludeExpression includeExpression = new IncludeExpression(rootGraphType, i, this, prevIncludeExpression);
@@ -306,7 +308,7 @@ namespace Graphene.Graph
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="services"></param>
-        public static void RegisterServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, IDisposable, new()
+        public static void RegisterServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, IDisposable
         {
             RegisterGraphServices<T>(builder);
             RegisterMCVServices(builder);
@@ -317,7 +319,7 @@ namespace Graphene.Graph
         /// 
         /// </summary>
         /// <param name="builder"></param>
-        private static void RegisterAuthorizationServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, IDisposable, new()
+        private static void RegisterAuthorizationServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, IDisposable
         {
             builder.Services.AddScoped<AuthorizationService>();
             builder.Services.AddScoped<AuthorizeActionFilter>();
@@ -329,10 +331,16 @@ namespace Graphene.Graph
         /// 
         /// </summary>
         /// <param name="builder"></param>
-        public static void RegisterGraphServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, new()
+        public static void RegisterGraphServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext
         {
             builder.Services.AddScoped<IGrapheneDatabaseContext>((IServiceProvider provider) => provider.GetService<T>());
-            builder.Services.AddSingleton<IGraph>((IServiceProvider provider) => new Graph(new T()));
+            builder.Services.AddSingleton<IGraph>((IServiceProvider provider) => {
+                using (var scope = provider.CreateScope())
+                {
+                    var service = scope.ServiceProvider.GetService<T>();
+                    return new Graph(service);
+                }
+            });
         }
         /// <summary>
         /// 

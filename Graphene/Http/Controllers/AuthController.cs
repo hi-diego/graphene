@@ -20,6 +20,7 @@ namespace Graphene.Http.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [Route("/auth")]
     public class AuthController : ControllerBase
     {
         /// <summary>
