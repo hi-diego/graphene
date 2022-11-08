@@ -36,7 +36,7 @@ namespace Graphene.Entities
         /// <param name="identity"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public static Authenticable Transform(ClaimsIdentity identity)
+        public static Authenticable Transform(ClaimsIdentity? identity)
         {
             if (identity == null) return null;
             Claim claim = identity.Claims.Where(c => c.Type == ClaimTypes.UserData).FirstOrDefault();

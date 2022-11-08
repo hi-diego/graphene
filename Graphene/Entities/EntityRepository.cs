@@ -65,6 +65,19 @@ namespace Graphene.Entities
         /// <param name="request"></param>
         /// <param name="entityName"></param>
         /// <returns></returns>
+        public object Generate(Type type, JObject data)
+        {
+            dynamic instance = data.ToObject(type);
+            return instance;
+        }
+
+        /// <summary>
+        /// Create a Entity from the JObject and add the resource into the DbContext
+        /// and Persist the changes with SaveChanges if the save flag is provided.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
         public async Task<object> TrackGraph(dynamic instance, object user = null, bool save = true)
         {
             Graphene.Graph.Graph.SaveAnnotatedGraph(DatabaseContext, instance);
@@ -86,6 +99,33 @@ namespace Graphene.Entities
             if (save) await Save((Entity)instance, false);
             return instance;
         }
+        /// <summary>
+        /// Verify if the Resource Exist in the DbContext
+        /// and find it by its Id.
+        ///
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Entity> Find(string entityName, Guid guid, bool tracking = true, string[] load = null, string[] includes = null)
+        {
+            // Check if the DbSet and the Key in the EntityDictionary exists in DatabaseContext, return if not
+            if (!Graph.Exists(DatabaseContext, ref entityName)) return null;
+            // Get the Set as var becuse (IQueryable<dynamic>) but the entityType will be calculated at runtime and thats necesary for the 
+            // dynamic excecution of "Include" and "IhenInclude" methods, if a (IQueryable<object>, IQueryable<Entity> IQueryable<any>) is given the dynamic excution by reflectrion will crash.
+            var set = Graph.GetSet(DatabaseContext, entityName);
+            // Get the entity SystemType and GraphType in order to follow the graph, this is key to know which method (Include, ThenInclude or ThenIncludeMultiple) is necesary to call.
+            Type entityType = Graph.Find(entityName.DbSetName()).SystemType;
+            // Generate and Juxtapoze the dynamic includeds by executing the static includeMethod from the EntityFrameworkQueryableExtensions.
+            set = Graph.SetIncludes(set, entityType, includes);
+            // Find instance by Entity.Id
+            set = set.Where(i => (i as Entity).Uid.Equals(guid));
+            // Set the AsNoTracking option value.
+            return tracking
+                ? await set.Includes(load).FirstOrDefaultAsync()
+                : await set.AsNoTracking().Includes(load).FirstOrDefaultAsync();
+        }
+
         /// <summary>
         /// Verify if the Resource Exist in the DbContext
         /// and find it by its Id.
@@ -156,6 +196,20 @@ namespace Graphene.Entities
             Entity instance = await Find(entityName, id, false);
             if (instance == null) return instance;
             return await Update(instance, data, save); ;
+        }
+
+        /// <summary>
+        /// Find the instance and if exists Update it from the JObject updating
+        /// the instance resource into the DbContext
+        /// and persist the changes with SaveChanges if the save flag is provided.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="request"></param>
+        /// <param name="id"></param>
+        public async Task<Entity> Edit(Entity instance, JObject data)
+        {
+            if (instance == null) return instance;
+            return await Update(instance, data, true); ;
         }
 
         /// <summary>

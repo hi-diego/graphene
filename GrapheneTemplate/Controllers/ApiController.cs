@@ -23,21 +23,21 @@ namespace GrapheneTemplate.Http.Controllers
     //[ApiController]
     //[Authorize]
     //[ServiceFilter(typeof(AuthorizeActionFilter))]
-    [Route("/graphene/api/")]
-    public class ApiController : Graphene.Http.Controllers.ApiController
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public DatabaseContext Context { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="databaseContext"></param>
-        public ApiController(IGrapheneDatabaseContext context, IConfiguration configuration, IGraph graph)
-            : base(context, configuration, graph)
-        {
-            Context = (DatabaseContext)context;
-        }
-    }
+    //[Route("/graphene/api/")]
+    //public class ApiController : Graphene.Http.Controllers.ApiController
+    //{
+    //    /// <summary>
+    //    /// 
+    //    /// </summary>
+    //    public DatabaseContext Context { get; set; }
+    //    /// <summary>
+    //    /// 
+    //    /// </summary>
+    //    /// <param name="databaseContext"></param>
+    //    public ApiController(IGrapheneDatabaseContext context, IConfiguration configuration, IGraph graph)
+    //        : base(context, configuration, graph)
+    //    {
+    //        Context = (DatabaseContext)context;
+    //    }
+    //}
 }
