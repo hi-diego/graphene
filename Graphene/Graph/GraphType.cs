@@ -31,21 +31,25 @@ namespace Graphene.Graph
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public virtual string PascalName { get => Name.ToCamelCase(true); }
 
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public virtual string HumanName { get => Name.ToCamelCase(true, true); }
 
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public virtual string HumanNamePlural { get => Name.ToCamelCase(true, true).ToPlural(); }
 
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public virtual string PluralName { get => Name.ToPlural(); }
 
         /// <summary>
@@ -66,26 +70,31 @@ namespace Graphene.Graph
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public virtual bool Multiple { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public virtual bool Primitive { get; set; } = false;
 
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public string ForeignKey { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public string InverseProperty { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public string InverseForeignKey { get; set; }
 
         /// <summary>
@@ -96,6 +105,7 @@ namespace Graphene.Graph
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public virtual string Description { get; set; }
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace Graphene.Http.Controllers
     /// </summary>
     //[ApiController]
     //[Route("[controller]")]
-    public class GraphController : ControllerBase
+    public abstract class GraphController : ControllerBase
     {
         /// <summary>
         /// 

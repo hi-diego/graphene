@@ -160,11 +160,11 @@ namespace Graphene.Graph
         /// <returns></returns>
         public IEnumerable<IncludeExpression> GetIncludeExpressions(Type root, string[] includes)
         {
-            //return includes;
             GraphType? rootGraphType = Types.FirstOrDefault(t => t.SystemType == root);
             List<IncludeExpression> includeExpressions = new List<IncludeExpression>();
             if (rootGraphType == null) return includeExpressions;
             IncludeExpression prevIncludeExpression = null;
+            if (includes == null) return includeExpressions;
             foreach (string i in includes) {
                 IncludeExpression includeExpression = new IncludeExpression(rootGraphType, i, this, prevIncludeExpression);
                 prevIncludeExpression = includeExpression;

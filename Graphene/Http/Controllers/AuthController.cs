@@ -20,8 +20,8 @@ namespace Graphene.Http.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Route("/auth")]
-    public class AuthController : ControllerBase
+    //[Route("/auth")]
+    public abstract class AuthController : ControllerBase
     {
         /// <summary>
         /// 
