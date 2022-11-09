@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using GrapheneTemplate.Database.Models;
+﻿using GrapheneTemplate.Database.Models;
 using Graphene.Database.Extensions;
 using Graphene.Database.Interfaces;
-using Graphene.Extensions;
-using Graphene.Graph;
-using Graphene.Entities;
 using Graphene.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Graphene.Services;
 
 namespace GrapheneTemplate.Database
 {
@@ -25,7 +18,7 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Post> Post { get; set; }
+        //public DbSet<Post> Post { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -33,15 +26,15 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Models.Log> Log { get; set; }
+        //public DbSet<Models.Log> Log { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Permission> Permission { get; set; }
+        //public DbSet<Permission> Permission { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<AuthorPermission> AuthorPermission { get; set; }
+        //public DbSet<AuthorPermission> AuthorPermission { get; set; }
         /// <summary>
         /// This is the Declaration of what is going to be accesible by
         /// the API Interface, all the entities that are declared here are going
@@ -75,12 +68,12 @@ namespace GrapheneTemplate.Database
             // Declare the models that you want to expose in the API.
             return new Dictionary<Type, Func<IQueryable<dynamic>>> {
                 { typeof(IAuthenticable), () => Author },
-                { typeof(IAuthorizator), () => Permission },
-                { typeof(IAuthorization), () => AuthorPermission },
-                { typeof(IInstanceLog), () => Log },
+                //{ typeof(IAuthorizator), () => Permission },
+                //{ typeof(IAuthorization), () => AuthorPermission },
+                //{ typeof(IInstanceLog), () => Log },
                 { typeof(Blog), () => Blog },
                 { typeof(Author), () => Author },
-                { typeof(Post), () => Post }
+                //{ typeof(Post), () => Post }
             };
         }
         /// <summary>

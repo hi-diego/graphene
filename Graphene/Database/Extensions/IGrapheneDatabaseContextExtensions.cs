@@ -24,9 +24,9 @@ namespace Graphene.Database.Extensions
         public static void SaveAnnotatedGraph(this IGrapheneDatabaseContext dbContext, object rootEntity)
         {
             dbContext.ChangeTracker.TrackGraph(rootEntity, n => {
-                Entity entity = (Entity)n.Entry.Entity;
-                n.Entry.State = entity.EntityState;
-                if (entity.EntityState == EntityState.Deleted) Entity.SoftDelete(entity, n.Entry);
+                Entity instance = (Entity)n.Entry.Entity;
+                n.Entry.State = instance.EntityState;
+                if (instance.EntityState == EntityState.Deleted) Entity.SoftDelete(instance, n.Entry);
             });
         }
 

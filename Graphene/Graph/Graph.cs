@@ -24,8 +24,52 @@ namespace Graphene.Graph
     /// <summary>
     /// 
     /// </summary>
+    public class UID
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Dictionary<int, Guid> Guid { get; set; } = new Dictionary<int, Guid>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Dictionary<Guid, int> Id { get; set; } = new Dictionary<Guid, int>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Guid GetGuid(int id)
+        {
+            Guid.TryGetValue(id, out var guid);
+            return guid;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public int GetId(Guid guid)
+        {
+            if (Id.TryGetValue(guid, out var id)) return id;
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class Graph : IGraph
     {
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static Dictionary<string, UID> UIDS { get; set; } = new Dictionary<string, UID>();
+
         /// <summary>
         /// 
         /// </summary>
@@ -101,6 +145,15 @@ namespace Graphene.Graph
         public void Init(IGrapheneDatabaseContext databaseContext)
         {
             Types = GetGraph(databaseContext);
+            databaseContext.SetDictionary.ToList().ForEach(kv => {
+                var guiDictionary = new UID();
+                var intances = kv.Value().ToList();
+                intances.ForEach(i => {
+                    guiDictionary.Guid.Add(i.Id, i.Uid);
+                    guiDictionary.Id.Add(i.Uid, i.Id);
+                });
+                Graph.UIDS.Add(kv.Key.Name, guiDictionary);
+            });
         }
 
         /// <summary>

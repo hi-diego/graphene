@@ -26,10 +26,15 @@ namespace GrapheneTemplate.Database.Models
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<Post> Posts { get; set; } = new List<Post>();
+        public IEnumerable<Blog> Bolg { get; set; } = new List<Blog>();
+
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<Permission> Permission { get; set; } = new List<Permission>();
+        // public IEnumerable<Post> Posts { get; set; } = new List<Post>();
+        /// <summary>
+        /// 
+        /// </summary>
+        // public IEnumerable<Permission> Permission { get; set; } = new List<Permission>();
     }
 }

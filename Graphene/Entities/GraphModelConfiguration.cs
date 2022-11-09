@@ -21,6 +21,7 @@ namespace Graphene.Entities
         public static void Configure(EntityTypeBuilder builder, Type type)
         {
             builder.HasIndex("Uid").IsUnique();
+            builder.HasIndex("Id").IsUnique();
             LambdaExpression e = DynamicExpressionParser.ParseLambda(
                 type, typeof(bool),
                 "e => e.DeletedAt == null"

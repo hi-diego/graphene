@@ -265,6 +265,11 @@ namespace Graphene.Entities
             IEnumerable<IInstanceLog> logs = BeforeSave(instance);
             if (update) DatabaseContext.Update(instance);
             await DatabaseContext.SaveChangesAsync();
+            logs.Where(l => l.InstanceEntityState == EntityState.Added).ToList().ForEach(l => {
+                l.InstanceId = instance.Id;
+                 Graphene.Graph.Graph.UIDS[instance._Entity].Guid.Add(l.InstanceId, l.InstanceUid);
+                 Graphene.Graph.Graph.UIDS[instance._Entity].Id.Add(l.InstanceUid, l.InstanceId);
+            });
             AfterSave(instance, logs);
             return instance;
         }
@@ -340,23 +345,27 @@ namespace Graphene.Entities
         public IEnumerable<IInstanceLog> LogChanges()
         {
             Type? logType = Graph.Find<IInstanceLog>()?.SystemType;
-            if (logType == null) return new List<InstanceLog>();
             var entries = DatabaseContext.ChangeTracker.Entries();
-            var set = Graphene.Graph.Graph.GetSet<IInstanceLog>(DatabaseContext);
-            IEnumerable<IInstanceLog> logs = set.CreateAndAddEntries(entries, logType);
-            DatabaseContext.AddRange(logs);
+            IQueryable<IInstanceLog> logs = (new List<InstanceLog>()).AsQueryable();
+            if (logType == null)
+            {
+                logs = logs.CreateAndAddEntries(entries, typeof(InstanceLog));
+            } else
+            {
+                logs = Graphene.Graph.Graph.GetSet<IInstanceLog>(DatabaseContext).CreateAndAddEntries(entries, typeof(InstanceLog));
+                DatabaseContext.AddRange(logs);
+            }
             // TODO: add a conditional option to store logs
-            return logs;
+            return logs.ToList();
         }
     }
     public static class IQueryableEntityLogExtensions
     {
-        public static IEnumerable<IInstanceLog> CreateAndAddEntries<T>(this IQueryable<T> set, IEnumerable<EntityEntry> entries, Type logType)
+        public static IQueryable<IInstanceLog> CreateAndAddEntries<T>(this IQueryable<T> set, IEnumerable<EntityEntry> entries, Type logType)
         {
             return entries.Where(e => e.State != EntityState.Unchanged)
                 // TODO: Replace null for the current auth user
-                .Select(entry => ((IInstanceLog)Activator.CreateInstance(logType)).Init(entry, null))
-                .ToList();
+                .Select(entry => ((IInstanceLog)Activator.CreateInstance(logType)).Init(entry, null)).AsQueryable();
         }
     }
 }

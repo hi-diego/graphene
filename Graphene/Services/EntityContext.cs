@@ -241,7 +241,8 @@ namespace Graphene.Services
             {
                 string? id = actionContext.RouteData?.Values["id"]?.ToString();
                 int resourceId = 0;
-                Int32.TryParse(id, out resourceId);
+                // Maybe is not a good idea to search in the API by Autoincremental ID
+                // Int32.TryParse(id, out resourceId);
                 Guid resourceGuid = new Guid();
                 Guid.TryParse(id, out resourceGuid);
                 bool hasGuid = !resourceGuid.Equals(new Guid());
