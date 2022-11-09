@@ -272,6 +272,24 @@ namespace Graphene.Graph
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <returns></returns>
+        public IQueryable<dynamic> GetSet(IGrapheneDatabaseContext dbContext, GraphType graphType)
+            => GetSet(dbContext, graphType.SystemType);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public IQueryable<dynamic> GetSet(IGrapheneDatabaseContext dbContext, Type type)
+            => dbContext.SetDictionary[type]();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public  IQueryable<T> GetSet<T>(IGrapheneDatabaseContext dbContext, string name)
             => (IQueryable<T>) dbContext.SetDictionary[Find(name).SystemType]();
 
@@ -322,7 +340,9 @@ namespace Graphene.Graph
         private static void RegisterAuthorizationServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, IDisposable
         {
             builder.Services.AddScoped<AuthorizationService>();
+            builder.Services.AddScoped<AuthorizationFilter>();
             builder.Services.AddScoped<AuthorizeActionFilter>();
+            builder.Services.AddScoped<ResourceFilter>();
             // TODO USE AuthorizationService or IAuthorizationHandler
             // builder.Services.AddSingleton<IAuthorizationHandler, MyHandler1>();
             //builder.Services.AddScoped<IAuthorizationService, AuthorizationService<T>>();
@@ -341,6 +361,7 @@ namespace Graphene.Graph
                     return new Graph(service);
                 }
             });
+            builder.Services.AddScoped<IEntityContext, EntityContext>();
         }
         /// <summary>
         /// 

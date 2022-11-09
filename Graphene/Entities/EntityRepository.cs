@@ -99,6 +99,30 @@ namespace Graphene.Entities
             if (save) await Save((Entity)instance, false);
             return instance;
         }
+
+        /// <summary>
+        /// Verify if the Resource Exist in the DbContext
+        /// and find it by its Id.
+        ///
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public IQueryable<dynamic> CreateFindQuery(Type entityType, object id, string[]? load = null, string[]? includes = null, bool tracking = true)
+        {
+            // Get the Set as var becuse (IQueryable<dynamic>) but the entityType will be calculated at runtime and thats necesary for the 
+            // dynamic excecution of "Include" and "IhenInclude" methods, if a (IQueryable<object>, IQueryable<Entity> IQueryable<any>) is given the dynamic excution by reflectrion will crash.
+            var set = Graph.GetSet(DatabaseContext, entityType);
+            // Generate and Juxtapoze the dynamic includeds by executing the static includeMethod from the EntityFrameworkQueryableExtensions.
+            // if (includes != null) set = Graph.SetIncludes(set, entityType, includes);
+            if (load != null) set = set.Includes(load);
+            // Find instance by Entity.Id
+            if (id is int) set = set.Where(i => (i as Entity).Id.Equals(id));
+            else set = set.Where(i => (i as Entity).Uid.Equals(id));
+            // Set the AsNoTracking option value.
+            return tracking ? set : set.AsNoTracking();
+        }
+
         /// <summary>
         /// Verify if the Resource Exist in the DbContext
         /// and find it by its Id.

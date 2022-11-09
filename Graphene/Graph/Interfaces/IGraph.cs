@@ -87,6 +87,21 @@ namespace Graphene.Graph.Interfaces
         /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public IQueryable<dynamic> GetSet(IGrapheneDatabaseContext dbContext, GraphType graphType);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public IQueryable<dynamic> GetSet(IGrapheneDatabaseContext dbContext, Type graphType);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="dbContext"></param>
         /// <returns></returns>
         public bool Exists<T>(IGrapheneDatabaseContext dbContext);
