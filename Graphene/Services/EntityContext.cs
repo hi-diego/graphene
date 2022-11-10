@@ -246,7 +246,7 @@ namespace Graphene.Services
                 Guid resourceGuid = new Guid();
                 Guid.TryParse(id, out resourceGuid);
                 bool hasGuid = !resourceGuid.Equals(new Guid());
-                if (resourceId == 0 && !hasGuid) return new BadRequestResult();
+                if (resourceId == 0 && !hasGuid) return new NotFoundResult();
                 Id = resourceId;
                 Guid = resourceGuid;
             }
@@ -264,18 +264,16 @@ namespace Graphene.Services
         /// <returns></returns>
         public async Task<Entity?> FindInstanceAsync(string[]? load = null)
         {
-            InstanceQuery = BuildQuery();
-            var instance = await InstanceQuery.FirstOrDefaultAsync();
-            Instance = instance;
-            return instance;
+            InstanceQuery = BuildQuery(load);
+            Instance = await InstanceQuery.FirstOrDefaultAsync();
+            return Instance;
         }
 
         public Entity? FindInstance(string[]? load = null)
         {
             InstanceQuery = BuildQuery(load);
-            var instance = InstanceQuery.FirstOrDefault();
-            Instance = instance;
-            return instance;
+            Instance = InstanceQuery.FirstOrDefault();
+            return Instance;
         }
 
         /// <summary>

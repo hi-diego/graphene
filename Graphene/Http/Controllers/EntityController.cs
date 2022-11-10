@@ -1,6 +1,7 @@
 ﻿using Graphene.Entities;
 using Graphene.Entities.Interfaces;
 using Graphene.Http;
+using Graphene.Http.Binders;
 using Graphene.Http.Filter;
 using Graphene.Services;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -46,26 +47,22 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpGet("/{entity}/{id}")]
-        public async Task<IActionResult> Find([FromQuery(Name = "load[]")] string[]? load = null)
+        public async Task<IActionResult> Find([FromEntityContext] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
         {
-            var instance = await EC.FindInstanceAsync(load);
-            if (instance == null) return new NotFoundResult();
             instance.SerializeId = true;
             return Ok(instance);
         }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //[HttpPatch("/{entity}/{id}")]
-        //public async Task<IActionResult> Update(string entity, string id, [FromQuery] Pagination pagination, [FromBody]JObject request)
-        //{
-        //    var resource = await FindInstance(EC.Id, EC.Guid, pagination);
-        //    if (resource == null) return new NotFoundResult();
-        //    if (!TryValidateModel(resource, entity)) return BadRequest(ModelState);
-        //    var resourceUpdated = await EC.Repository.Edit(resource, request);
-        //    return Ok(resourceUpdated);
-        //}
+        /// <summary>
+        /// 
+        /// </summary>
+        [HttpPatch("/{entity}/{id}")]
+        public async Task<IActionResult> Update([FromEntityContext] Entity resource, [FromQuery] Pagination pagination, [FromBody] JObject request)
+        {
+            if (!TryValidateModel(request)) return BadRequest(ModelState);
+            var resourceUpdated = await EC.Repository.Edit(resource, request);
+            return Ok(resourceUpdated);
+        }
 
         /// <summary>
         /// Validates and Store the requested instance
@@ -74,7 +71,7 @@ namespace Graphene.Http.Controllers
         /// <param name="request">The Entity instance created by the model binder<m</param>
         /// <returns></returns>
         [HttpPost("/{entity}")]
-        public async Task<IActionResult> Add([ModelBinder(typeof(EntityRequestModelBinder))] Entity request, string entity)
+        public async Task<IActionResult> Add([EntityRequest] Entity request, string entity)
         {
             // Validate the given model against the DataAnotation validation Attributes.
             // return the error bag in fvalidation fails.

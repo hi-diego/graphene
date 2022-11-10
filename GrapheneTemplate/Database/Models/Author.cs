@@ -26,7 +26,7 @@ namespace GrapheneTemplate.Database.Models
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<Blog> Bolg { get; set; } = new List<Blog>();
+        public IEnumerable<Blog> Bolgs { get; set; } = new List<Blog>();
 
         /// <summary>
         /// 

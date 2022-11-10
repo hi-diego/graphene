@@ -8,38 +8,47 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Graphene.Http
-{ }
-public class EntityRequestModelBinder : IModelBinder
+namespace Graphene.Http.Binders
 {
-    private readonly IEntityContext _context;
-
-    public EntityRequestModelBinder(IEntityContext context)
+    public class EntityRequest : ModelBinderAttribute
     {
-        _context = context;
+        public EntityRequest() : base (typeof(EntityRequestModelBinder))
+        {
+            //
+        }
     }
 
-    public Task BindModelAsync(ModelBindingContext bindingContext)
+    public class EntityRequestModelBinder : Attribute, IModelBinder
     {
-        if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
-        var request = _context.HttpRequestToJson(bindingContext.HttpContext).GetAwaiter().GetResult();
-        try
+        private readonly IEntityContext _context;
+
+        public EntityRequestModelBinder(IEntityContext context)
         {
-            var result = request.ToObject(_context.GraphType.SystemType);
-            bindingContext.Result = ModelBindingResult.Success(result);
+            _context = context;
         }
-        catch (JsonSerializationException e)
+
+        public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            bindingContext.ModelState.TryAddModelError(e.Path.Replace("Id", "Uid"), e.InnerException.Message);
+            if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+            var request = _context.HttpRequestToJson(bindingContext.HttpContext).GetAwaiter().GetResult();
+            try
+            {
+                var result = request.ToObject(_context.GraphType.SystemType);
+                bindingContext.Result = ModelBindingResult.Success(result);
+            }
+            catch (JsonSerializationException e)
+            {
+                bindingContext.ModelState.TryAddModelError(e.Path.Replace("Id", "Uid"), e.InnerException.Message);
+            }
+            catch (JsonReaderException e)
+            {
+                bindingContext.ModelState.TryAddModelError(e.Path.Replace("Id", "Uid"), e.Message);
+            }
+            catch (Exception e)
+            {
+                bindingContext.ModelState.TryAddModelError("", e.Message);
+            }
+            return Task.CompletedTask;
         }
-        catch (JsonReaderException e)
-        {
-            bindingContext.ModelState.TryAddModelError(e.Path.Replace("Id", "Uid"), e.Message);
-        }
-        catch (Exception e)
-        {
-            bindingContext.ModelState.TryAddModelError("", e.Message);
-        }
-        return Task.CompletedTask;
     }
 }
