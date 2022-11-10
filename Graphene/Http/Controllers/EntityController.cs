@@ -47,7 +47,7 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpGet("/{entity}/{id}")]
-        public async Task<IActionResult> Find([FromEntityContext] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
+        public async Task<IActionResult> Find([FindEntity] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
         {
             instance.SerializeId = true;
             return Ok(instance);
@@ -57,7 +57,7 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpPatch("/{entity}/{id}")]
-        public async Task<IActionResult> Update([FromEntityContext] Entity resource, [FromQuery] Pagination pagination, [FromBody] JObject request)
+        public async Task<IActionResult> Update([FindEntity] Entity resource, [FromQuery] Pagination pagination, [FromBody] JObject request)
         {
             if (!TryValidateModel(request)) return BadRequest(ModelState);
             var resourceUpdated = await EC.Repository.Edit(resource, request);
