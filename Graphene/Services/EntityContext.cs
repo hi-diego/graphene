@@ -264,6 +264,8 @@ namespace Graphene.Services
         /// <returns></returns>
         public async Task<Entity?> FindInstanceAsync(string[]? load = null)
         {
+            // If it was already fetched return it.
+            if (Instance != null) return Instance;
             InstanceQuery = BuildQuery(load);
             Instance = await InstanceQuery.FirstOrDefaultAsync();
             return Instance;
@@ -271,6 +273,8 @@ namespace Graphene.Services
 
         public Entity? FindInstance(string[]? load = null)
         {
+            // If it was already fetched return it.
+            if (Instance != null) return Instance;
             InstanceQuery = BuildQuery(load);
             Instance = InstanceQuery.FirstOrDefault();
             return Instance;
