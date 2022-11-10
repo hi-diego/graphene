@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GrapheneTemplate.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20221109185031_INIT")]
+    [Migration("20221110025408_INIT")]
     partial class INIT
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,11 +60,19 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnName("serialize_id");
 
                     b.Property<Guid>("Uid")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnName("uid")
+                        .HasDefaultValueSql("(uuid())");
 
                     b.HasKey("Id")
                         .HasName("pk_authors");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("Uid")
+                        .IsUnique();
 
                     b.ToTable("authors");
                 });
@@ -97,8 +105,10 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnName("serialize_id");
 
                     b.Property<Guid>("Uid")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnName("uid")
+                        .HasDefaultValueSql("(uuid())");
 
                     b.Property<string>("Url")
                         .IsRequired()

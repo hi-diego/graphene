@@ -24,7 +24,7 @@ namespace GrapheneTemplate.Database.Migrations
                     name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     serialize_id = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    uid = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    uid = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(uuid())", collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -47,7 +47,7 @@ namespace GrapheneTemplate.Database.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     author_id = table.Column<int>(type: "int", nullable: false),
                     serialize_id = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    uid = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    uid = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(uuid())", collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -63,6 +63,18 @@ namespace GrapheneTemplate.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_authors_id",
+                table: "authors",
+                column: "id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_authors_uid",
+                table: "authors",
+                column: "uid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_blogs_author_id",

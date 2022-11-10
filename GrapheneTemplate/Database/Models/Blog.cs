@@ -1,4 +1,5 @@
-﻿using Graphene.Graph;
+﻿using Graphene.Entities;
+using Graphene.Graph;
 using Graphene.Http.Validation;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,7 +21,7 @@ namespace GrapheneTemplate.Database.Models
         /// you can set a Computed Property to fetch the Cache UIDS from each Table see AuthorUId
         /// </summary>
         [JsonIgnore]
-        [ValidForeignKeyAttribute("Author")]
+        [ValidForeignKey("Author")]
         public int AuthorId { get; set; }
 
         /// <summary>

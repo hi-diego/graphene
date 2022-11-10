@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace Graphene.Entities
         /// <param name="builder"></param>
         public static void Configure(EntityTypeBuilder builder, Type type)
         {
+            builder.Property("Uid").HasDefaultValueSql("(uuid())");
             builder.HasIndex("Uid").IsUnique();
             builder.HasIndex("Id").IsUnique();
             LambdaExpression e = DynamicExpressionParser.ParseLambda(

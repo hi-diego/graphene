@@ -37,8 +37,11 @@ namespace Graphene.Database.Extensions
         /// <param name="entityBuilder"></param>
         public static void OnModelCreating(this IGrapheneDatabaseContext dbContext, ModelBuilder entityBuilder)
         {
+            // Iterate the Dictionary to get all the Models.
             foreach (Type entity in dbContext.SetDictionary.Values.Select(kv => Graphene.Graph.Graph.GetSetType(kv())))
-                if (entity.BaseType == typeof(Entity)) EntityConfiguration.Configure(entityBuilder.Entity(entity), entity);
+                // If is child of Entity lets configure it.
+                if (typeof(Entity).IsAssignableFrom(entity.BaseType)) EntityConfiguration.Configure(entityBuilder.Entity(entity), entity);
+            // Use snakecase simplicity
             dbContext.ModelBuilderToSnakeCase(entityBuilder);
         }
 

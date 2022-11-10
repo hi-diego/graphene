@@ -30,11 +30,11 @@ public class EntityRequestModelBinder : IModelBinder
         }
         catch (JsonSerializationException e)
         {
-            bindingContext.ModelState.TryAddModelError(e.Path, e.InnerException.Message);
+            bindingContext.ModelState.TryAddModelError(e.Path.Replace("Id", "Uid"), e.InnerException.Message);
         }
         catch (JsonReaderException e)
         {
-            bindingContext.ModelState.TryAddModelError(e.Path, e.Message);
+            bindingContext.ModelState.TryAddModelError(e.Path.Replace("Id", "Uid"), e.Message);
         }
         catch (Exception e)
         {

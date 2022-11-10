@@ -3,6 +3,7 @@ using Graphene.Entities.Interfaces;
 using Graphene.Http;
 using Graphene.Http.Filter;
 using Graphene.Services;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 
@@ -67,18 +68,21 @@ namespace Graphene.Http.Controllers
         //}
 
         /// <summary>
-        /// 
+        /// Validates and Store the requested instance
+        /// It will trigger the entire Graphene Entity Pipeline.
         /// </summary>
+        /// <param name="request">The Entity instance created by the model binder<m</param>
+        /// <returns></returns>
         [HttpPost("/{entity}")]
-        public async Task<IActionResult> Add(string entity, [FromQuery] Pagination pagination, [ModelBinder(typeof(EntityRequestModelBinder))] Entity request)
+        public async Task<IActionResult> Add([ModelBinder(typeof(EntityRequestModelBinder))] Entity request, string entity)
         {
-            // if (!TryValidateModel(request, entity)) return BadRequest(ModelState);
-            //try { var res = request.ToObject(EC.GraphType.SystemType);  }
-            //catch (Exception e) { System.Console.WriteLine(e); }
-             // var resource = EC.Repository.Generate(EC.GraphType.SystemType, request);
+            // Validate the given model against the DataAnotation validation Attributes.
+            // return the error bag in fvalidation fails.
             if (!TryValidateModel(request)) return BadRequest(ModelState);
-            Entity instance = (Entity)await EC.Repository.Create(request, true);
-            return Ok(instance);
+            // Persist the given request instance
+            var instance = (Entity) await EC.Repository.Create(request);
+            // return the new created Instance with 201 status code and the URL link on where to find the new created resource.
+            return Created($"{HttpContext.Request.GetEncodedUrl()}/{instance.Uid}", instance);
         }
 
         ///// <summary>

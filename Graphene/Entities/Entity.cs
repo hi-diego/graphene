@@ -35,6 +35,8 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
+        // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        // [DefaultValueSql("GETUTCDATE()")]
         public virtual Guid Uid { get; set; } = Guid.NewGuid();
 
         /// <summary>

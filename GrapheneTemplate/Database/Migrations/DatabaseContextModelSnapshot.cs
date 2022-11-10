@@ -58,11 +58,19 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnName("serialize_id");
 
                     b.Property<Guid>("Uid")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnName("uid")
+                        .HasDefaultValueSql("(uuid())");
 
                     b.HasKey("Id")
                         .HasName("pk_authors");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("Uid")
+                        .IsUnique();
 
                     b.ToTable("authors");
                 });
@@ -95,8 +103,10 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnName("serialize_id");
 
                     b.Property<Guid>("Uid")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnName("uid")
+                        .HasDefaultValueSql("(uuid())");
 
                     b.Property<string>("Url")
                         .IsRequired()
