@@ -38,7 +38,7 @@ namespace Graphene.Http.Filter
         /// <param name="context"></param>
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            context.Result = _entityContext.Settup(context);
+            context.Result = _entityContext.Init(context);
             if (context.Result != null) return;
             // bool authorized = AuthorizationService.IsAuthorized(_entityContext, _graph, _db).GetAwaiter().GetResult();
             // if (!authorized) context.Result = new UnauthorizedResult();

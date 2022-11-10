@@ -94,7 +94,7 @@ namespace Graphene.Services
         /// <param name="graph"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public IActionResult? Settup(ActionContext actionDescriptor);
+        public IActionResult? Init(ActionContext actionDescriptor);
 
         /// <summary>
         /// 
@@ -225,7 +225,15 @@ namespace Graphene.Services
             return Request;
         }
 
-        public IActionResult? Settup(ActionContext actionContext)
+        /// <summary>
+        /// Initialize the Graphene Pipeline by deconstructing the Request params.
+        /// It will return a NotFoundResult if the requested Entity url param 
+        /// https://api.foo.bar/{entity} does not correspond to any Model in the DatabaseContext or Graphene.Types cache;
+        /// It also returns a NotFoundResult if the request does not provide a valid GUID on the id url parameter.
+        /// </summary>
+        /// <param name="actionContext"></param>
+        /// <returns></returns>
+        public IActionResult? Init(ActionContext actionContext)
         {
             User = Authenticable.Transform((ClaimsIdentity?)actionContext?.HttpContext.User.Identity);
             Repository = new EntityRepository(DbContext, Graph);
