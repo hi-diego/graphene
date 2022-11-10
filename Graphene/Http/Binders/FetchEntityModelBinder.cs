@@ -51,6 +51,7 @@ namespace Graphene.Http.Binders
 
         /// <summary>
         /// 
+        /// Fetch from Database and Bind the requested instance using the IEntityContext data.
         /// </summary>
         /// <param name="bindingContext"></param>
         /// <returns></returns>
