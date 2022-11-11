@@ -228,7 +228,7 @@ namespace Graphene.Services
         /// <summary>
         /// Initialize the Graphene Pipeline by deconstructing the Request params.
         /// It will return a NotFoundResult if the requested Entity url param 
-        /// https://api.foo.bar/{entity} does not correspond to any Model in the DatabaseContext or Graphene.Types cache;
+        /// https://api.foo.bar/{entity} does not correspond to any Model in the DatabaseContext or Graphene.Graph.Types cache;
         /// It also returns a NotFoundResult if the request does not provide a valid GUID on the id url parameter.
         /// </summary>
         /// <param name="actionContext"></param>
