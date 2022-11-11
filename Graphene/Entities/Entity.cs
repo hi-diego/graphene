@@ -18,12 +18,35 @@ namespace Graphene.Entities
     /// <summary>
     /// 
     /// </summary>
-    public class Entity : IEntity
+    public abstract class Entity : BaseEntity
     {
         /// <summary>
         /// 
         /// </summary>
         [Key]
+        public override int Id { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public abstract class DevEntity : BaseEntity
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [Key]
+        public override int Id { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public abstract class BaseEntity : IEntity
+    {
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual int Id { get; set; }
 
         /// <summary>
@@ -35,8 +58,7 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
-        // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        // [DefaultValueSql("GETUTCDATE()")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual Guid Uid { get; set; } = Guid.NewGuid();
 
         /// <summary>
@@ -69,7 +91,7 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
-        public Entity()
+        public BaseEntity()
         {
             _Entity = GetType().Name;
         }

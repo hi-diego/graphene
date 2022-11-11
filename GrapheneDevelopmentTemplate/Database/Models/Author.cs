@@ -1,9 +1,9 @@
 ﻿using Graphene.Entities;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using static Graphene.Graph.Graph;
 
-namespace GrapheneTemplate.Database.Models
+namespace GrapheneDevelopmentTemplate.Database.Models
 {
     /// <summary>
     /// 

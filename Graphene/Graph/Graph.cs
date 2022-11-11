@@ -18,6 +18,8 @@ using System.Reflection;
 using System.Text;
 using Graphene.Services;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json.Linq;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Graphene.Graph
 {
@@ -451,7 +453,50 @@ namespace Graphene.Graph
             }).AddNewtonsoftJson(opt => {
                 opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 opt.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
+                // opt.SerializerSettings.Converters.Add(new EntityKeysJsonConverter());
             });
         }
+
+        public class EntityKeysJsonConverter : JsonConverter
+        {
+            // public override bool CanRead => false;
+            public override bool CanConvert(Type objectType)
+            {
+                var can = typeof(Entity).IsAssignableFrom(objectType);
+                return can;
+            }
+
+            public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+            {
+                return reader.Value;
+            }
+
+            public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+            {
+                var t = JToken.FromObject(value, serializer);
+                //if (t == null)
+                //{
+                //    serializer.Serialize(writer, value);
+                //}
+                JObject o = ((JObject) t) ?? new JObject();
+                var properties = value.GetType().GetProperties().ToList();
+                properties.ForEach(p => {
+                    var att = p.GetCustomAttribute<ForeignKeyAttribute>();
+                    //if (o.ContainsKey(p.Name)) o.Remove(p.Name);
+                    if (p.GetCustomAttribute<ForeignKeyAttribute>() != null)
+                    {
+                        //o.AddFirst(new JProperty(p.Name.Replace("Id", "Uid"), Graph.UIDS[att.Name].GetGuid((int)p.GetValue(value))));
+                    } else
+                    {
+                        //var val = p.GetValue(value);
+                        //o.AddFirst(new JProperty(p.Name, JToken.FromObject(val, serializer) ?? val));
+                    }
+                });
+                // if (o.ContainsKey("Id")) o.Remove("Id");
+                // o.WriteTo(writer);
+                //writer.WriteToken((new JToken("Uid", ((Entity) value).Uid)));
+            }
+        }
+
     }
 }
