@@ -18,15 +18,16 @@ namespace Graphene.Http.Validation
 
         public string Entity { get; }
 
-        public override string FormatErrorMessage(string name)
-        {
-            return base.FormatErrorMessage(name).Replace("Id", "Uid");
-        }
+        //public override string FormatErrorMessage(string name)
+        //{
+        //    return base.FormatErrorMessage(name).Replace("Id", "Uid");
+        //}
 
         public override bool IsValid(object? value)
         {
             int id = (value as int?) ?? 0;
-            return Graphene.Graph.Graph.UIDS[Entity].Guid.ContainsKey(id);
+            //return Graphene.Graph.Graph.UIDS[Entity].Guid.ContainsKey(id);
+            return id > 0;
         }
 
         /// <summary>

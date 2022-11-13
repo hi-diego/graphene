@@ -265,11 +265,12 @@ namespace Graphene.Entities
             IEnumerable<IInstanceLog> logs = BeforeSave(instance);
             if (update) DatabaseContext.Update(instance);
             await DatabaseContext.SaveChangesAsync();
-            logs.Where(l => l.InstanceEntityState == EntityState.Added).ToList().ForEach(l => {
-                l.InstanceId = instance.Id;
-                 Graphene.Graph.Graph.UIDS[instance._Entity].Guid.Add(l.InstanceId, l.InstanceUid);
-                 Graphene.Graph.Graph.UIDS[instance._Entity].Id.Add(l.InstanceUid, l.InstanceId);
-            });
+            // Use REdis cache Instead
+            //logs.Where(l => l.InstanceEntityState == EntityState.Added).ToList().ForEach(l => {
+            //    l.InstanceId = instance.Id;
+            //     Graphene.Graph.Graph.UIDS[instance._Entity].Guid.Add(l.InstanceId, l.InstanceUid);
+            //     Graphene.Graph.Graph.UIDS[instance._Entity].Id.Add(l.InstanceUid, l.InstanceId);
+            //});
             AfterSave(instance, logs);
             return instance;
         }

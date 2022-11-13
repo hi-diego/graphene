@@ -1,11 +1,10 @@
 ﻿using Graphene.Entities;
-using Graphene.Entities.Interfaces;
-using Graphene.Http;
 using Graphene.Http.Binders;
 using Graphene.Http.Filter;
 using Graphene.Services;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
 namespace Graphene.Http.Controllers
@@ -22,10 +21,13 @@ namespace Graphene.Http.Controllers
         /// </summary>
         /// <param name="graph"></param>
         /// <param name="db"></param>
-        public EntityController(IEntityContext entityContext)
+        public EntityController(IEntityContext entityContext, IOptions<JsonOptions> options = null)
         {
+            _options = options;
             EC = entityContext;
         }
+
+        private IOptions<JsonOptions> _options;
 
         /// <summary>
         /// 
@@ -50,6 +52,7 @@ namespace Graphene.Http.Controllers
         public async Task<IActionResult> Find([FindEntity] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
         {
             instance.SerializeId = true;
+            // string instance = JObject.FromObject(instance, this._options.Value.SerializerSettings);
             return Ok(instance);
         }
 

@@ -85,5 +85,17 @@ namespace GrapheneTemplate.Database
             GrapheneDatabaseContextExtensions.OnModelCreating(this, modelBuilder);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        public IGrapheneDatabaseContext Clone()
+        {
+            var contextOptions = new DbContextOptionsBuilder<DatabaseContext>()
+                .UseSqlServer(Database.GetConnectionString())
+                .Options;
+            return new DatabaseContext(contextOptions);
+        }
+
     }
 }

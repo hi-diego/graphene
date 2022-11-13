@@ -11,40 +11,6 @@ using static Graphene.Graph.Graph;
 
 namespace GrapheneTemplate.Database.Models
 {
-    public class IntToUidConverter : ValueConverter<int, Guid>
-    {
-
-        public IntToUidConverter(string name) : base(id => Graph.UIDS[name].GetGuid(id), guid => Graph.UIDS[name].GetId(guid))
-        {
-        }
-    }
-
-    public class JsonIntToUidConverter : JsonConverter
-    {
-        public JsonIntToUidConverter(string name)
-        {
-            Converter = new IntToUidConverter(name);
-        }
-
-        public IntToUidConverter Converter { get; }
-
-        public override bool CanConvert(Type objectType)
-        {
-            return true;
-        }
-
-        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-        {
-            return Converter.ConvertFromProvider((Guid.Parse((string) existingValue)));
-        }
-
-        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-        {
-           JToken t = JToken.FromObject(Converter.ConvertToProvider((int)value));
-           t.WriteTo(writer);
-        }
-    }
-
     /// <summary>
     /// 
     /// </summary>
@@ -60,9 +26,9 @@ namespace GrapheneTemplate.Database.Models
         /// you can set a Computed Property to fetch the Cache UIDS from each Table see AuthorUId
         /// </summary>
         [ValidForeignKey("Author")]
-        [JsonProperty("AuthorUid")]
+        // [JsonProperty("AuthorUid")]
         [ForeignKey(nameof(Author))]
-        [JsonConverter(typeof(JsonIntToUidConverter), "Author")]
+        [JsonConverter(typeof(KeyConverter<Author>))]
         public virtual int AuthorId { get; set; }
 
         /// <summary>

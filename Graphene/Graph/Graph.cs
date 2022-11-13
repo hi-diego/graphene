@@ -1,7 +1,6 @@
 ﻿using Graphene.Extensions;
 using Graphene.Database.Extensions;
 using Graphene.Database.Interfaces;
-using Graphene.Extensions;
 using Graphene.Graph.Interfaces;
 using Graphene.Http.Filter;
 using Graphene.Entities;
@@ -20,6 +19,9 @@ using Graphene.Services;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Graphene.Graph
 {
@@ -37,6 +39,21 @@ namespace Graphene.Graph
         /// 
         /// </summary>
         public Dictionary<Guid, int> Id { get; set; } = new Dictionary<Guid, int>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Dictionary<int, bool> IdTest { get; set; } = new Dictionary<int, bool>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int[] ArrayTest { get; set; } = new int[1];
+
+        /// <summary>
+        /// 
+        /// </summary>
+        //public Guid[] ArrayGuidTest { get; set; } = new Guid[1000000];
 
         /// <summary>
         /// 
@@ -147,15 +164,21 @@ namespace Graphene.Graph
         public void Init(IGrapheneDatabaseContext databaseContext)
         {
             Types = GetGraph(databaseContext);
-            databaseContext.SetDictionary.ToList().ForEach(kv => {
-                var guiDictionary = new UID();
-                var intances = kv.Value().ToList();
-                intances.ForEach(i => {
-                    guiDictionary.Guid.Add(i.Id, i.Uid);
-                    guiDictionary.Id.Add(i.Uid, i.Id);
-                });
-                Graph.UIDS.Add(kv.Key.Name, guiDictionary);
-            });
+            //databaseContext.SetDictionary.ToList().ForEach(kv => {
+            //    if (!kv.Key.Name.Equals("Blog")) return;
+            //    var guiDictionary = new UID();
+            //    var intances = kv.Value().ToList();
+            //    int i = 0;
+            //    intances.ForEach(e => {
+            //        // guiDictionary.Guid.Add(i.Id, i.Uid);
+            //        //guiDictionary.IdTest.Add(e.Id, true);
+            //        //guiDictionary.Id.Add(e.Uid, e.Id);
+            //        //guiDictionary.ArrayTest[i] = e.Id;
+            //        //guiDictionary.ArrayGuidTest[i] = e.Uid;
+            //        i++;
+            //    });
+            //    Graph.UIDS.Add(kv.Key.Name, guiDictionary);
+            //});
         }
 
         /// <summary>
@@ -448,55 +471,125 @@ namespace Graphene.Graph
         /// <param name="builder"></param>
         public static void RegisterMCVServices(WebApplicationBuilder builder)
         {
-            builder.Services.AddMvc(options => {
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddMvc(options =>
+            {
                 options.Filters.Add(typeof(DefaultExceptionFilter));
-            }).AddNewtonsoftJson(opt => {
-                opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                opt.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
-                // opt.SerializerSettings.Converters.Add(new EntityKeysJsonConverter());
-            });
+            }).AddNewtonsoftJson();
+            builder.Services.ConfigureOptions<ConfigureJsonOptions>();
         }
 
-        public class EntityKeysJsonConverter : JsonConverter
+    }
+    public class KeyConverter<Entity> : JsonConverter where Entity : IEntity
+    {
+        public override bool CanConvert(Type objectType)
         {
-            // public override bool CanRead => false;
-            public override bool CanConvert(Type objectType)
-            {
-                var can = typeof(Entity).IsAssignableFrom(objectType);
-                return can;
-            }
-
-            public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-            {
-                return reader.Value;
-            }
-
-            public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-            {
-                var t = JToken.FromObject(value, serializer);
-                //if (t == null)
-                //{
-                //    serializer.Serialize(writer, value);
-                //}
-                JObject o = ((JObject) t) ?? new JObject();
-                var properties = value.GetType().GetProperties().ToList();
-                properties.ForEach(p => {
-                    var att = p.GetCustomAttribute<ForeignKeyAttribute>();
-                    //if (o.ContainsKey(p.Name)) o.Remove(p.Name);
-                    if (p.GetCustomAttribute<ForeignKeyAttribute>() != null)
-                    {
-                        //o.AddFirst(new JProperty(p.Name.Replace("Id", "Uid"), Graph.UIDS[att.Name].GetGuid((int)p.GetValue(value))));
-                    } else
-                    {
-                        //var val = p.GetValue(value);
-                        //o.AddFirst(new JProperty(p.Name, JToken.FromObject(val, serializer) ?? val));
-                    }
-                });
-                // if (o.ContainsKey("Id")) o.Remove("Id");
-                // o.WriteTo(writer);
-                //writer.WriteToken((new JToken("Uid", ((Entity) value).Uid)));
-            }
+            return true;
         }
 
+        public override object? ReadJson(JsonReader reader, Type objectType, object? id, JsonSerializer serializer)
+        {
+            var db = serializer.GetServiceProvider().GetRequiredService<IGrapheneDatabaseContext>();
+            Guid guid = new Guid((string?) reader.Value ?? Guid.Empty.ToString());
+            var instance = Graph.GetSet<Entity>(db).FirstOrDefault(i => i.Uid == guid);
+            return instance?.Id ?? 0;
+        }
+
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            var db = serializer.GetServiceProvider().GetRequiredService<IGrapheneDatabaseContext>();
+            int id = (int?)value ?? 0;
+            var instance = Graph.GetSet<Entity>(db).FirstOrDefault(i => i.Id == id);
+            writer.WriteValue(instance.Uid);
+        }
+    }
+
+    class ConfigureJsonOptions : IConfigureOptions<MvcNewtonsoftJsonOptions>
+    {
+        private readonly IGrapheneDatabaseContext _db;
+        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
+        private readonly IServiceProvider _serviceProvider;
+
+        public ConfigureJsonOptions(
+            Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor,
+            //IGrapheneDatabaseContext db,
+            IServiceProvider serviceProvider)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            //_db = db;
+            _serviceProvider = serviceProvider;
+        }
+
+        public void Configure(MvcNewtonsoftJsonOptions options)
+        {
+            var sp = new ServiceProviderConverter(_httpContextAccessor, _serviceProvider);
+            JsonConvert.DefaultSettings = () =>
+            {
+                var settings = new JsonSerializerSettings();
+                settings.Converters.Add(sp);
+                settings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
+                settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                return settings;
+            };
+            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
+            options.SerializerSettings.Converters.Add(sp);
+        }
+    }
+
+
+    /// <summary>
+    /// This isn't a real converter. It only exists as a hack to expose
+    /// IServiceProvider on the JsonSerializerOptions.
+    /// </summary>
+    public class ServiceProviderConverter :
+        JsonConverter,
+        IServiceProvider
+    {
+        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
+        private readonly IGrapheneDatabaseContext _db;
+        private readonly IServiceProvider _serviceProvider;
+
+        public ServiceProviderConverter(
+            Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor,
+            //IGrapheneDatabaseContext db,
+            IServiceProvider serviceProvider)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            //_db = db;
+            _serviceProvider = serviceProvider;
+        }
+
+        public object? GetService(Type serviceType)
+        {
+            // Use the request services, if available, to be able to resolve
+            // scoped services.
+            // If there isn't a current HttpContext, just use the root service
+            // provider.
+            var services = _httpContextAccessor.HttpContext?.RequestServices
+                ?? _serviceProvider;
+            return services.GetService(serviceType);
+        }
+
+        public override bool CanConvert(Type typeToConvert) => false;
+
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        {
+            throw new NotSupportedException();
+        }
+    }
+    public static class Extensions
+    {
+        public static IServiceProvider GetServiceProvider(this JsonSerializer serializer)
+        {
+            return serializer.Converters.OfType<IServiceProvider>().FirstOrDefault()
+                ?? throw new InvalidOperationException(
+                    "No service provider found in JSON converters");
+        }
     }
 }

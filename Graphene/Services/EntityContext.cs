@@ -127,7 +127,7 @@ namespace Graphene.Services
     public class EntityContext : IEntityContext
     {
         /// <summary>
-        /// 
+        ///  
         /// </summary>
         /// <param name="graph"></param>
         /// <param name="db"></param>
@@ -241,7 +241,7 @@ namespace Graphene.Services
             var actionName = descriptor.ActionName;
             // var jsonBody = await HttpRequestToJson();
             var entityName = actionContext.RouteData?.Values["entity"]?.ToString()?.DbSetName();
-            if (entityName == null) return new NotFoundResult();
+            if (entityName == null) return null;
             var graphType = Graph.Find(entityName);
             if (graphType == null) return new NotFoundResult();
             bool? idParam = actionContext.RouteData?.Values.ContainsKey("id");

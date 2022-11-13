@@ -27,8 +27,15 @@ namespace Graphene.Http.Filter
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
             // _entityContext.BuildQuery();
+            var graphType = _entityContext.GraphType;
+            var foreignKeyFields = graphType.Fields.Where(f => f.ForeignKey != null).ToList();
         }
 
-        public void OnResourceExecuted(ResourceExecutedContext context) { }
+        public void OnResourceExecuted(ResourceExecutedContext context)
+        {
+            var graphType = _entityContext.GraphType;
+            var foreignKeyFields = graphType.Fields.Where(f => f.ForeignKey != null).ToList();
+            var result = context.Result;
+        }
     }
 }
