@@ -30,7 +30,7 @@ namespace GrapheneTemplate.Controllers
             //return Ok(_dbContext.Blog.Take(100).ToList());
             //return Ok(await pagination.Paginate(_dbContext.Blog));
             var query = _dbContext.Blog.AsNoTracking();
-            pagination.Total = 1000009; // query.Count();
+            pagination.Total = query.Count();
             pagination.Pages = pagination.Total / pagination.Size + (pagination.Total % pagination.Size);
             pagination.Data = await query.Skip((pagination.Page - 1) * pagination.Size).Take(pagination.Size).ToArrayAsync();
             return Ok(pagination);

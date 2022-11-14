@@ -1,5 +1,6 @@
 ﻿using Graphene.Entities;
 using Graphene.Graph;
+using Graphene.Http.Converters;
 using Graphene.Http.Validation;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
@@ -20,31 +21,15 @@ namespace GrapheneTemplate.Database.Models
         /// 
         /// </summary>
         public string Url { get; set; }
-
         /// <summary>
         /// If you want to hidde auto incremental IDs from JSON API
         /// you can set a Computed Property to fetch the Cache UIDS from each Table see AuthorUId
         /// </summary>
-        [ValidForeignKey("Author")]
-        // [JsonProperty("AuthorUid")]
-        [ForeignKey(nameof(Author))]
-        [JsonConverter(typeof(KeyConverter<Author>))]
-        public virtual int AuthorId { get; set; }
-
-        /// <summary>
-        /// This computed property takes ands sets the correspondet UID and autoincrementable Ids
-        /// to avoid Brute force attacks on AutoIncrementable Ids.
-        /// </summary>
-        //[NotMapped]
         //[JsonIgnore]
-        //public virtual Guid AuthorUId
-        //{
-        //    // Get from Graph.UIDS GUID static cache dictionary.
-        //    get => Graph.UIDS["Author"].GetGuid(AuthorId);
-        //    // Set from Graph.UIDS ID static cache dictionary.
-        //    set => AuthorId = Graph.UIDS["Author"].GetId(value);
-        //}
-
+        [ValidForeignKey("Author")]
+        [ForeignKey(nameof(Author))]
+        [JsonConverter(typeof(GuidConverter<Author>))]
+        public virtual int AuthorId { get; set; }
         /// <summary>
         /// 
         /// </summary>

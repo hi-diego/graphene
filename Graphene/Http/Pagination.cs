@@ -1,4 +1,5 @@
-﻿using Graphene.Extensions;
+﻿using Graphene.Entities;
+using Graphene.Extensions;
 using Graphene.Graph.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -77,7 +78,7 @@ namespace Graphene.Http
             query = query.Where(pagination.Where, user).Includes(pagination.Load);
             if (graph != null) query.Includes(pagination.Load, graph, entityType).AsNoTracking();
             // DAANGER , this NEXT LINE IS CRazy, wee need to cache the count of each table so do not perform count on tables that have more than 100,000 records
-            pagination.Total = 1000009;
+            pagination.Total = query.Count();
             pagination.Pages = pagination.Total / pagination.Size + (pagination.Total % pagination.Size);
             pagination.Data = await query.Skip((pagination.Page - 1) * pagination.Size).Take(pagination.Size).ToArrayAsync();
             return pagination;
