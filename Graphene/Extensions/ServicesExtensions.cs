@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace Graphene.Extensions
 {
-    public static class ServiceCollectionExtensions
+    public static class IServiceCollectionExtensions
     {
         public static void AddGraphene<Db>(this IServiceCollection services, WebApplicationBuilder builder) where Db : class, IGrapheneDatabaseContext, IInfrastructure<IServiceProvider>, IDbContextDependencies, IDbSetCache, IDbContextPoolable, IResettableService, IDisposable, IAsyncDisposable
         {

@@ -31,6 +31,8 @@ namespace Graphene.Http.Binders
         {
             if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
             var request = _context.HttpRequestToJson(bindingContext.HttpContext).GetAwaiter().GetResult();
+            if (request == null) bindingContext.ModelState.TryAddModelError("request", "Empty request not allowed.");
+            else
             try
             {
                 var result = request.ToObject(_context.GraphType.SystemType);

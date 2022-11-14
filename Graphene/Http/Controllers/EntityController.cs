@@ -49,7 +49,7 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpGet("/{entity}/{id}")]
-        public async Task<IActionResult> Find([FindEntity] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
+        public IActionResult Find([FindEntity] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
         {
             instance.SerializeId = true;
             // string instance = JObject.FromObject(instance, this._options.Value.SerializerSettings);

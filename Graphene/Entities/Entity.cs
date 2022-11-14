@@ -53,6 +53,7 @@ namespace Graphene.Entities
         /// 
         /// </summary>
         [JsonIgnore]
+        [NotMapped]
         public virtual bool SerializeId { get; set; } = false;
 
         /// <summary>

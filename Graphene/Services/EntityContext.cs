@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json.Linq;
 using System.Security.Claims;
 
@@ -118,6 +119,11 @@ namespace Graphene.Services
         /// </summary>
         /// <returns></returns>
         public IQueryable<dynamic> BuildQuery(string[]? load = null);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IDistributedCache Cache { get; set; }
     }
 
     /// <summary>
@@ -131,11 +137,12 @@ namespace Graphene.Services
         /// </summary>
         /// <param name="graph"></param>
         /// <param name="db"></param>
-        public EntityContext(IGraph graph, IGrapheneDatabaseContext db)
+        public EntityContext(IGraph graph, IGrapheneDatabaseContext db, IDistributedCache cache)
         {
+            Cache = cache;
             Graph = graph;
             DbContext = db;
-            Repository = new EntityRepository(DbContext, Graph);
+            Repository = new EntityRepository(DbContext, Graph, cache);
         }
 
         /// <summary>
@@ -193,6 +200,12 @@ namespace Graphene.Services
         /// 
         /// </summary>
         public IGrapheneDatabaseContext DbContext { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IDistributedCache Cache { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -236,7 +249,6 @@ namespace Graphene.Services
         public IActionResult? Init(ActionContext actionContext)
         {
             User = Authenticable.Transform((ClaimsIdentity?)actionContext?.HttpContext.User.Identity);
-            Repository = new EntityRepository(DbContext, Graph);
             var descriptor = (ControllerActionDescriptor) actionContext.ActionDescriptor;
             var actionName = descriptor.ActionName;
             // var jsonBody = await HttpRequestToJson();

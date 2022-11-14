@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Graphene.Extensions;
+﻿using Graphene.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Threading.Tasks;
 using Graphene.Database.Interfaces;
-using Graphene.Entities;
-using Graphene.Extensions;
 using Graphene.Entities.Interfaces;
-using System.Reflection;
 using Graphene.Graph.Interfaces;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Graphene.Entities
 {
@@ -29,9 +18,10 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
-        public EntityRepository(IGrapheneDatabaseContext dbContext, IGraph graph)
+        public EntityRepository(IGrapheneDatabaseContext dbContext, IGraph graph, IDistributedCache? cache = null)
         {
             Graph = graph;
+            _cache = cache;
             DatabaseContext = dbContext;
         }
 
@@ -44,6 +34,11 @@ namespace Graphene.Entities
         /// 
         /// </summary>
         public IGrapheneDatabaseContext DatabaseContext { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IDistributedCache _cache { get; private set; }
 
         /// <summary>
         /// Create a Entity from the JObject and add the resource into the DbContext
@@ -266,11 +261,15 @@ namespace Graphene.Entities
             if (update) DatabaseContext.Update(instance);
             await DatabaseContext.SaveChangesAsync();
             // Use REdis cache Instead
-            //logs.Where(l => l.InstanceEntityState == EntityState.Added).ToList().ForEach(l => {
-            //    l.InstanceId = instance.Id;
-            //     Graphene.Graph.Graph.UIDS[instance._Entity].Guid.Add(l.InstanceId, l.InstanceUid);
-            //     Graphene.Graph.Graph.UIDS[instance._Entity].Id.Add(l.InstanceUid, l.InstanceId);
-            //});
+            logs.Where(l => l.InstanceEntityState == EntityState.Added).ToList().ForEach(l => {
+                l.InstanceId = instance.Id;
+                string idKey = instance._Entity + "-" + instance.Id.ToString();
+                string guidKey = instance._Entity + "-" + instance.Uid.ToString();
+                string uid = (string)instance.Uid.ToString();
+                string id = (string)instance.Id.ToString();
+                _cache.SetString(idKey, uid);
+                _cache.SetString(guidKey, id);
+            });
             AfterSave(instance, logs);
             return instance;
         }
@@ -347,19 +346,14 @@ namespace Graphene.Entities
         {
             Type? logType = Graph.Find<IInstanceLog>()?.SystemType;
             var entries = DatabaseContext.ChangeTracker.Entries();
-            IQueryable<IInstanceLog> logs = (new List<InstanceLog>()).AsQueryable();
-            if (logType == null)
-            {
-                logs = logs.CreateAndAddEntries(entries, typeof(InstanceLog));
-            } else
-            {
-                logs = Graphene.Graph.Graph.GetSet<IInstanceLog>(DatabaseContext).CreateAndAddEntries(entries, typeof(InstanceLog));
-                DatabaseContext.AddRange(logs);
-            }
-            // TODO: add a conditional option to store logs
+            IQueryable<IInstanceLog> logs = logType == null
+                ? (new List<InstanceLog>()).AsQueryable().CreateAndAddEntries(entries, typeof(InstanceLog))
+                : Graphene.Graph.Graph.GetSet<IInstanceLog>(DatabaseContext).CreateAndAddEntries(entries, typeof(InstanceLog));
+            if (logType != null) DatabaseContext.AddRange(logs);
             return logs.ToList();
         }
     }
+
     public static class IQueryableEntityLogExtensions
     {
         public static IQueryable<IInstanceLog> CreateAndAddEntries<T>(this IQueryable<T> set, IEnumerable<EntityEntry> entries, Type logType)

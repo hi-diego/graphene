@@ -85,7 +85,7 @@ namespace Graphene.Graph
                         pi.ParameterType == typeof(ParsingConfig)
                     )
                 );
-        private IDistributedCache _cahce;
+        private IDistributedCache _cache;
 
         /// <summary>
         /// All the types including the fake ones;
@@ -98,7 +98,7 @@ namespace Graphene.Graph
         /// <param name="context"></param>
         public Graph(IGrapheneDatabaseContext context, IDistributedCache cache)
         {
-            _cahce = cache;
+            _cache = cache;
             Init(context);
         }
 
@@ -109,20 +109,26 @@ namespace Graphene.Graph
         public void Init(IGrapheneDatabaseContext databaseContext)
         {
             Types = GetGraph(databaseContext);
-            // databaseContext.UpdateCache()
             //databaseContext.SetDictionary.ToList().ForEach(kv =>
-            //{
-            //    var intances = kv.Value().AsNoTracking().ToList();
-            //    intances.ForEach(e => {
-            //        dynamic instance = e;
-            //        string idKey = instance._Entity + "-" + instance.Id.ToString();
-            //        string guidKey = instance._Entity + "-" + instance.Uid.ToString();
-            //        string uid = (string)instance.Uid.ToString();
-            //        string id = (string)instance.Id.ToString();
-            //        _cahce.SetString(idKey, uid);
-            //        _cahce.SetString(guidKey, id);
-            //    });
-            //});
+            //    AddGuidsToCache(kv.Value().AsNoTracking().ToList(), _cache)
+            //);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void AddGuidsToCache (List<object> instances, IDistributedCache cache)
+        {
+            instances.ForEach(e =>
+            {
+                dynamic instance = e;
+                string idKey = instance._Entity + "-" + instance.Id.ToString();
+                string guidKey = instance._Entity + "-" + instance.Uid.ToString();
+                string uid = (string)instance.Uid.ToString();
+                string id = (string)instance.Id.ToString();
+                cache.SetString(idKey, uid);
+                cache.SetString(guidKey, id);
+            });
         }
 
         /// <summary>
