@@ -25,12 +25,12 @@ namespace Graphene.Http
         /// 
         /// </summary>
         [FromQuery(Name = "load[]")]
-        public string[] Load { get; set; } = { };
+        public string[] Load { get; set; } = Array.Empty<string>();
         /// <summary>
         /// 
         /// </summary>
         [FromQuery(Name = "include[]")]
-        public string[] Include { get; set; } = { };
+        public string[] Include { get; set; } = Array.Empty<string>();
         /// <summary>
         /// 
         /// </summary>
@@ -52,7 +52,7 @@ namespace Graphene.Http
         /// <summary>
         /// 
         /// </summary>
-        public object[] Data { get; set; } = { };
+        public object[] Data { get; set; } = Array.Empty<object>();
         /// <summary>
         /// 
         /// </summary>
@@ -74,8 +74,10 @@ namespace Graphene.Http
         /// <returns></returns>
         public static async Task<Pagination> Paginate(Pagination pagination, IQueryable<dynamic> query, object user = null, IGraph graph = null, Type entityType = null)
         {
-            query = query.Where(pagination.Where, user).Includes(pagination.Load).Includes(pagination.Load, graph, entityType).AsNoTracking();
-            pagination.Total = query.Count();
+            query = query.Where(pagination.Where, user).Includes(pagination.Load);
+            if (graph != null) query.Includes(pagination.Load, graph, entityType).AsNoTracking();
+            // DAANGER , this NEXT LINE IS CRazy, wee need to cache the count of each table so do not perform count on tables that have more than 100,000 records
+            pagination.Total = 1000009;
             pagination.Pages = pagination.Total / pagination.Size + (pagination.Total % pagination.Size);
             pagination.Data = await query.Skip((pagination.Page - 1) * pagination.Size).Take(pagination.Size).ToArrayAsync();
             return pagination;

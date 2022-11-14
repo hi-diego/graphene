@@ -22,6 +22,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Graphene.Graph
 {
@@ -83,12 +84,6 @@ namespace Graphene.Graph
     /// </summary>
     public class Graph : IGraph
     {
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public static Dictionary<string, UID> UIDS { get; set; } = new Dictionary<string, UID>();
-
         /// <summary>
         /// 
         /// </summary>
@@ -143,6 +138,8 @@ namespace Graphene.Graph
                         pi.ParameterType == typeof(ParsingConfig)
                     )
                 );
+        private IDistributedCache _cahce;
+
         /// <summary>
         /// All the types including the fake ones;
         /// </summary>
@@ -152,8 +149,9 @@ namespace Graphene.Graph
         /// 
         /// </summary>
         /// <param name="context"></param>
-        public Graph(IGrapheneDatabaseContext context)
+        public Graph(IGrapheneDatabaseContext context, IDistributedCache cache)
         {
+            _cahce = cache;
             Init(context);
         }
 
@@ -164,20 +162,18 @@ namespace Graphene.Graph
         public void Init(IGrapheneDatabaseContext databaseContext)
         {
             Types = GetGraph(databaseContext);
-            //databaseContext.SetDictionary.ToList().ForEach(kv => {
-            //    if (!kv.Key.Name.Equals("Blog")) return;
-            //    var guiDictionary = new UID();
-            //    var intances = kv.Value().ToList();
-            //    int i = 0;
+            //databaseContext.SetDictionary.ToList().ForEach(kv =>
+            //{
+            //    var intances = kv.Value().AsNoTracking().ToList();
             //    intances.ForEach(e => {
-            //        // guiDictionary.Guid.Add(i.Id, i.Uid);
-            //        //guiDictionary.IdTest.Add(e.Id, true);
-            //        //guiDictionary.Id.Add(e.Uid, e.Id);
-            //        //guiDictionary.ArrayTest[i] = e.Id;
-            //        //guiDictionary.ArrayGuidTest[i] = e.Uid;
-            //        i++;
+            //        dynamic instance = e;
+            //        string idKey = instance._Entity + "-" + instance.Id.ToString();
+            //        string guidKey = instance._Entity + "-" + instance.Uid.ToString();
+            //        string uid = (string)instance.Uid.ToString();
+            //        string id = (string)instance.Id.ToString();
+            //        _cahce.SetString(idKey, uid);
+            //        _cahce.SetString(guidKey, id);
             //    });
-            //    Graph.UIDS.Add(kv.Key.Name, guiDictionary);
             //});
         }
 
@@ -436,7 +432,8 @@ namespace Graphene.Graph
                 using (var scope = provider.CreateScope())
                 {
                     var service = scope.ServiceProvider.GetService<T>();
-                    return new Graph(service);
+                    var cache = scope.ServiceProvider.GetService<IDistributedCache>();
+                    return new Graph(service, cache);
                 }
             });
             builder.Services.AddScoped<IEntityContext, EntityContext>();
@@ -471,6 +468,10 @@ namespace Graphene.Graph
         /// <param name="builder"></param>
         public static void RegisterMCVServices(WebApplicationBuilder builder)
         {
+            builder.Services.AddStackExchangeRedisCache(options => {
+                options.InstanceName = "GrapheneCache";
+                options.Configuration = builder.Configuration.GetConnectionString("redis");
+            });
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddMvc(options =>
             {
@@ -480,7 +481,7 @@ namespace Graphene.Graph
         }
 
     }
-    public class KeyConverter<Entity> : JsonConverter where Entity : IEntity
+    public class KeyConverter<E> : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
@@ -489,18 +490,27 @@ namespace Graphene.Graph
 
         public override object? ReadJson(JsonReader reader, Type objectType, object? id, JsonSerializer serializer)
         {
-            var db = serializer.GetServiceProvider().GetRequiredService<IGrapheneDatabaseContext>();
-            Guid guid = new Guid((string?) reader.Value ?? Guid.Empty.ToString());
-            var instance = Graph.GetSet<Entity>(db).FirstOrDefault(i => i.Uid == guid);
-            return instance?.Id ?? 0;
+            var redis = serializer.GetServiceProvider().GetRequiredService<IDistributedCache>();
+            if (redis == null) return 0;
+            string key = typeof(E).Name + "-" + (string?)reader.Value;
+            int cacheId = Int32.Parse(redis.GetString(key ?? "") ?? "0");
+            //var db = serializer.GetServiceProvider().GetRequiredService<IGrapheneDatabaseContext>();
+            //Guid guid = new Guid((string?) reader.Value ?? Guid.Empty.ToString());
+            //var instance = Graph.GetSet<Entity>(db).FirstOrDefault(i => i.Uid == guid);
+            return cacheId;
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var db = serializer.GetServiceProvider().GetRequiredService<IGrapheneDatabaseContext>();
-            int id = (int?)value ?? 0;
-            var instance = Graph.GetSet<Entity>(db).FirstOrDefault(i => i.Id == id);
-            writer.WriteValue(instance.Uid);
+            var redis = serializer.GetServiceProvider().GetRequiredService<IDistributedCache>();
+            if (redis == null) return;
+            string key = typeof(E).Name + "-" + (string?) value.ToString();
+            string? guid = redis.GetString(key);
+            Guid cacheGuid = new Guid(guid ?? Guid.Empty.ToString());
+            //var db = serializer.GetServiceProvider().GetRequiredService<IGrapheneDatabaseContext>();
+            //int id = (int?)value ?? 0;
+            //var instance = Graph.GetSet<Entity>(db).FirstOrDefault(i => i.Id == id);
+            writer.WriteValue(cacheGuid.ToString());
         }
     }
 
