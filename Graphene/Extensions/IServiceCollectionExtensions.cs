@@ -54,7 +54,8 @@ namespace Graphene.Extensions
                 // Name the instance this will put a prexif on the REdis Keys
                 // 1) "GrapheneCacheBlog-820020"
                 // 2) "GrapheneCacheBlog-f311addd-39e8-40d5-aadd-5ba127620020"
-                options.InstanceName = "GrapheneCache";
+                var name = typeof(T).Name;
+                options.InstanceName = name;
                 // Get the redis connection string from the correspondent appsettins.json
                 options.Configuration = builder.Configuration.GetConnectionString("redis");
             });

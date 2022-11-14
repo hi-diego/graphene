@@ -9,7 +9,7 @@ namespace GrapheneTemplate.Database
     /// <summary>
     /// 
     /// </summary>
-    public class DatabaseContext : DbContext, IGrapheneDatabaseContext
+    public class GrapheneCache : DbContext, IGrapheneDatabaseContext
     {
         /// <summary>
         /// 
@@ -54,7 +54,7 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
-        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
+        public GrapheneCache(DbContextOptions<GrapheneCache> options) : base(options)
         {
             // Declare the models that you want to expose in the API.
             SetDictionary = GetSets();
@@ -91,10 +91,10 @@ namespace GrapheneTemplate.Database
         /// <param name="modelBuilder"></param>
         public IGrapheneDatabaseContext Clone()
         {
-            var contextOptions = new DbContextOptionsBuilder<DatabaseContext>()
+            var contextOptions = new DbContextOptionsBuilder<GrapheneCache>()
                 .UseSqlServer(Database.GetConnectionString())
                 .Options;
-            return new DatabaseContext(contextOptions);
+            return new GrapheneCache(contextOptions);
         }
 
     }

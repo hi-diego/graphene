@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GrapheneTemplate.Database.Migrations
 {
-    [DbContext(typeof(DatabaseContext))]
+    [DbContext(typeof(GrapheneCache))]
     [Migration("20221110025408_INIT")]
     partial class INIT
     {

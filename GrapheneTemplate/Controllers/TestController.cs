@@ -9,13 +9,13 @@ namespace GrapheneTemplate.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        private DatabaseContext _dbContext;
+        private GrapheneCache _dbContext;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="entityContext"></param>
-        public TestController(DatabaseContext dbContext)
+        public TestController(GrapheneCache dbContext)
         {
             _dbContext = dbContext;
         }
