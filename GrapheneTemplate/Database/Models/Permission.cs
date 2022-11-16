@@ -12,29 +12,11 @@ namespace GrapheneTemplate.Database.Models
         /// <summary>
         /// 
         /// </summary>
-        [NotMapped]
-        public int AuthorId { get => AuthorizedId; set => AuthorizedId = value; }
-        /// <summary>
-        /// 
-        /// </summary>
-        [Column("author_id")]
-        public int AuthorizedId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Action { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool Denied { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Entity { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public IEnumerable<AuthorPermission> AuthorPermissions { get; set; } = Enumerable.Empty<AuthorPermission>();
+        /// <param name="entityContext"></param>
+        /// <returns></returns>
+        public override async Task<bool> IsAuthorized(IEntityContext entityContext)
+        {
+            return true;
+        }
     }
 }

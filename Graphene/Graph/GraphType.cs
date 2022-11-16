@@ -1,4 +1,5 @@
-﻿using Graphene.Extensions;
+﻿using Graphene.Entities.Interfaces;
+using Graphene.Extensions;
 using Graphene.Graph.Attributes;
 using Newtonsoft.Json;
 using System;
@@ -12,6 +13,12 @@ namespace Graphene.Graph
 {
     public class GraphType
     {
+        /// <summary>
+        /// TODO, use multiple authorizators
+        /// Retrive the authorizator rules from database
+        /// </summary>
+        [JsonIgnore]
+        public IAuthorizator? Authorizator { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -124,9 +131,10 @@ namespace Graphene.Graph
         /// 
         /// </summary>
         /// <param name="value"></param>
-        public GraphType(Type value) // , IEnumerable<Rule> rules = null)
+        public GraphType(Type value, IAuthorizator? authorizator = null) // , IEnumerable<Rule> rules = null)
         {
             Init(value);
+            Authorizator = authorizator;
             //if (rules != null) DatabaseRules = rules;
         }
 

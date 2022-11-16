@@ -2,6 +2,7 @@
 using Graphene.Http.Binders;
 using Graphene.Http.Filter;
 using Graphene.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

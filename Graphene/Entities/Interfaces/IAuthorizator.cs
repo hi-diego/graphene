@@ -1,5 +1,6 @@
 ﻿using Graphene.Database.Interfaces;
 using Graphene.Graph.Interfaces;
+using Graphene.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,15 +29,17 @@ namespace Graphene.Entities.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<IAuthorization> Authorizations { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="entityInstance"></param>
         /// <param name="user"></param>
         /// <param name="context"></param>
         /// <param name="graph"></param>
         /// <returns></returns>
         public Task<bool> IsAuthorized(Entity entityInstance, IAuthorizable user, IGrapheneDatabaseContext context, IGraph graph);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityContext"></param>
+        /// <returns></returns>
+        public Task<bool> IsAuthorized(IEntityContext entityContext);
     }
 }

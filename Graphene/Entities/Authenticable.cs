@@ -20,7 +20,7 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
-        public virtual string Identifier { get; set; }
+        public virtual string Identifier { get; set; } = "email";
         /// <summary>
         /// 
         /// </summary>
@@ -30,6 +30,12 @@ namespace Graphene.Entities
         /// </summary>
         [NotMapped]
         public virtual string? Token { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        [NotMapped]
+        public IEnumerable<IAuthorizator> Authorizations { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

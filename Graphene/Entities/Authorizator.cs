@@ -28,6 +28,24 @@ namespace Graphene.Entities
         /// The Action to Authorize, this correspond to and endpoint call (create/delete/update/or read).
         /// </summary>
         public string Action { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityContext"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static IAuthorizator GetFromContext(IEntityContext entityContext)
+        {
+            // Wee dont need to retrive it from Db each time is already cached in the Graph
+            // return entityContext.User.Authorizations.Where(a => a.Action == entityContext.ActionName).FirstOrDefault();
+            IAuthorizator authorizator = Graph.Graph.GetSet<IAuthorizator>(entityContext.DbContext)?.FirstOrDefault() ?? (IAuthorizator) new Authorization();
+            authorizator.Action = entityContext.ActionName;
+            authorizator.Entity = entityContext.GraphType.Name;
+            authorizator.Expression = entityContext.ActionName == "Find" || entityContext.ActionName == "Index" ? "true" : "false";
+            return authorizator;
+        }
+
         /// <summary>
         /// The entity that will be affected: this corresponds to a DbSet in the Databasecontext
         /// </summary>
@@ -35,33 +53,33 @@ namespace Graphene.Entities
         /// <summary>
         /// The Dinamic LinQ expression to excecute to authorize the User
         /// </summary>
-        public string Expression { get; set; }
+        public string Expression { get; set; } = "false";
         /// <summary>
         /// In case that it needs to query the database to authorize 
         /// this holds the Table in which starts the query.
         /// </summary>
         public string From { get; set; }
-        public ICollection<IAuthorization> Authorizations { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        // public bool  { get; set; }
-        /// <summary>
-        /// TODO: EXPLICIT AUTHORIZATION without linq
-        /// </summary>
-        //[NotMapped]
-        //public ICollection<IAuthorization> Authorizations { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="user"></param>
         /// <param name="res"></param>
         /// <returns></returns>
-        public virtual  bool Evaluate(IAuthorizable user, dynamic resource, dynamic request)
-           => Expression != null && user != null && resource != null
-                ? Graphene.Entities.Entity.QueryableOf(resource).Where(Expression, user, request).Count() > 0
-                : false;
+        public virtual bool Evaluate(dynamic user, dynamic? resource, dynamic? request)
+           => Graphene.Entities.Entity.QueryableOf(user).Where(FormatExpression(), resource, request).Count() > 0;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private object FormatExpression()
+        {
+            return Expression
+                .Replace("$user", "@0")
+                .Replace("$resource", "@1")
+                .Replace("$request", "@2");
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -99,11 +117,12 @@ namespace Graphene.Entities
         /// <param name="graph"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public virtual async Task<bool> AuthorizeFromDatabase(IEntityContext entityContext, IGraph graph, IGrapheneDatabaseContext db)
+        public virtual async Task<bool> EvaluateFromDatabase(IEntityContext entityContext, IGraph graph, IGrapheneDatabaseContext db)
         {
             var query = graph.GetSet(db, From ?? Entity).Where(Expression, entityContext.User, entityContext.RequestInstance, entityContext.Resource);
             return (await query.AsNoTracking().CountAsync()) > 0;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -111,9 +130,36 @@ namespace Graphene.Entities
         /// <param name="graph"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public virtual async Task<bool> Authorize(IAuthenticable user, object request, IEntity resource)
+        public virtual async Task<bool> EvaluateFromDatabase(IAuthenticable user, object? request, object? resource, IGraph graph, IGrapheneDatabaseContext db)
         {
-            return Evaluate(user, resource, request);
+            var query = graph.GetSet(db, From ?? Entity).Where(Expression, user, request, resource);
+            return (await query.AsNoTracking().CountAsync()) > 0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityContext"></param>
+        /// <param name="graph"></param>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public virtual async Task<bool> Authorize(IAuthenticable user, object? request, object? resource, IGraph? graph = null, IGrapheneDatabaseContext? db = null)
+        {
+            return graph == null || db == null
+                ? Evaluate(user, resource, request)
+                : await EvaluateFromDatabase(user, resource, request, graph, db);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityContext"></param>
+        /// <returns></returns>
+        public virtual async Task<bool> IsAuthorized(IEntityContext entityContext)
+        {
+            return entityContext.User == null
+                ? false
+                : await Authorize(entityContext.User, entityContext.Request, entityContext.Resource);
         }
     }
 }

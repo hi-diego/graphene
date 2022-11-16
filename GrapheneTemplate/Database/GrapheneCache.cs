@@ -30,10 +30,6 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
-        //public DbSet<Permission> Permission { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
         //public DbSet<AuthorPermission> AuthorPermission { get; set; }
         /// <summary>
         /// This is the Declaration of what is going to be accesible by
@@ -68,7 +64,7 @@ namespace GrapheneTemplate.Database
             // Declare the models that you want to expose in the API.
             return new Dictionary<Type, Func<IQueryable<dynamic>>> {
                 { typeof(IAuthenticable), () => Author },
-                //{ typeof(IAuthorizator), () => Permission },
+                { typeof(IAuthorizator), () => (new List<Permission>() { new Permission() }).AsQueryable() },
                 //{ typeof(IAuthorization), () => AuthorPermission },
                 //{ typeof(IInstanceLog), () => Log },
                 { typeof(Blog), () => Blog },

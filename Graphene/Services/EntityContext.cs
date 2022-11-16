@@ -59,7 +59,7 @@ namespace Graphene.Services
         /// <summary>
         /// 
         /// </summary>
-        public IAuthorizable? User { get; set; }
+        public IAuthenticable? User { get; set; }
 
         /// <summary>
         /// 
@@ -158,7 +158,7 @@ namespace Graphene.Services
         /// <summary>
         /// 
         /// </summary>
-        public IAuthorizable? User { get; set; }
+        public IAuthenticable? User { get; set; }
         /// <summary>
         /// To Read the RequestJson and deconstruct it for future purpuses on the Graphene Pipeline.
         /// </summary>

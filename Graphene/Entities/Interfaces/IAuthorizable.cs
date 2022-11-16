@@ -11,5 +11,9 @@ namespace Graphene.Entities.Interfaces
     /// </summary>
     public interface IAuthorizable : IEntity
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public IEnumerable<IAuthorizator> Authorizations { get; set; }
     }
 }

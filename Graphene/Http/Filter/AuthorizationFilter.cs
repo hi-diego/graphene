@@ -40,8 +40,9 @@ namespace Graphene.Http.Filter
         {
             context.Result = _entityContext.DeconstructAction(context);
             if (context.Result != null) return;
-            // bool authorized = AuthorizationService.IsAuthorized(_entityContext, _graph, _db).GetAwaiter().GetResult();
-            // if (!authorized) context.Result = new UnauthorizedResult();
+            IAuthorizator? authorizator = _entityContext.GraphType.Authorizator ?? Authorizator.GetFromContext(_entityContext);
+            bool isAuthorized = authorizator.IsAuthorized(_entityContext).GetAwaiter().GetResult();
+            if (!isAuthorized) context.Result = new UnauthorizedResult();
         }
     }
 }

@@ -140,7 +140,8 @@ namespace Graphene.Graph
             => context.SetDictionary.ToList()
                     //.Where(m => !m.Value.IsAbstract && m.Value.IsSubclassOf(typeof(Entity)))
                     .Where(m => Graph.GetSetType(m.Value()).IsSubclassOf(typeof(Entity)))
-                    .Select(m => new GraphType(Graph.GetSetType(m.Value()))) // until Rules are implemented, context.Rule.Where(r => r.Entity == m.Key).ToList()))
+                    .Select(m => new GraphType(Graph.GetSetType(m.Value()), Graph.GetSet<IAuthorizator>(context)?.Where(a => a.Entity == m.Key.Name).FirstOrDefault()))
+                    // when Rules are implemented, wee shloud add context.Rule.Where(r => r.Entity == m.Key).ToList()))
                     .ToList();
         /// <summary>
         /// 
@@ -291,8 +292,11 @@ namespace Graphene.Graph
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static IQueryable<T> GetSet<T>(IGrapheneDatabaseContext dbContext) 
-            => (IQueryable<T>) dbContext.SetDictionary[typeof(T)]();
+        public static IQueryable<T>? GetSet<T>(IGrapheneDatabaseContext dbContext)
+        {
+            try { return (IQueryable<T>)dbContext.SetDictionary[typeof(T)](); }
+            catch (KeyNotFoundException e) { return null;  }
+        }
 
         /// <summary>
         /// 

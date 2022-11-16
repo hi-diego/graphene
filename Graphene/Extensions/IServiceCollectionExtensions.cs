@@ -35,9 +35,7 @@ namespace Graphene.Extensions
         /// <param name="builder"></param>
         private static void RegisterAuthorizationServices<T>(WebApplicationBuilder builder) where T : class, IGrapheneDatabaseContext, IDisposable
         {
-            builder.Services.AddScoped<AuthorizationService>();
             builder.Services.AddScoped<AuthorizationFilter>();
-            builder.Services.AddScoped<AuthorizeActionFilter>();
             builder.Services.AddScoped<ResourceFilter>();
             // TODO USE AuthorizationService or IAuthorizationHandler
             // builder.Services.AddSingleton<IAuthorizationHandler, MyHandler1>();
