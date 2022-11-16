@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 namespace Graphene.Http.Controllers
 {
     [Route("/")]
-    // [Authorize]
+    [Authorize]
     [ApiController]
     [ServiceFilter(typeof(AuthorizationFilter))]
     [ServiceFilter(typeof(ResourceFilter))]
@@ -40,7 +40,7 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpGet("/{entity}")]
-        public async Task<IActionResult?> Index(string entity, [FromQuery] Pagination pagination)
+        public virtual async Task<IActionResult?> Index(string entity, [FromQuery] Pagination pagination)
         {
             var set = EC.Graph.GetSet(EC.DbContext, entity);
             return Ok(await pagination.Paginate(set, new { }, EC.Repository.Graph, EC.GraphType.SystemType));
@@ -50,7 +50,7 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpGet("/{entity}/{id}")]
-        public IActionResult Find([FindEntity] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
+        public virtual IActionResult Find([FindEntity] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
         {
             instance.SerializeId = true;
             // string instance = JObject.FromObject(instance, this._options.Value.SerializerSettings);
@@ -61,7 +61,7 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpPatch("/{entity}/{id}")]
-        public async Task<IActionResult> Update([FindEntity] Entity resource, [FromQuery] Pagination pagination, [FromBody] JObject request)
+        public virtual async Task<IActionResult> Update([FindEntity] Entity resource, [FromQuery] Pagination pagination, [FromBody] JObject request)
         {
             if (!TryValidateModel(request)) return BadRequest(ModelState);
             var resourceUpdated = await EC.Repository.Edit(resource, request);
@@ -75,7 +75,7 @@ namespace Graphene.Http.Controllers
         /// <param name="request">The Entity instance created by the model binder<m</param>
         /// <returns></returns>
         [HttpPost("/{entity}")]
-        public async Task<IActionResult> Add([EntityRequest] Entity request, string entity)
+        public virtual async Task<IActionResult> Add([EntityRequest] Entity request, string entity)
         {
             // Validate the given model against the DataAnotation validation Attributes.
             // return the error bag in fvalidation fails.
