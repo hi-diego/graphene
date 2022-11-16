@@ -22,6 +22,7 @@ namespace Tests.Authorization
         {
             //AuthorizationService service = new AuthorizationService();
             //service.GetAuthorizeQueryable();
+            Assert.False(result, "1 should not be prime");
         }
 
 

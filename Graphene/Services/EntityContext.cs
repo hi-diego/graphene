@@ -95,7 +95,7 @@ namespace Graphene.Services
         /// <param name="graph"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public IActionResult? Init(ActionContext actionDescriptor);
+        public IActionResult? DeconstructAction(ActionContext actionDescriptor);
 
         /// <summary>
         /// 
@@ -246,7 +246,7 @@ namespace Graphene.Services
         /// </summary>
         /// <param name="actionContext"></param>
         /// <returns></returns>
-        public IActionResult? Init(ActionContext actionContext)
+        public IActionResult? DeconstructAction(ActionContext actionContext)
         {
             User = Authenticable.Transform((ClaimsIdentity?)actionContext?.HttpContext.User.Identity);
             var descriptor = (ControllerActionDescriptor) actionContext.ActionDescriptor;
