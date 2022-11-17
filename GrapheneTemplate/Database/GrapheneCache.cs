@@ -3,13 +3,15 @@ using Graphene.Database.Extensions;
 using Graphene.Database.Interfaces;
 using Graphene.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace GrapheneTemplate.Database
 {
     /// <summary>
     /// 
     /// </summary>
-    public class GrapheneCache : DbContext, IGrapheneDatabaseContext
+    public class GrapheneCache : IdentityDbContext<Author, Job, int>, IGrapheneDatabaseContext
     {
         /// <summary>
         /// 
@@ -64,7 +66,7 @@ namespace GrapheneTemplate.Database
             // Declare the models that you want to expose in the API.
             return new Dictionary<Type, Func<IQueryable<dynamic>>> {
                 { typeof(IAuthenticable), () => Author },
-                { typeof(IAuthorizator), () => (new List<Permission>() { new Permission() }).AsQueryable() },
+                //{ typeof(IAuthorizator), () => (new List<Permission>() { new Permission() }).AsQueryable() },
                 //{ typeof(IAuthorization), () => AuthorPermission },
                 //{ typeof(IInstanceLog), () => Log },
                 { typeof(Blog), () => Blog },

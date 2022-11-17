@@ -1,6 +1,8 @@
 ﻿using Graphene.Database.Interfaces;
 using Graphene.Entities.Interfaces;
 using Graphene.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ namespace Graphene.Entities
     /// <summary>
     /// 
     /// </summary>
-    public class Authenticable : Entity, IAuthenticable
+    public class Authenticable : IdentityUser<int>, IEntity, IAuthenticable
     {
         /// <summary>
         /// 
@@ -35,6 +37,12 @@ namespace Graphene.Entities
         /// </summary>
         [NotMapped]
         public IEnumerable<IAuthorizator> Authorizations { get; set; }
+        public Guid Uid { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string _Entity { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime CreatedAt { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime? ModifiedAt { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime? DeletedAt { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public EntityState EntityState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         /// <summary>
         /// 
@@ -53,11 +61,11 @@ namespace Graphene.Entities
         /// 
         /// </summary>
         /// <param name="Database"></param>
-        public override void BeforeAdded(IGrapheneDatabaseContext database)
-        {
-            base.BeforeAdded(database);
-            if (Id == 0) Password = new SecurePasswordService().Hash(Password);
-        }
+        //public override void BeforeAdded(IGrapheneDatabaseContext database)
+        //{
+        //    base.BeforeAdded(database);
+        //    if (Id == 0) Password = new SecurePasswordService().Hash(Password);
+        //}
         /// <summary>
         /// 
         /// </summary>
@@ -68,5 +76,10 @@ namespace Graphene.Entities
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerializeIdentifier() => false;
+
+        public string ToJson()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
