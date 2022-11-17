@@ -3,6 +3,7 @@ using Graphene.Http;
 using Graphene.Http.Filter;
 using Graphene.Services;
 using GrapheneTemplate.Database.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -11,7 +12,11 @@ using System.Text;
 
 namespace GrapheneTemplate.Controllers
 {
-    // [Authorize]
+    [Route("/entity")]
+    //[Authorize]
+    [ApiController]
+    //[ServiceFilter(typeof(AuthorizationFilter))]
+    //[ServiceFilter(typeof(ResourceFilter))]
     public class EntityController : Graphene.Http.Controllers.EntityController
     {
         /// <summary>
@@ -59,6 +64,7 @@ namespace GrapheneTemplate.Controllers
         }
 
         // Generates a random string with a given size.    
+        [NonAction]
         public string RandomString(int size, bool lowerCase = false)
         {
             var builder = new StringBuilder(size);

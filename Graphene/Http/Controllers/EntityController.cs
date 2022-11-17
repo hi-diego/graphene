@@ -10,11 +10,11 @@ using Newtonsoft.Json.Linq;
 
 namespace Graphene.Http.Controllers
 {
-    [Route("/")]
-    [Authorize]
-    [ApiController]
-    [ServiceFilter(typeof(AuthorizationFilter))]
-    [ServiceFilter(typeof(ResourceFilter))]
+    //[Route("/")]
+    //[Authorize]
+    //[ApiController]
+    //[ServiceFilter(typeof(AuthorizationFilter))]
+    //[ServiceFilter(typeof(ResourceFilter))]
     public abstract class EntityController : ControllerBase
     {
         /// <summary>
@@ -39,7 +39,7 @@ namespace Graphene.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        [HttpGet("/{entity}")]
+        [HttpGet("{entity}")]
         public virtual async Task<IActionResult?> Index(string entity, [FromQuery] Pagination pagination)
         {
             var set = EC.Graph.GetSet(EC.DbContext, entity);
@@ -49,7 +49,7 @@ namespace Graphene.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        [HttpGet("/{entity}/{id}")]
+        [HttpGet("{entity}/{id}")]
         public virtual IActionResult Find([FindEntity] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
         {
             instance.SerializeId = true;
@@ -60,7 +60,7 @@ namespace Graphene.Http.Controllers
         /// <summary>
         /// 
         /// </summary>
-        [HttpPatch("/{entity}/{id}")]
+        [HttpPatch("{entity}/{id}")]
         public virtual async Task<IActionResult> Update([FindEntity] Entity resource, [FromQuery] Pagination pagination, [FromBody] JObject request)
         {
             if (!TryValidateModel(request)) return BadRequest(ModelState);
@@ -74,7 +74,7 @@ namespace Graphene.Http.Controllers
         /// </summary>
         /// <param name="request">The Entity instance created by the model binder<m</param>
         /// <returns></returns>
-        [HttpPost("/{entity}")]
+        [HttpPost("{entity}")]
         public virtual async Task<IActionResult> Add([EntityRequest] Entity request, string entity)
         {
             // Validate the given model against the DataAnotation validation Attributes.

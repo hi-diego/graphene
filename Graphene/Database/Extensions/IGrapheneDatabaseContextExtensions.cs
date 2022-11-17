@@ -56,8 +56,8 @@ namespace Graphene.Database.Extensions
             foreach (IMutableEntityType entity in builder.Model.GetEntityTypes())
             {
                 // snakify table names
-                if (!typeof(Entity).IsAssignableFrom(entity.ClrType.BaseType)) continue;
-                entity.SetTableName(entity.GetTableName().Replace("AspNet", "").ToSnakeCase().ToPlural());
+                //if (!typeof(Entity).IsAssignableFrom(entity.ClrType.BaseType)) continue;
+                entity.SetTableName(entity.GetTableName().Replace("AspNet", "")); // .ToSnakeCase().ToPlural());
                 // snakify column names
                 foreach (var property in entity.GetProperties()) property.SetColumnName(property.GetColumnBaseName().ToSnakeCase());
                 // snakify key names

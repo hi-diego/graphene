@@ -13,13 +13,7 @@ namespace GrapheneTemplate.Database.Models
         /// <summary>
         /// 
         /// </summary>
-        [NotMapped]
-        public string Email { get => Identifier; set => Identifier = value; }
-        /// <summary>
-        /// 
-        /// </summary>
-        [Column("email")]
-        public override string Identifier { get; set; }
+        public override string Email { get => Identifier; set => Identifier = value; }
         /// <summary>
         /// 
         /// </summary>
@@ -28,13 +22,5 @@ namespace GrapheneTemplate.Database.Models
         /// 
         /// </summary>
         public IEnumerable<Blog> Bolgs { get; set; } = new List<Blog>();
-        /// <summary>
-        /// 
-        /// </summary>
-        // public IEnumerable<Post> Posts { get; set; } = new List<Post>();
-        /// <summary>
-        /// 
-        /// </summary>
-        // public IEnumerable<Permission> Permission { get; set; } = new List<Permission>();
     }
 }
