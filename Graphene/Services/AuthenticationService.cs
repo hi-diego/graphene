@@ -62,7 +62,7 @@ namespace Graphene.Services
             var claims = new[] {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Identifier),
-                new Claim(ClaimTypes.UserData, user.ToJson())
+                new Claim(ClaimTypes.UserData, user.ToString())
             };
             var tokenDescriptor = new SecurityTokenDescriptor
             {

@@ -5,6 +5,9 @@ using Graphene.Graph.Interfaces;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using Graphene.Extensions;
+using Microsoft.AspNetCore.Identity;
+using GrapheneTemplate.Database.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 // Register DatabaseContext Mysql
@@ -17,6 +20,10 @@ builder.Services.AddDbContext<GrapheneTemplate.Database.GrapheneCache>(
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 );
+builder.Services
+    .AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<GrapheneCache>();
+builder.Services.AddRazorPages();
 // Register Graphene Services after your DatabaseContext.
 builder.Services.AddGraphene<GrapheneCache>(builder);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -33,4 +40,5 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapRazorPages();
 app.Run();

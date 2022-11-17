@@ -10,12 +10,18 @@ namespace Graphene.Entities.Interfaces
     /// <summary>
     /// 
     /// </summary>
-    public interface IEntity
+    public interface IEntity : GrapheneEntity<int>
+    {
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface GrapheneEntity<KeyType>
     {
         /// <summary>
         /// 
         /// </summary>
-        public int Id { get; set; }
+        public KeyType Id { get; set; }
 
         /// <summary>
         /// 
@@ -46,10 +52,5 @@ namespace Graphene.Entities.Interfaces
         /// 
         /// </summary>
         public EntityState EntityState { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public string ToJson();
     }
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Graphene.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace GrapheneTemplate.Database.Models
 {
-    public class Job : IdentityRole<int>
+    public class Job : GrapheneIdentityRole
     {
     }
 }

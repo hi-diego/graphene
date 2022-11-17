@@ -5,13 +5,14 @@ using Graphene.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Graphene.Entities.Identity;
 
 namespace GrapheneTemplate.Database
 {
     /// <summary>
     /// 
     /// </summary>
-    public class GrapheneCache : IdentityDbContext<Author, Job, int>, IGrapheneDatabaseContext
+    public class GrapheneCache : IdentityDbContext<Author, Job, int, GrapheneIdentityUserClaim, GrapheneIdentityUserRole, GrapheneIdentityUserLogin, GrapheneIdentityRoleClaim, GrapheneIdentityUserToken>, IGrapheneDatabaseContext
     {
         /// <summary>
         /// 
@@ -57,6 +58,14 @@ namespace GrapheneTemplate.Database
             // Declare the models that you want to expose in the API.
             SetDictionary = GetSets();
         }
+
+        public GrapheneCache(DbSet<Blog> blog, DbSet<Author> author, Dictionary<Type, Func<IQueryable<dynamic>>> setDictionary)
+        {
+            Blog = blog;
+            Author = author;
+            SetDictionary = setDictionary;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -82,18 +91,5 @@ namespace GrapheneTemplate.Database
         {
             GrapheneDatabaseContextExtensions.OnModelCreating(this, modelBuilder);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="modelBuilder"></param>
-        public IGrapheneDatabaseContext Clone()
-        {
-            var contextOptions = new DbContextOptionsBuilder<GrapheneCache>()
-                .UseSqlServer(Database.GetConnectionString())
-                .Options;
-            return new GrapheneCache(contextOptions);
-        }
-
     }
 }

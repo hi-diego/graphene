@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Claims;
@@ -19,6 +20,12 @@ namespace Graphene.Entities
     /// </summary>
     public class Authenticable : IdentityUser<int>, IEntity, IAuthenticable
     {
+        /// <summary>
+        /// Gets or sets the primary key for this user.
+        /// </summary>
+        [PersonalData]
+        [Key]
+        public override int Id { get; set; }
         /// <summary>
         /// 
         /// </summary>
