@@ -59,13 +59,13 @@ namespace Graphene.Database.Extensions
                 //if (!typeof(Entity).IsAssignableFrom(entity.ClrType.BaseType)) continue;
                 entity.SetTableName(entity.GetTableName().Replace("AspNet", "")); // .ToSnakeCase().ToPlural());
                 // snakify column names
-                foreach (var property in entity.GetProperties()) property.SetColumnName(property.GetColumnBaseName().ToSnakeCase());
+                //foreach (var property in entity.GetProperties()) property.SetColumnName(property.GetColumnBaseName().ToSnakeCase());
                 // snakify key names
-                foreach (var key in entity.GetKeys()) key.SetName(key.GetName().ToSnakeCase());
+                //foreach (var key in entity.GetKeys()) key.SetName(key.GetName().ToSnakeCase());
                 // snakify foreignkeys names
-                foreach (var key in entity.GetForeignKeys()) key.SetConstraintName(key.GetConstraintName().ToSnakeCase());
+                //foreach (var key in entity.GetForeignKeys()) key.SetConstraintName(key.GetConstraintName().ToSnakeCase());
                 // snakify index names
-                foreach (var index in entity.GetIndexes()) index.SetName(index.Name.ToSnakeCase());
+                //foreach (var index in entity.GetIndexes()) index.SetDatabaseName(index.Name.ToSnakeCase());
             }
         }
     }

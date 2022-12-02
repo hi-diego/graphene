@@ -17,12 +17,12 @@ namespace GrapheneTemplate.Database
     /// <summary>
     /// 
     /// </summary>
-    public class GrapheneCache : IdentityDbContext<Author, Job, int, GrapheneIdentityUserClaim, GrapheneIdentityUserRole, GrapheneIdentityUserLogin, GrapheneIdentityRoleClaim, GrapheneIdentityUserToken>, IGrapheneDatabaseContext, IPersistedGrantDbContext
+    public class GrapheneCache : IdentityDbContext<Author, Job, int, GrapheneIdentityUserClaim, GrapheneIdentityUserRole, GrapheneIdentityUserLogin, GrapheneIdentityRoleClaim, GrapheneIdentityUserToken>, IGrapheneDatabaseContext // , IPersistedGrantDbContext
     {
         /// <summary>
         /// 
         /// </summary>
-        private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
+        //private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
 
         /// <summary>
         /// 
@@ -34,20 +34,20 @@ namespace GrapheneTemplate.Database
         /// </summary>
         public DbSet<Author> Author { get; set; }
 
-        /// <summary>
-        /// Gets or sets the <see cref="DbSet{PersistedGrant}"/>.
-        /// </summary>
-        public DbSet<PersistedGrant> PersistedGrants { get; set; }
+        ///// <summary>
+        ///// Gets or sets the <see cref="DbSet{PersistedGrant}"/>.
+        ///// </summary>
+        //public DbSet<PersistedGrant> PersistedGrants { get; set; }
 
-        /// <summary>
-        /// Gets or sets the <see cref="DbSet{DeviceFlowCodes}"/>.
-        /// </summary>
-        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
+        ///// <summary>
+        ///// Gets or sets the <see cref="DbSet{DeviceFlowCodes}"/>.
+        ///// </summary>
+        //public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
 
-        /// <summary>
-        /// Gets or sets the <see cref="DbSet{Key}"/>.
-        /// </summary>
-        public DbSet<Key> Keys { get; set; }
+        ///// <summary>
+        ///// Gets or sets the <see cref="DbSet{Key}"/>.
+        ///// </summary>
+        //public DbSet<Key> Keys { get; set; }
 
         /// <summary>
         /// 
@@ -60,11 +60,12 @@ namespace GrapheneTemplate.Database
         /// <param name="options">The <see cref="DbContextOptions"/>.</param>
         /// <param name="operationalStoreOptions">The <see cref="IOptions{OperationalStoreOptions}"/>.</param>
         public GrapheneCache(
-            DbContextOptions options,
-            IOptions<OperationalStoreOptions> operationalStoreOptions)
+            DbContextOptions options // ,
+            //IOptions<OperationalStoreOptions> operationalStoreOptions
+        )
             : base(options)
         {
-            _operationalStoreOptions = operationalStoreOptions;
+            //    _operationalStoreOptions = operationalStoreOptions;
             SetDictionary = GetSets();
         }
 
@@ -72,7 +73,7 @@ namespace GrapheneTemplate.Database
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<int> IPersistedGrantDbContext.SaveChangesAsync() => base.SaveChangesAsync();
+        //Task<int> IPersistedGrantDbContext.SaveChangesAsync() => base.SaveChangesAsync();
 
         /// <summary>
         /// 
@@ -100,7 +101,7 @@ namespace GrapheneTemplate.Database
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ConfigurePersistedGrantContext(_operationalStoreOptions.Value);
+            // builder.ConfigurePersistedGrantContext(_operationalStoreOptions.Value);
             GrapheneDatabaseContextExtensions.OnModelCreating(this, builder);
         }
     }

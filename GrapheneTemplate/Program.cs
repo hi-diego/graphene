@@ -22,14 +22,14 @@ builder.Services.AddDbContext<GrapheneTemplate.Database.GrapheneCache>(
         .EnableDetailedErrors()
 );
 builder.Services
-    .AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<GrapheneCache>();
-builder.Services
-    .AddIdentityServer()
-    .AddApiAuthorization<Author, GrapheneCache>();
-builder.Services
-    .AddAuthentication()
-    .AddIdentityServerJwt();
+//builder.Services
+    //.AddIdentityServer();
+    //.AddApiAuthorization<Author, GrapheneCache>();
+//builder.Services
+//    .AddAuthentication()
+//    .AddIdentityServerJwt();
 builder.Services
     .AddControllersWithViews();
 builder.Services
@@ -47,7 +47,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
-    // app.UseMigrationsEndPoint();
+    //app.UseMigrationsEndPoint();
 } else {
     app.UseHsts();
 }
@@ -55,7 +55,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
-app.UseIdentityServer();
+// app.UseIdentityServer();
 app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();

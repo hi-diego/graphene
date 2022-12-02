@@ -16,226 +16,44 @@ namespace GrapheneTemplate.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
-                {
-                    b.Property<string>("UserCode")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("user_code");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("client_id");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("creation_time");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasMaxLength(50000)
-                        .HasColumnType("longtext")
-                        .HasColumnName("data");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("DeviceCode")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("device_code");
-
-                    b.Property<DateTime?>("Expiration")
-                        .IsRequired()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("expiration");
-
-                    b.Property<string>("SessionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("session_id");
-
-                    b.Property<string>("SubjectId")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("subject_id");
-
-                    b.HasKey("UserCode")
-                        .HasName("pk_device_codes");
-
-                    b.HasIndex("DeviceCode")
-                        .IsUnique();
-
-                    b.HasIndex("Expiration");
-
-                    b.ToTable("DeviceCodes", (string)null);
-                });
-
-            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.Key", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Algorithm")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("algorithm");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("data");
-
-                    b.Property<bool>("DataProtected")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("data_protected");
-
-                    b.Property<bool>("IsX509Certificate")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_x509_certificate");
-
-                    b.Property<string>("Use")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("use");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int")
-                        .HasColumnName("version");
-
-                    b.HasKey("Id")
-                        .HasName("pk_keys");
-
-                    b.HasIndex("Use");
-
-                    b.ToTable("Keys");
-                });
-
-            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PersistedGrant", b =>
-                {
-                    b.Property<string>("Key")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("key");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("client_id");
-
-                    b.Property<DateTime?>("ConsumedTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("consumed_time");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("creation_time");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasMaxLength(50000)
-                        .HasColumnType("longtext")
-                        .HasColumnName("data");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("description");
-
-                    b.Property<DateTime?>("Expiration")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("expiration");
-
-                    b.Property<string>("SessionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("session_id");
-
-                    b.Property<string>("SubjectId")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("subject_id");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("type");
-
-                    b.HasKey("Key")
-                        .HasName("pk_persisted_grants");
-
-                    b.HasIndex("ConsumedTime");
-
-                    b.HasIndex("Expiration");
-
-                    b.HasIndex("SubjectId", "ClientId", "Type");
-
-                    b.HasIndex("SubjectId", "SessionId", "Type");
-
-                    b.ToTable("PersistedGrants", (string)null);
-                });
 
             modelBuilder.Entity("Graphene.Entities.Identity.GrapheneIdentityRoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("claim_type");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext")
-                        .HasColumnName("claim_value");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EntityState")
-                        .HasColumnType("int")
-                        .HasColumnName("entity_state");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int")
-                        .HasColumnName("role_id");
+                        .HasColumnType("int");
 
                     b.Property<Guid>("Uid")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("_Entity")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("__entity");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("Id")
-                        .HasName("pk_role_claims");
+                    b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
@@ -246,48 +64,37 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("claim_type");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("longtext")
-                        .HasColumnName("claim_value");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EntityState")
-                        .HasColumnType("int")
-                        .HasColumnName("entity_state");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Uid")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
                     b.Property<string>("_Entity")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("__entity");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("Id")
-                        .HasName("pk_user_claims");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -298,53 +105,41 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
-                        .HasColumnType("varchar(128)")
-                        .HasColumnName("login_provider");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("ProviderKey")
                         .HasMaxLength(128)
-                        .HasColumnType("varchar(128)")
-                        .HasColumnName("provider_key");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EntityState")
-                        .HasColumnType("int")
-                        .HasColumnName("entity_state");
+                        .HasColumnType("int");
 
                     b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("longtext")
-                        .HasColumnName("provider_display_name");
+                        .HasColumnType("longtext");
 
                     b.Property<Guid>("Uid")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
                     b.Property<string>("_Entity")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("__entity");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("LoginProvider", "ProviderKey")
-                        .HasName("pk_user_logins");
+                    b.HasKey("LoginProvider", "ProviderKey");
 
                     b.HasIndex("UserId");
 
@@ -354,44 +149,34 @@ namespace GrapheneTemplate.Database.Migrations
             modelBuilder.Entity("Graphene.Entities.Identity.GrapheneIdentityUserRole", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int")
-                        .HasColumnName("role_id");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EntityState")
-                        .HasColumnType("int")
-                        .HasColumnName("entity_state");
+                        .HasColumnType("int");
 
                     b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Uid")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("_Entity")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("__entity");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("UserId", "RoleId")
-                        .HasName("pk_user_roles");
+                    b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
@@ -401,54 +186,42 @@ namespace GrapheneTemplate.Database.Migrations
             modelBuilder.Entity("Graphene.Entities.Identity.GrapheneIdentityUserToken", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
-                        .HasColumnType("varchar(128)")
-                        .HasColumnName("login_provider");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(128)
-                        .HasColumnType("varchar(128)")
-                        .HasColumnName("name");
+                        .HasColumnType("varchar(128)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EntityState")
-                        .HasColumnType("int")
-                        .HasColumnName("entity_state");
+                        .HasColumnType("int");
 
                     b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Uid")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("longtext")
-                        .HasColumnName("value");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("_Entity")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("__entity");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("UserId", "LoginProvider", "Name")
-                        .HasName("pk_user_tokens");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", (string)null);
                 });
@@ -457,118 +230,95 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int")
-                        .HasColumnName("access_failed_count");
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("longtext")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("email");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("email_confirmed");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("EntityState")
-                        .HasColumnType("int")
-                        .HasColumnName("entity_state");
+                        .HasColumnType("int");
 
                     b.Property<string>("Identifier")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("identifier");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("lockout_enabled");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("lockout_end");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("name");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("normalized_email");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("normalized_user_name");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("password");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext")
-                        .HasColumnName("password_hash");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext")
-                        .HasColumnName("phone_number");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("phone_number_confirmed");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext")
-                        .HasColumnName("security_stamp");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("two_factor_enabled");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<Guid>("Uid")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("user_name");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("_Entity")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("__entity");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("Id")
-                        .HasName("pk_users");
+                    b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail");
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -577,38 +327,30 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
                     b.Property<int>("AuthorId")
-                        .HasColumnType("int")
-                        .HasColumnName("author_id");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid>("Uid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasColumnName("uid")
                         .HasDefaultValueSql("(uuid())");
 
                     b.Property<string>("Url")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("url");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("Id")
-                        .HasName("pk_blog");
+                    b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
@@ -625,54 +367,44 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("longtext")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("EntityState")
-                        .HasColumnType("int")
-                        .HasColumnName("entity_state");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("name");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("normalized_name");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<Guid>("Uid")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid");
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("_Entity")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("__entity");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("Id")
-                        .HasName("pk_roles");
+                    b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("Roles", (string)null);
                 });
@@ -683,8 +415,7 @@ namespace GrapheneTemplate.Database.Migrations
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_role_claims_asp_net_roles_role_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Graphene.Entities.Identity.GrapheneIdentityUserClaim", b =>
@@ -693,8 +424,7 @@ namespace GrapheneTemplate.Database.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_claims_asp_net_users_user_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Graphene.Entities.Identity.GrapheneIdentityUserLogin", b =>
@@ -703,8 +433,7 @@ namespace GrapheneTemplate.Database.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_logins_asp_net_users_user_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Graphene.Entities.Identity.GrapheneIdentityUserRole", b =>
@@ -713,15 +442,13 @@ namespace GrapheneTemplate.Database.Migrations
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_roles_asp_net_roles_role_id");
+                        .IsRequired();
 
                     b.HasOne("GrapheneTemplate.Database.Models.Author", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_roles_asp_net_users_user_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Graphene.Entities.Identity.GrapheneIdentityUserToken", b =>
@@ -730,8 +457,7 @@ namespace GrapheneTemplate.Database.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_tokens_asp_net_users_user_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Database.Models.Blog", b =>
@@ -740,8 +466,7 @@ namespace GrapheneTemplate.Database.Migrations
                         .WithMany("Bolgs")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_blog_users_author_id");
+                        .IsRequired();
 
                     b.Navigation("Author");
                 });
