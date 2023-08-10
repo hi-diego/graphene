@@ -6,7 +6,7 @@ namespace GrapheneTemplate.Database.Models
     /// <summary>
     /// 
     /// </summary>
-    public class AuthorPermission : Authorization
+    public class UserPermission : Authorization
     {
         /// <summary>
         /// 
@@ -22,12 +22,12 @@ namespace GrapheneTemplate.Database.Models
         /// 
         /// </summary>
         [NotMapped]
-        public override IAuthorizable Authorizable { get => Author; set => Author = (Author) value; }
+        public override IAuthorizable Authorizable { get => User; set => User = (User) value; }
         /// <summary>
         /// 
         /// </summary>
         [NotMapped]
-        public override int AuthorizableId { get => AuthorId; set => AuthorId = value; }
+        public override int AuthorizableId { get => UserId; set => UserId = value; }
         /// <summary>
         /// 
         /// </summary>
@@ -39,10 +39,10 @@ namespace GrapheneTemplate.Database.Models
         /// <summary>
         /// 
         /// </summary>
-        public int AuthorId { get; set; }
+        public int UserId { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public Author Author { get; set; }
+        public User User { get; set; }
     }
 }

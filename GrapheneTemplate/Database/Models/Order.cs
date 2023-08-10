@@ -1,4 +1,4 @@
-﻿using Graphene.Entities;
+using Graphene.Entities;
 using Graphene.Graph;
 using Graphene.Http.Converters;
 using Graphene.Http.Validation;
@@ -15,24 +15,24 @@ namespace GrapheneTemplate.Database.Models
     /// <summary>
     /// 
     /// </summary>
-    public class Blog : Entity
+    public class Order : Entity
     {
         /// <summary>
         /// 
         /// </summary>
-        public string Url { get; set; }
+        public double Quantity { get; set; }
         /// <summary>
         /// If you want to hidde auto incremental IDs from JSON API
-        /// you can set a Computed Property to fetch the Cache UIDS from each Table see AuthorUId
+        /// you can set a Computed Property to fetch the Cache UIDS from each Table see ProductUId
         /// </summary>
         //[JsonIgnore]
-        [ValidForeignKey("Author")]
-        [ForeignKey(nameof(Author))]
-        [JsonConverter(typeof(GuidConverter<Author>))]
-        public virtual int AuthorId { get; set; }
+        [ValidForeignKey("Product")]
+        [ForeignKey(nameof(Product))]
+        [JsonConverter(typeof(GuidConverter<Product>))]
+        public virtual int? ProductId { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public virtual Author? Author { get; set; }
+        public virtual Product? Product { get; set; }
     }
 }

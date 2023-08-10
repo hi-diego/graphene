@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GrapheneTemplate.Database.Migrations
 {
-    public partial class INIT : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,7 @@ namespace GrapheneTemplate.Database.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "authors",
+                name: "users",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -23,7 +23,6 @@ namespace GrapheneTemplate.Database.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    serialize_id = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     uid = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(uuid())", collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -33,20 +32,45 @@ namespace GrapheneTemplate.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_authors", x => x.id);
+                    table.PrimaryKey("pk_users", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "blogs",
+                name: "products",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    url = table.Column<string>(type: "longtext", nullable: false)
+                    name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    author_id = table.Column<int>(type: "int", nullable: false),
-                    serialize_id = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    price = table.Column<double>(type: "double", nullable: false),
+                    user_id = table.Column<int>(type: "int", nullable: true),
+                    uid = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_products", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_products_user_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "orders",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    quantity = table.Column<double>(type: "double", nullable: false),
+                    product_id = table.Column<int>(type: "int", nullable: true),
+                    user_id = table.Column<int>(type: "int", nullable: true),
                     uid = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "(uuid())", collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -54,42 +78,56 @@ namespace GrapheneTemplate.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_blogs", x => x.id);
+                    table.PrimaryKey("pk_orders", x => x.id);
                     table.ForeignKey(
-                        name: "fk_blogs_authors_author_id",
-                        column: x => x.author_id,
-                        principalTable: "authors",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "fk_orders_product_product_id",
+                        column: x => x.product_id,
+                        principalTable: "products",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_orders_user_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_authors_id",
-                table: "authors",
+                name: "IX_orders_id",
+                table: "orders",
                 column: "id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_authors_uid",
-                table: "authors",
+                name: "IX_orders_product_id",
+                table: "orders",
+                column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_orders_uid",
+                table: "orders",
                 column: "uid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_blogs_author_id",
-                table: "blogs",
-                column: "author_id");
+                name: "IX_orders_user_id",
+                table: "orders",
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_blogs_id",
-                table: "blogs",
+                name: "IX_products_user_id",
+                table: "products",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_users_id",
+                table: "users",
                 column: "id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_blogs_uid",
-                table: "blogs",
+                name: "IX_users_uid",
+                table: "users",
                 column: "uid",
                 unique: true);
         }
@@ -97,10 +135,13 @@ namespace GrapheneTemplate.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "blogs");
+                name: "orders");
 
             migrationBuilder.DropTable(
-                name: "authors");
+                name: "products");
+
+            migrationBuilder.DropTable(
+                name: "users");
         }
     }
 }

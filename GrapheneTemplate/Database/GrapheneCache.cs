@@ -14,7 +14,7 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Blog> Blog { get; set; }
+        public DbSet<Order> Order { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -22,7 +22,7 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Author> Author { get; set; }
+        public DbSet<User> User { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -67,12 +67,12 @@ namespace GrapheneTemplate.Database
         {
             // Declare the models that you want to expose in the API.
             return new Dictionary<Type, Func<IQueryable<dynamic>>> {
-                { typeof(IAuthenticable), () => Author },
+                { typeof(IAuthenticable), () => User },
                 //{ typeof(IAuthorizator), () => Permission },
                 //{ typeof(IAuthorization), () => AuthorPermission },
                 //{ typeof(IInstanceLog), () => Log },
-                { typeof(Blog), () => Blog },
-                { typeof(Author), () => Author },
+                { typeof(Order), () => Order },
+                { typeof(User), () => User },
                 //{ typeof(Post), () => Post }
             };
         }
@@ -84,18 +84,5 @@ namespace GrapheneTemplate.Database
         {
             GrapheneDatabaseContextExtensions.OnModelCreating(this, modelBuilder);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="modelBuilder"></param>
-        public IGrapheneDatabaseContext Clone()
-        {
-            var contextOptions = new DbContextOptionsBuilder<GrapheneCache>()
-                .UseSqlServer(Database.GetConnectionString())
-                .Options;
-            return new GrapheneCache(contextOptions);
-        }
-
     }
 }

@@ -8,7 +8,7 @@ namespace GrapheneTemplate.Database.Models
     /// <summary>
     /// 
     /// </summary>
-    public class Author : Authenticable
+    public class User : Authenticable
     {
         /// <summary>
         /// 
@@ -27,7 +27,7 @@ namespace GrapheneTemplate.Database.Models
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<Blog> Bolgs { get; set; } = new List<Blog>();
+        public IEnumerable<Order> Order { get; set; } = new List<Order>();
         /// <summary>
         /// 
         /// </summary>

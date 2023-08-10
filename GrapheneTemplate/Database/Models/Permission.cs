@@ -35,6 +35,6 @@ namespace GrapheneTemplate.Database.Models
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<AuthorPermission> AuthorPermissions { get; set; } = Enumerable.Empty<AuthorPermission>();
+        public IEnumerable<UserPermission> UserPermissions { get; set; } = Enumerable.Empty<UserPermission>();
     }
 }
