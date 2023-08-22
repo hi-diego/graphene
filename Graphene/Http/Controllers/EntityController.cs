@@ -49,10 +49,9 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpGet("/{entity}/{id}")]
-        public IActionResult Find([FindEntity] Entity instance, [FromQuery(Name = "load[]")] string[]? load = null)
+        public IActionResult Find([FindEntity] Entity instance)
         {
             instance.SerializeId = true;
-            // string instance = JObject.FromObject(instance, this._options.Value.SerializerSettings);
             return Ok(instance);
         }
 
@@ -60,7 +59,7 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpPatch("/{entity}/{id}")]
-        public async Task<IActionResult> Update([FindEntity] Entity resource, [FromQuery] Pagination pagination, [FromBody] JObject request)
+        public async Task<IActionResult> Update([FindEntity] Entity resource, [FromBody] JObject request)
         {
             if (!TryValidateModel(request)) return BadRequest(ModelState);
             var resourceUpdated = await EC.Repository.Edit(resource, request);
@@ -74,7 +73,7 @@ namespace Graphene.Http.Controllers
         /// <param name="request">The Entity instance created by the model binder<m</param>
         /// <returns></returns>
         [HttpPost("/{entity}")]
-        public async Task<IActionResult> Add([EntityRequest] Entity request, string entity)
+        public async Task<IActionResult> Add([EntityRequest] Entity request)
         {
             // Validate the given model against the DataAnotation validation Attributes.
             // return the error bag in fvalidation fails.
