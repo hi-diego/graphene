@@ -11,9 +11,69 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Graphene.Http.Exceptions;
 
 namespace Graphene.Http.Converters
 {
+    
+    
+    public class EntityGuidConverter<E> : EntityGuidConverter {
+        public EntityGuidConverter (IDistributedCache redis) : base(typeof(E), redis)
+        {
+            //
+        }
+        public EntityGuidConverter (IDistributedCache redis, E instance) : base(typeof(E), redis)
+        {
+            //
+        }
+    }
+
+    public class EntityGuidConverter {
+        public Type EntityType { get; set; }
+        public IDistributedCache Redis { get; set; }
+        public EntityGuidConverter(Type type, IDistributedCache redis) {
+            this.EntityType = type;
+            this.Redis = redis;
+        }
+        public EntityGuidConverter(Entity instance, IDistributedCache redis) {
+            this.EntityType = instance.GetType();
+            this.Redis = redis;
+        }
+
+        public int GetCachedId (object? value) {
+            string key = GetIdKey(value);
+            string? stringId = Redis.GetString(key);
+            // if (stringId == null) throw new StatusCodeException(new BadRequestObjectResult($"id {value} does not exist"));
+            int cacheId = Int32.Parse(stringId ?? "0");
+            return cacheId;
+        }
+
+        public Guid GetCachedGuid (object? value) {
+            string key = GetIdKey(value);
+            string? guidString = Redis.GetString(key);
+            // if (guidString == null) throw new StatusCodeException(new BadRequestObjectResult($"uuid {value} does not exist"));
+            Guid cacheGuid = new Guid(guidString ?? Guid.Empty.ToString());
+            return cacheGuid;
+        }
+
+        
+        public string GetIdKey (object? value) {
+            return EntityType.Name + "-" + (string?) (value?.ToString());
+        }
+
+        public void CacheUuids (Entity instance) {
+            string uid = (string)instance.Uid.ToString();
+            string id = (string)instance.Id.ToString();
+            Redis.SetString(GetIdKey(instance.Id), uid);
+            Redis.SetString(GetIdKey(instance.Uid), id);
+        }
+
+        public static void CacheUuids (IDistributedCache cache, Entity instance) {
+            var converter = new EntityGuidConverter(instance.GetType(), cache);
+            converter.CacheUuids(instance);
+        }
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -25,41 +85,20 @@ namespace Graphene.Http.Converters
             return true;
         }
 
-        public override object? ReadJson(JsonReader reader, Type objectType, object? id, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? v, JsonSerializer serializer)
         {
+            var value = reader.Value ?? v;
             var redis = serializer.GetServiceProvider().GetRequiredService<IDistributedCache>();
-            if (redis == null) return 0;
-            string key = GuidConverter<E>.getIdKey(reader.Value);
-            int cacheId = Int32.Parse(redis.GetString(key ?? "") ?? "0");
-            return cacheId;
+            if (redis == null || value == null) return 0;
+            return new EntityGuidConverter<E>(redis).GetCachedId(value);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             var redis = serializer.GetServiceProvider().GetRequiredService<IDistributedCache>();
-            if (redis == null) return;
-            string key = GuidConverter<E>.getIdKey(value);
-            string? guid = redis.GetString(key);
-            Guid cacheGuid = new Guid(guid ?? Guid.Empty.ToString());
+            if (redis == null || value == null) return;
+            Guid cacheGuid = new EntityGuidConverter<E>(redis).GetCachedGuid(value);
             writer.WriteValue(cacheGuid.ToString());
-        }
-        public static string getIdKey (object? id) {
-            return typeof(E).Name + "-" + (string?)id.ToString();
-        }
-
-        public static string getInstanceIdKey (Entity instance) {
-            return instance._Entity + "-" + instance.Id.ToString();
-        }
-
-        public static string getInstanceUuidKey (Entity instance) {
-            return instance._Entity + "-" + instance.Uid.ToString();
-        }
-
-        public static void cacheUuids (IDistributedCache cache, Entity instance) {
-            string uid = (string)instance.Uid.ToString();
-            string id = (string)instance.Id.ToString();
-            cache.SetString(getIdKey(instance), uid);
-            cache.SetString(getInstanceUuidKey(instance), id);
         }
     }
 

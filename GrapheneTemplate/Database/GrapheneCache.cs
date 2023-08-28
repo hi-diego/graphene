@@ -10,39 +10,47 @@ namespace GrapheneTemplate.Database
     /// 
     /// </summary>
     public class GrapheneCache : DbContext, IGrapheneDatabaseContext
-    {
+    {   
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<ProductPreference> ProductPreference { get; set; }
+        public DbSet<Order> Order { get; set; }
         
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<OrderProduct> OrderProduct { get; set; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public DbSet<CompanyUser> CompanyUser { get; set; }
+        public DbSet<Staff> Staff { get; set; }
         
         /// <summary>
         /// 
         /// </summary>
         public DbSet<Product> Product { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DbSet<Bill> Bill { get; set; }
         
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Company> Company { get; set; }
+        public DbSet<Space> Space { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Order> Order { get; set; }
+        // public DbSet<PayDesk> PayDesk { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
-        //public DbSet<Post> Post { get; set; }
+        // public DbSet<Location> Location { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        // public DbSet<DinnerTable> DinnerTable { get; set; }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -95,13 +103,12 @@ namespace GrapheneTemplate.Database
                 //{ typeof(IAuthorizator), () => Permission },
                 //{ typeof(IAuthorization), () => AuthorPermission },
                 // { typeof(IInstanceLog), () => Log },
-                { typeof(ProductPreference), () => ProductPreference },
-                { typeof(Order), () => Order },
                 { typeof(User), () => User },
+                { typeof(Bill), () => Bill },
                 { typeof(Product), () => Product },
-                { typeof(Company), () => Company },
-                { typeof(OrderProduct), () => OrderProduct },
-                { typeof(CompanyUser), () => CompanyUser },
+                { typeof(Space), () => Space },
+                { typeof(Order), () => Order },
+                { typeof(Staff), () => Staff },
             };
         }
         /// <summary>
@@ -111,9 +118,12 @@ namespace GrapheneTemplate.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             GrapheneDatabaseContextExtensions.OnModelCreating(this, modelBuilder);
-            modelBuilder.Entity<Company>()
-                .HasIndex(p => p.Alias)
-                .IsUnique();
+            // modelBuilder
+            //     .Entity<Space>()
+            //     .HasDiscriminator<Models.Space.SpaceTypes>("Type")
+            //     .HasValue<Location>(Models.Space.SpaceTypes.Location)
+            //     .HasValue<DinnerTable>(Models.Space.SpaceTypes.DinnerTable)
+            //     .HasValue<PayDesk>(Models.Space.SpaceTypes.PayDesk);
         }
     }
 }

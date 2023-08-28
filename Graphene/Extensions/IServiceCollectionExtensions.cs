@@ -53,11 +53,11 @@ namespace Graphene.Extensions
             builder.Services.AddStackExchangeRedisCache(options => {
                 // Name the instance this will put a prexif on the REdis Keys
                 // 1) "GrapheneCacheBlog-820020"
-                // 2) "GrapheneCacheBlog-f311addd-39e8-40d5-aadd-5ba127620020"
-                var name = typeof(T).Name;
-                options.InstanceName = name;
-                // Get the redis connection string from the correspondent appsettins.json
                 options.Configuration = builder.Configuration.GetConnectionString("redis");
+                var name = typeof(T).Name;
+                // 2) "GrapheneCacheBlog-f311addd-39e8-40d5-aadd-5ba127620020"
+                // Get the redis connection string from the correspondent appsettins.json
+                options.InstanceName = name;
             });
             // Add IGrapheneDatabaseContext and explicitly resolve it to the provided DbContext type.
             builder.Services.AddScoped<IGrapheneDatabaseContext>((IServiceProvider provider) => provider.GetService<T>());

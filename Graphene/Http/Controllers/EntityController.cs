@@ -51,7 +51,6 @@ namespace Graphene.Http.Controllers
         [HttpGet("/{entity}/{id}")]
         public IActionResult Find([FindEntity] Entity instance)
         {
-            instance.SerializeId = true;
             return Ok(instance);
         }
 

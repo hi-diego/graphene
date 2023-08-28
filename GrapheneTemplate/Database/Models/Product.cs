@@ -54,21 +54,7 @@ namespace GrapheneTemplate.Database.Models
         /// <summary>
         /// 
         /// </summary>
-        public virtual User? CreatedBy { get; set; }
-        
-     /// <summary>
-        /// If you want to hidde auto incremental IDs from JSON API
-        /// you can set a Computed Property to fetch the Cache UIDS from each Table see AuthorUId
-        /// </summary>
-        //[JsonIgnore]
-        [ValidForeignKey("Company")]
-        [ForeignKey(nameof(Company))]
-        [JsonConverter(typeof(GuidConverter<Company>))]
-        public virtual int? OfferedById { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public Company? OfferedBy { get; set; }
+        public virtual User? CreatedBy { get; set; }    
         /// <summary>
         /// 
         /// </summary>

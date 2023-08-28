@@ -29,12 +29,6 @@ namespace GrapheneTemplate.Database.Models
         
         /// <summary>
         /// 
-        /// </summary>
-        [InverseProperty(nameof(Models.Order.HandledBy))]
-        public IEnumerable<Order> HandledOrders { get; set; } = new List<Order>();
-        
-        /// <summary>
-        /// 
         /// /// 
         /// 
         /// </summary>

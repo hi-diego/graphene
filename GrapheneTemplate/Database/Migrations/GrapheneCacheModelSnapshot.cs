@@ -19,21 +19,12 @@ namespace GrapheneTemplate.Database.Migrations
                 .HasAnnotation("ProductVersion", "6.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.Company", b =>
+            modelBuilder.Entity("GrapheneTemplate.Database.Models.Bill", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("alias");
-
-                    b.Property<int>("Category")
-                        .HasColumnType("int")
-                        .HasColumnName("category");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
@@ -47,62 +38,17 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("modified_at");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("name");
-
-                    b.Property<int?>("Plan")
+                    b.Property<int?>("SpaceId")
                         .HasColumnType("int")
-                        .HasColumnName("plan");
+                        .HasColumnName("space_id");
 
-                    b.Property<Guid>("Uid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid")
-                        .HasDefaultValueSql("(uuid())");
+                    b.Property<double>("Total")
+                        .HasColumnType("double")
+                        .HasColumnName("total");
 
-                    b.HasKey("Id")
-                        .HasName("pk_companies");
-
-                    b.HasIndex("Alias")
-                        .IsUnique();
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("Uid")
-                        .IsUnique();
-
-                    b.ToTable("companies");
-                });
-
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.CompanyUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("Type")
                         .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int")
-                        .HasColumnName("company_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("int")
-                        .HasColumnName("role");
+                        .HasColumnName("type");
 
                     b.Property<Guid>("Uid")
                         .ValueGeneratedOnAdd()
@@ -115,19 +61,19 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_company_users");
-
-                    b.HasIndex("CompanyId");
+                        .HasName("pk_bills");
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("SpaceId");
 
                     b.HasIndex("Uid")
                         .IsUnique();
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("company_users");
+                    b.ToTable("bills");
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Database.Models.Order", b =>
@@ -137,86 +83,15 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<int?>("BuyerId")
+                    b.Property<int?>("BillId")
                         .HasColumnType("int")
-                        .HasColumnName("buyer_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int")
-                        .HasColumnName("created_by_id");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<int?>("HandledById")
-                        .HasColumnType("int")
-                        .HasColumnName("handled_by_id");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("product_id");
-
-                    b.Property<int?>("SellerId")
-                        .HasColumnType("int")
-                        .HasColumnName("seller_id");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int")
-                        .HasColumnName("status");
-
-                    b.Property<Guid>("Uid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid")
-                        .HasDefaultValueSql("(uuid())");
-
-                    b.HasKey("Id")
-                        .HasName("pk_orders");
-
-                    b.HasIndex("BuyerId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("HandledById");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SellerId");
-
-                    b.HasIndex("Uid")
-                        .IsUnique();
-
-                    b.ToTable("orders");
-                });
-
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.OrderProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("bill_id");
 
                     b.Property<string>("Comments")
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("comments");
 
-                    b.Property<int?>("ConfirmedById")
-                        .HasColumnType("int")
-                        .HasColumnName("confirmed_by_id");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
@@ -232,10 +107,6 @@ namespace GrapheneTemplate.Database.Migrations
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("modified_at");
-
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int")
-                        .HasColumnName("order_id");
 
                     b.Property<int?>("ProductId")
                         .HasColumnType("int")
@@ -255,29 +126,22 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnName("uid")
                         .HasDefaultValueSql("(uuid())");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("unit");
-
                     b.HasKey("Id")
-                        .HasName("pk_order_products");
+                        .HasName("pk_orders");
 
-                    b.HasIndex("ConfirmedById");
+                    b.HasIndex("BillId");
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("OrderId");
-
                     b.HasIndex("ProductId");
 
                     b.HasIndex("Uid")
                         .IsUnique();
 
-                    b.ToTable("order_products");
+                    b.ToTable("orders");
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Database.Models.Product", b =>
@@ -320,10 +184,6 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("name");
 
-                    b.Property<int?>("OfferedById")
-                        .HasColumnType("int")
-                        .HasColumnName("offered_by_id");
-
                     b.Property<string>("Packaging")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -351,57 +211,52 @@ namespace GrapheneTemplate.Database.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("OfferedById");
-
                     b.HasIndex("Uid")
                         .IsUnique();
 
                     b.ToTable("products");
                 });
 
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.ProductPreference", b =>
+            modelBuilder.Entity("GrapheneTemplate.Database.Models.Space", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<int?>("BuyerId")
+                    b.Property<int>("Capacity")
                         .HasColumnType("int")
-                        .HasColumnName("buyer_id");
+                        .HasColumnName("capacity");
+
+                    b.Property<int>("Configuration")
+                        .HasColumnType("int")
+                        .HasColumnName("configuration");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int")
-                        .HasColumnName("created_by_id");
-
-                    b.Property<string>("DefaultComment")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("default_comment");
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("deleted_at");
 
-                    b.Property<double>("Max")
-                        .HasColumnType("double")
-                        .HasColumnName("max");
-
-                    b.Property<double>("Min")
-                        .HasColumnType("double")
-                        .HasColumnName("min");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("modified_at");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Type")
                         .HasColumnType("int")
-                        .HasColumnName("product_id");
+                        .HasColumnName("type");
 
                     b.Property<Guid>("Uid")
                         .ValueGeneratedOnAdd()
@@ -409,27 +264,69 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnName("uid")
                         .HasDefaultValueSql("(uuid())");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("unit");
-
                     b.HasKey("Id")
-                        .HasName("pk_product_preferences");
-
-                    b.HasIndex("BuyerId");
-
-                    b.HasIndex("CreatedById");
+                        .HasName("pk_spaces");
 
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("Uid")
+                        .IsUnique();
+
+                    b.ToTable("spaces");
+                });
+
+            modelBuilder.Entity("GrapheneTemplate.Database.Models.Staff", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("modified_at");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int")
+                        .HasColumnName("role");
+
+                    b.Property<int?>("SpaceId")
+                        .HasColumnType("int")
+                        .HasColumnName("space_id");
+
+                    b.Property<Guid>("Uid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("uid")
+                        .HasDefaultValueSql("(uuid())");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_staff");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("SpaceId");
 
                     b.HasIndex("Uid")
                         .IsUnique();
 
-                    b.ToTable("product_preferences");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("staff");
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Database.Models.User", b =>
@@ -484,86 +381,43 @@ namespace GrapheneTemplate.Database.Migrations
                     b.ToTable("users");
                 });
 
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.CompanyUser", b =>
+            modelBuilder.Entity("GrapheneTemplate.Database.Models.Bill", b =>
                 {
-                    b.HasOne("GrapheneTemplate.Database.Models.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .HasConstraintName("fk_company_users_companies_company_id");
+                    b.HasOne("GrapheneTemplate.Database.Models.Space", "Space")
+                        .WithMany("Bills")
+                        .HasForeignKey("SpaceId")
+                        .HasConstraintName("fk_bills_space_space_id");
 
                     b.HasOne("GrapheneTemplate.Database.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .HasConstraintName("fk_company_users_user_user_id");
+                        .HasConstraintName("fk_bills_user_user_id");
 
-                    b.Navigation("Company");
+                    b.Navigation("Space");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Database.Models.Order", b =>
                 {
-                    b.HasOne("GrapheneTemplate.Database.Models.Company", "Buyer")
-                        .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .HasConstraintName("fk_orders_companies_buyer_id");
+                    b.HasOne("GrapheneTemplate.Database.Models.Bill", "Bill")
+                        .WithMany("Orders")
+                        .HasForeignKey("BillId")
+                        .HasConstraintName("fk_orders_bills_bill_id");
 
                     b.HasOne("GrapheneTemplate.Database.Models.User", "CreatedBy")
                         .WithMany("OrderHistory")
                         .HasForeignKey("CreatedById")
                         .HasConstraintName("fk_orders_user_created_by_id");
 
-                    b.HasOne("GrapheneTemplate.Database.Models.User", "HandledBy")
-                        .WithMany("HandledOrders")
-                        .HasForeignKey("HandledById")
-                        .HasConstraintName("fk_orders_user_handled_by_id");
-
-                    b.HasOne("GrapheneTemplate.Database.Models.Product", null)
+                    b.HasOne("GrapheneTemplate.Database.Models.Product", "Product")
                         .WithMany("Orders")
                         .HasForeignKey("ProductId")
                         .HasConstraintName("fk_orders_product_product_id");
 
-                    b.HasOne("GrapheneTemplate.Database.Models.Company", "Seller")
-                        .WithMany()
-                        .HasForeignKey("SellerId")
-                        .HasConstraintName("fk_orders_companies_seller_id");
-
-                    b.Navigation("Buyer");
+                    b.Navigation("Bill");
 
                     b.Navigation("CreatedBy");
-
-                    b.Navigation("HandledBy");
-
-                    b.Navigation("Seller");
-                });
-
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.OrderProduct", b =>
-                {
-                    b.HasOne("GrapheneTemplate.Database.Models.User", "ConfirmedBy")
-                        .WithMany()
-                        .HasForeignKey("ConfirmedById")
-                        .HasConstraintName("fk_order_products_user_confirmed_by_id");
-
-                    b.HasOne("GrapheneTemplate.Database.Models.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .HasConstraintName("fk_order_products_user_created_by_id");
-
-                    b.HasOne("GrapheneTemplate.Database.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .HasConstraintName("fk_order_products_orders_order_id");
-
-                    b.HasOne("GrapheneTemplate.Database.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("fk_order_products_product_product_id");
-
-                    b.Navigation("ConfirmedBy");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -575,43 +429,29 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasForeignKey("CreatedById")
                         .HasConstraintName("fk_products_user_created_by_id");
 
-                    b.HasOne("GrapheneTemplate.Database.Models.Company", "OfferedBy")
-                        .WithMany("Products")
-                        .HasForeignKey("OfferedById")
-                        .HasConstraintName("fk_products_companies_offered_by_id");
-
                     b.Navigation("CreatedBy");
-
-                    b.Navigation("OfferedBy");
                 });
 
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.ProductPreference", b =>
+            modelBuilder.Entity("GrapheneTemplate.Database.Models.Staff", b =>
                 {
-                    b.HasOne("GrapheneTemplate.Database.Models.Company", "Buyer")
+                    b.HasOne("GrapheneTemplate.Database.Models.Space", "Space")
                         .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .HasConstraintName("fk_product_preferences_companies_buyer_id");
+                        .HasForeignKey("SpaceId")
+                        .HasConstraintName("fk_staff_spaces_space_id");
 
-                    b.HasOne("GrapheneTemplate.Database.Models.User", "CreatedBy")
+                    b.HasOne("GrapheneTemplate.Database.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .HasConstraintName("fk_product_preferences_user_created_by_id");
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("fk_staff_user_user_id");
 
-                    b.HasOne("GrapheneTemplate.Database.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("fk_product_preferences_products_product_id");
+                    b.Navigation("Space");
 
-                    b.Navigation("Buyer");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Product");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.Company", b =>
+            modelBuilder.Entity("GrapheneTemplate.Database.Models.Bill", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Database.Models.Product", b =>
@@ -619,10 +459,13 @@ namespace GrapheneTemplate.Database.Migrations
                     b.Navigation("Orders");
                 });
 
+            modelBuilder.Entity("GrapheneTemplate.Database.Models.Space", b =>
+                {
+                    b.Navigation("Bills");
+                });
+
             modelBuilder.Entity("GrapheneTemplate.Database.Models.User", b =>
                 {
-                    b.Navigation("HandledOrders");
-
                     b.Navigation("OrderHistory");
                 });
 #pragma warning restore 612, 618

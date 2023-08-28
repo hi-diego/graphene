@@ -112,11 +112,18 @@ namespace Graphene.Entities
             // Generate and Juxtapoze the dynamic includeds by executing the static includeMethod from the EntityFrameworkQueryableExtensions.
             // if (includes != null) set = Graph.SetIncludes(set, entityType, includes);
             if (load != null) set = set.Includes(load);
-            // Find instance by Entity.Id
-            if (id is int) set = set.Where(i => (i as Entity).Id.Equals(id));
-            else set = set.Where(i => (i as Entity).Uid.Equals(id));
             // Set the AsNoTracking option value.
-            return tracking ? set : set.AsNoTracking();
+            if (!tracking) set = set.AsNoTracking();
+            // Find instance by Entity.Id
+            if (id is int) return set.Where(i => (i as Entity).Id.Equals(id));
+            // check for the incremental Id in redis cache for performance 
+            int cacheId = new EntityGuidConverter(entityType, _cache).GetCachedId(id);
+            // if found use the chache id
+            if (cacheId > 0) return set.Where(i => (i as Entity).Id.Equals(cacheId));
+            // if not query with the guid
+            return set = set.Where(i => (i as Entity).Uid.Equals(id));
+            
+            // return tracking ? set : set.AsNoTracking();
         }
 
         /// <summary>
@@ -261,7 +268,7 @@ namespace Graphene.Entities
             List<IInstanceLog> logs = BeforeSave(instance);
             if (update) DatabaseContext.Update(instance);
             await DatabaseContext.SaveChangesAsync();
-            GuidConverter<Entity>.cacheUuids(_cache, instance);
+            EntityGuidConverter.CacheUuids(_cache, instance);
             logs.Where(l => l.InstanceEntityState == EntityState.Added).ToList().ForEach(l => {
                 l.InstanceId = instance.Id;
             });
