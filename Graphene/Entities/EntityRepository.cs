@@ -7,6 +7,7 @@ using Graphene.Database.Interfaces;
 using Graphene.Entities.Interfaces;
 using Graphene.Graph.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
+using Graphene.Http.Converters;
 
 namespace Graphene.Entities
 {
@@ -88,11 +89,11 @@ namespace Graphene.Entities
         /// <param name="request"></param>
         /// <param name="entityName"></param>
         /// <returns></returns>
-        public async Task<object> Create(object instance, bool save = true)
+        public async Task<Entity> Create(object instance, bool save = true)
         {
             DatabaseContext.Add(instance);
-            if (save) await Save((Entity)instance, false);
-            return instance;
+            if (save) return await Save(instance as Entity, false);
+            return instance as Entity;
         }
 
         /// <summary>
@@ -257,18 +258,12 @@ namespace Graphene.Entities
         /// <param name="id"></param>
         public async Task<Entity> Save(Entity instance, bool update = true)
         {
-            IEnumerable<IInstanceLog> logs = BeforeSave(instance);
+            List<IInstanceLog> logs = BeforeSave(instance);
             if (update) DatabaseContext.Update(instance);
             await DatabaseContext.SaveChangesAsync();
-            // Use REdis cache Instead
+            GuidConverter<Entity>.cacheUuids(_cache, instance);
             logs.Where(l => l.InstanceEntityState == EntityState.Added).ToList().ForEach(l => {
                 l.InstanceId = instance.Id;
-                string idKey = instance._Entity + "-" + instance.Id.ToString();
-                string guidKey = instance._Entity + "-" + instance.Uid.ToString();
-                string uid = (string)instance.Uid.ToString();
-                string id = (string)instance.Id.ToString();
-                _cache.SetString(idKey, uid);
-                _cache.SetString(guidKey, id);
             });
             AfterSave(instance, logs);
             return instance;
@@ -281,9 +276,9 @@ namespace Graphene.Entities
         /// and adding it to the DbContext and Firing all the EntityEvents.
         /// </summary>
         /// <returns></returns>
-        public virtual IEnumerable<IInstanceLog> BeforeSave(Entity instance)
+        public virtual List<IInstanceLog> BeforeSave(Entity instance)
         {
-            IEnumerable<IInstanceLog> logs = LogChanges();
+            List<IInstanceLog> logs = LogChanges();
             FireBeforeEntityEvents(logs);
             return logs;
         }
@@ -342,15 +337,17 @@ namespace Graphene.Entities
         /// <summary>
         /// Check if the Proyect needs to store changes .
         /// </summary>
-        public IEnumerable<IInstanceLog> LogChanges()
+        public List<IInstanceLog> LogChanges()
         {
-            Type? logType = Graph.Find<IInstanceLog>()?.SystemType;
-            var entries = DatabaseContext.ChangeTracker.Entries();
-            IQueryable<IInstanceLog> logs = logType == null
-                ? (new List<InstanceLog>()).AsQueryable().CreateAndAddEntries(entries, typeof(InstanceLog))
-                : Graphene.Graph.Graph.GetSet<IInstanceLog>(DatabaseContext).CreateAndAddEntries(entries, typeof(InstanceLog));
-            if (logType != null) DatabaseContext.AddRange(logs);
-            return logs.ToList();
+            var logGraphType = Graph.Find<IInstanceLog>();
+            Type logType = logGraphType?.SystemType ?? typeof(InstanceLog);
+            var entries = DatabaseContext.ChangeTracker.Entries().ToList();
+            var logInstance = (IInstanceLog) Activator.CreateInstance(logType); 
+            var logs = entries.Where(e => e.State != EntityState.Unchanged)
+                .Select(entry => logInstance.Init(entry, null))
+                .ToList();
+            if (logGraphType != null) DatabaseContext.AddRange(logs);
+            return logs;
         }
     }
 

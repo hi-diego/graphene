@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using static Graphene.Graph.Graph;
+using Graphene.Http.Converters;
+using Graphene.Http.Validation;
 
 namespace GrapheneTemplate.Database.Models
 {
@@ -24,17 +26,20 @@ namespace GrapheneTemplate.Database.Models
         /// 
         /// </summary>
         public string Name { get; set; }
+        
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<Order> Order { get; set; } = new List<Order>();
+        [InverseProperty(nameof(Models.Order.HandledBy))]
+        public IEnumerable<Order> HandledOrders { get; set; } = new List<Order>();
+        
         /// <summary>
         /// 
-        /// </summary>
-        // public IEnumerable<Post> Posts { get; set; } = new List<Post>();
-        /// <summary>
+        /// /// 
         /// 
         /// </summary>
-        // public IEnumerable<Permission> Permission { get; set; } = new List<Permission>();
+        [InverseProperty(nameof(Models.Order.CreatedBy))]
+        public IEnumerable<Order> OrderHistory { get; set; } = new List<Order>();
+        
     }
 }

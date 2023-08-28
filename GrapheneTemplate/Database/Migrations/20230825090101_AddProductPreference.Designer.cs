@@ -3,6 +3,7 @@ using System;
 using GrapheneTemplate.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GrapheneTemplate.Database.Migrations
 {
     [DbContext(typeof(GrapheneCache))]
-    partial class GrapheneCacheModelSnapshot : ModelSnapshot
+    [Migration("20230825090101_AddProductPreference")]
+    partial class AddProductPreference
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -399,15 +401,14 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("modified_at");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int?>("SellerId")
                         .HasColumnType("int")
-                        .HasColumnName("product_id");
+                        .HasColumnName("seller_id");
 
                     b.Property<Guid>("Uid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasColumnName("uid")
-                        .HasDefaultValueSql("(uuid())");
+                        .HasColumnName("uid");
 
                     b.Property<string>("Unit")
                         .IsRequired()
@@ -421,13 +422,7 @@ namespace GrapheneTemplate.Database.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("Uid")
-                        .IsUnique();
+                    b.HasIndex("SellerId");
 
                     b.ToTable("product_preferences");
                 });
@@ -597,16 +592,16 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasForeignKey("CreatedById")
                         .HasConstraintName("fk_product_preferences_user_created_by_id");
 
-                    b.HasOne("GrapheneTemplate.Database.Models.Product", "Product")
+                    b.HasOne("GrapheneTemplate.Database.Models.Company", "Seller")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("fk_product_preferences_products_product_id");
+                        .HasForeignKey("SellerId")
+                        .HasConstraintName("fk_product_preferences_companies_seller_id");
 
                     b.Navigation("Buyer");
 
                     b.Navigation("CreatedBy");
 
-                    b.Navigation("Product");
+                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Database.Models.Company", b =>

@@ -3,6 +3,7 @@ using System;
 using GrapheneTemplate.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GrapheneTemplate.Database.Migrations
 {
     [DbContext(typeof(GrapheneCache))]
-    partial class GrapheneCacheModelSnapshot : ModelSnapshot
+    [Migration("20230823193423_INIT")]
+    partial class INIT
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,79 +361,6 @@ namespace GrapheneTemplate.Database.Migrations
                     b.ToTable("products");
                 });
 
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.ProductPreference", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int?>("BuyerId")
-                        .HasColumnType("int")
-                        .HasColumnName("buyer_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int")
-                        .HasColumnName("created_by_id");
-
-                    b.Property<string>("DefaultComment")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("default_comment");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<double>("Max")
-                        .HasColumnType("double")
-                        .HasColumnName("max");
-
-                    b.Property<double>("Min")
-                        .HasColumnType("double")
-                        .HasColumnName("min");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_at");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("product_id");
-
-                    b.Property<Guid>("Uid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("uid")
-                        .HasDefaultValueSql("(uuid())");
-
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("unit");
-
-                    b.HasKey("Id")
-                        .HasName("pk_product_preferences");
-
-                    b.HasIndex("BuyerId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("Uid")
-                        .IsUnique();
-
-                    b.ToTable("product_preferences");
-                });
-
             modelBuilder.Entity("GrapheneTemplate.Database.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -583,30 +512,6 @@ namespace GrapheneTemplate.Database.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("OfferedBy");
-                });
-
-            modelBuilder.Entity("GrapheneTemplate.Database.Models.ProductPreference", b =>
-                {
-                    b.HasOne("GrapheneTemplate.Database.Models.Company", "Buyer")
-                        .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .HasConstraintName("fk_product_preferences_companies_buyer_id");
-
-                    b.HasOne("GrapheneTemplate.Database.Models.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .HasConstraintName("fk_product_preferences_user_created_by_id");
-
-                    b.HasOne("GrapheneTemplate.Database.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .HasConstraintName("fk_product_preferences_products_product_id");
-
-                    b.Navigation("Buyer");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("GrapheneTemplate.Database.Models.Company", b =>

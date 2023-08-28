@@ -87,12 +87,10 @@ namespace Graphene.Http.Controllers
         ///// <summary>
         ///// 
         ///// </summary>
-        //[HttpDelete("/{entity}/{id}")]
-        //public async Task<IActionResult> Delete(string entity, string id, [FromQuery] Pagination pagination)
-        //{
-        //    var resource = await FindInstance(EC.Id, EC.Guid, pagination);
-        //    if (resource == null) return new NotFoundResult();
-        //    return Ok(await EC.Repository.Delete(resource));
-        //}
+        [HttpDelete("/{entity}/{id}")]
+        public async Task<IActionResult> Delete([FindEntity] Entity instance)
+        {
+           return Ok(await EC.Repository.Delete(instance));
+        }
     }
 }

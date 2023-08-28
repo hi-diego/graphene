@@ -18,7 +18,7 @@ namespace Graphene.Entities
     /// <summary>
     /// 
     /// </summary>
-    public abstract class Entity : BaseEntity
+    public class Entity : BaseEntity
     {
         /// <summary>
         /// 
@@ -26,23 +26,10 @@ namespace Graphene.Entities
         [Key]
         public override int Id { get; set; }
     }
-
     /// <summary>
     /// 
     /// </summary>
-    public abstract class DevEntity : BaseEntity
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        [Key]
-        public override int Id { get; set; }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public abstract class BaseEntity : IEntity
+    public class BaseEntity : IEntity
     {
         /// <summary>
         /// 

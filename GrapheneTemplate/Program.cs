@@ -4,13 +4,14 @@ using Graphene.Graph;
 using Graphene.Graph.Interfaces;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Graphene.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 // Register DatabaseContext Mysql
 var connectionString = builder.Configuration.GetConnectionString("mysql");
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
-builder.Services.AddDbContext<GrapheneTemplate.Database.GrapheneCache>(
+builder.Services.AddDbContext<GrapheneCache>(
     dbContextOptions => dbContextOptions
         .UseMySql(connectionString, serverVersion)
         .LogTo(Console.WriteLine, LogLevel.Information)
@@ -30,6 +31,7 @@ var app = builder.Build();
 //     app.UseSwaggerUI();
 // }
 // app.UseHttpsRedirection();
+app.UseCors("development");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -14,6 +14,30 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
+        public DbSet<ProductPreference> ProductPreference { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public DbSet<OrderProduct> OrderProduct { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public DbSet<CompanyUser> CompanyUser { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public DbSet<Product> Product { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public DbSet<Company> Company { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public DbSet<Order> Order { get; set; }
         /// <summary>
         /// 
@@ -26,7 +50,7 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
-        //public DbSet<Models.Log> Log { get; set; }
+        // public DbSet<Log> Log { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -70,10 +94,14 @@ namespace GrapheneTemplate.Database
                 { typeof(IAuthenticable), () => User },
                 //{ typeof(IAuthorizator), () => Permission },
                 //{ typeof(IAuthorization), () => AuthorPermission },
-                //{ typeof(IInstanceLog), () => Log },
+                // { typeof(IInstanceLog), () => Log },
+                { typeof(ProductPreference), () => ProductPreference },
                 { typeof(Order), () => Order },
                 { typeof(User), () => User },
-                //{ typeof(Post), () => Post }
+                { typeof(Product), () => Product },
+                { typeof(Company), () => Company },
+                { typeof(OrderProduct), () => OrderProduct },
+                { typeof(CompanyUser), () => CompanyUser },
             };
         }
         /// <summary>
@@ -83,6 +111,9 @@ namespace GrapheneTemplate.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             GrapheneDatabaseContextExtensions.OnModelCreating(this, modelBuilder);
+            modelBuilder.Entity<Company>()
+                .HasIndex(p => p.Alias)
+                .IsUnique();
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Graphene.Http.Validation
         {
             int id = (value as int?) ?? 0;
             //return Graphene.Graph.Graph.UIDS[Entity].Guid.ContainsKey(id);
-            return id > 0;
+            return id > 0 || value == null;
         }
 
         /// <summary>
