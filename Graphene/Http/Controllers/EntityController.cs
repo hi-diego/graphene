@@ -42,15 +42,24 @@ namespace Graphene.Http.Controllers
         public async Task<IActionResult?> Index(string entity, [FromQuery] Pagination pagination)
         {
             var set = EC.Graph.GetSet(EC.DbContext, entity);
-            var r = Ok(await pagination.Paginate(set, new { }, EC.Repository.Graph, EC.GraphType.SystemType));
+            var r = await pagination.Paginate(set, new { }, EC.Repository.Graph, EC.GraphType.SystemType);
             var e = EC.DbContext.ChangeTracker.Entries().ToList();
             // e.ForEach(((Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry e) => {
             //     var instance = (Entity) e.Entity;
             //     EC.RedisKeys.Add($"{instance._Entity}-{instance.Id}");
             //     System.Console.WriteLine(e);
             // }));
-            return r;
+            var job = JObject.FromObject(r);
+            return Ok(job.ToString());
         }
+
+        // public class RedisReplacerResult : OkObjectResult {
+        //     public override Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
+        //     {
+        //         var r = base.ExecuteAsync(cancellationToken);
+        //         return r;
+        //     }
+        // } 
 
         /// <summary>
         /// 
