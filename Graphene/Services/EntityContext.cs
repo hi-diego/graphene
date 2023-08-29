@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json.Linq;
 using System.Security.Claims;
+using StackExchange.Redis;
 
 namespace Graphene.Services
 {
@@ -21,6 +22,7 @@ namespace Graphene.Services
     /// </summary>
     public interface IEntityContext
     {
+        public Dictionary<string, string> RedisKeys { get; set; }
 
         /// <summary>
         /// To Read the RequestJson and deconstruct it for future purpuses on the Graphene Pipeline.
@@ -132,6 +134,8 @@ namespace Graphene.Services
     /// </summary>
     public class EntityContext : IEntityContext
     {
+        public Dictionary<string, string> RedisKeys { get; set; } = new Dictionary<string, string>();
+
         /// <summary>
         ///  
         /// </summary>

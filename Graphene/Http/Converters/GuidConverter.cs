@@ -12,6 +12,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Graphene.Http.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using Graphene.Database.Interfaces;
+using System.IO.Compression;
+using StackExchange.Redis;
+using Microsoft.Extensions.Configuration;
 
 namespace Graphene.Http.Converters
 {
@@ -66,12 +71,39 @@ namespace Graphene.Http.Converters
             string id = (string)instance.Id.ToString();
             Redis.SetString(GetIdKey(instance.Id), uid);
             Redis.SetString(GetIdKey(instance.Uid), id);
+            var r = (Microsoft.Extensions.Caching.StackExchangeRedis.RedisCache) Redis;
+            var s = new RedisKey[] { "A", "B" };
         }
 
         public static void CacheUuids (IDistributedCache cache, Entity instance) {
             var converter = new EntityGuidConverter(instance.GetType(), cache);
             converter.CacheUuids(instance);
         }
+    }
+
+    public class FetchCacheGuidConverter<E> : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return true;
+        }
+
+        public override object? ReadJson(JsonReader reader, Type objectType, object? v, JsonSerializer serializer)
+        {
+            var value = reader.Value ?? v;
+            var redis = serializer.GetServiceProvider().GetRequiredService<IDistributedCache>();
+            if (redis == null || value == null) return 0;
+            return new EntityGuidConverter<E>(redis).GetCachedId(value);
+        }
+
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            var ec = serializer.GetServiceProvider().GetRequiredService<IEntityContext>();
+            var key = $"{typeof(E).Name}-{value}";
+            if (!ec.RedisKeys.ContainsKey(key)) ec.RedisKeys.Add(key, null);
+            writer.WriteValue(value);
+        }
+
     }
 
     /// <summary>
@@ -95,9 +127,25 @@ namespace Graphene.Http.Converters
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var redis = serializer.GetServiceProvider().GetRequiredService<IDistributedCache>();
+            var redis = serializer.GetServiceProvider().GetRequiredService<IDistributedCache>() as Microsoft.Extensions.Caching.StackExchangeRedis.RedisCache;
+            var _configuration = serializer.GetServiceProvider().GetRequiredService<IConfiguration>();
+            var ec = serializer.GetServiceProvider().GetRequiredService<IEntityContext>();
+            var key = $"{typeof(E).Name}-{value}";
+            var rediskeys = ec.RedisKeys;
+            var guid = rediskeys[key];
+            if (guid == null) {
+                ConfigurationOptions options = ConfigurationOptions.Parse(_configuration.GetConnectionString("redis"));
+                ConnectionMultiplexer connection = ConnectionMultiplexer.Connect(options);
+                IDatabase db = connection.GetDatabase();
+                // ec.RedisKeys.Keys.ToList().ForEach(k => {
+                    var r = db.HashGetAll(new RedisKey($"GrapheneCache{key}"))?.LastOrDefault().Value.ToString();
+                    ec.RedisKeys.Remove(key);
+                    ec.RedisKeys.Add(key, r ?? Guid.Empty.ToString());
+                // });
+                guid = ec.RedisKeys[key];
+            }
             if (redis == null || value == null) return;
-            Guid cacheGuid = new EntityGuidConverter<E>(redis).GetCachedGuid(value);
+            Guid cacheGuid = guid == null ? Guid.Empty : Guid.Parse(guid);// new EntityGuidConverter<E>(redis).GetCachedGuid(value);
             writer.WriteValue(cacheGuid.ToString());
         }
     }

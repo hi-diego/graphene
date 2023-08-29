@@ -122,8 +122,6 @@ namespace Graphene.Entities
             if (cacheId > 0) return set.Where(i => (i as Entity).Id.Equals(cacheId));
             // if not query with the guid
             return set = set.Where(i => (i as Entity).Uid.Equals(id));
-            
-            // return tracking ? set : set.AsNoTracking();
         }
 
         /// <summary>

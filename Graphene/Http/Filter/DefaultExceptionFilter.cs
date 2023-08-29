@@ -23,7 +23,7 @@ namespace Graphene.Http.Filter
             //    context.Result = new BadRequestObjectResult(new { Message = "You can not delete the resource because multiples: " + Regex.Match(context.Exception.InnerException.Message, "(dbo.)\\w+").Groups.First().Value.Replace("dbo.", "") +" depend on it." });
             if (context.Exception is StatusCodeException)
                 context.Result = ((StatusCodeException)context.Exception).Result;
-            context.ExceptionHandled = false;
+            context.ExceptionHandled = true;
         }
     }
 }
