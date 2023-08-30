@@ -42,24 +42,9 @@ namespace Graphene.Http.Controllers
         public async Task<IActionResult?> Index(string entity, [FromQuery] Pagination pagination)
         {
             var set = EC.Graph.GetSet(EC.DbContext, entity);
-            var r = await pagination.Paginate(set, new { }, EC.Repository.Graph, EC.GraphType.SystemType);
-            var e = EC.DbContext.ChangeTracker.Entries().ToList();
-            // e.ForEach(((Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry e) => {
-            //     var instance = (Entity) e.Entity;
-            //     EC.RedisKeys.Add($"{instance._Entity}-{instance.Id}");
-            //     System.Console.WriteLine(e);
-            // }));
-            var job = JObject.FromObject(r);
-            return Ok(job.ToString());
+            var result = await pagination.Paginate(set, new { }, EC.Repository.Graph, EC.GraphType.SystemType);
+            return Ok(result);
         }
-
-        // public class RedisReplacerResult : OkObjectResult {
-        //     public override Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
-        //     {
-        //         var r = base.ExecuteAsync(cancellationToken);
-        //         return r;
-        //     }
-        // } 
 
         /// <summary>
         /// 
@@ -99,9 +84,9 @@ namespace Graphene.Http.Controllers
             return Created($"{HttpContext.Request.GetEncodedUrl()}/{instance.Uid}", instance);
         }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
+        /// <summary>
+        /// 
+        /// </summary>
         [HttpDelete("/{entity}/{id}")]
         public async Task<IActionResult> Delete([FindEntity] Entity instance)
         {

@@ -90,6 +90,8 @@ namespace Graphene.Services
         /// <returns></returns>
         public Task<JObject?> HttpRequestToJson(HttpContext? httpContext = null, HttpRequest? httpRequest = null);
 
+        public Task<string?> HttpRequestToString(HttpContext? httpContext = null, HttpRequest? httpRequest = null);
+
         /// <summary>
         /// 
         /// </summary>
@@ -125,7 +127,7 @@ namespace Graphene.Services
         /// <summary>
         /// 
         /// </summary>
-        public IDistributedCache Cache { get; set; }
+        public IConnectionMultiplexer Multiplexer { get; set; }
     }
 
     /// <summary>
@@ -141,12 +143,12 @@ namespace Graphene.Services
         /// </summary>
         /// <param name="graph"></param>
         /// <param name="db"></param>
-        public EntityContext(IGraph graph, IGrapheneDatabaseContext db, IDistributedCache cache)
+        public EntityContext(IGraph graph, IGrapheneDatabaseContext db, IConnectionMultiplexer multiplexer)
         {
-            Cache = cache;
+            Multiplexer = multiplexer;
             Graph = graph;
             DbContext = db;
-            Repository = new EntityRepository(DbContext, Graph, cache);
+            Repository = new EntityRepository(DbContext, Graph, Multiplexer);
         }
 
         /// <summary>
@@ -208,7 +210,7 @@ namespace Graphene.Services
         /// <summary>
         /// 
         /// </summary>
-        public IDistributedCache Cache { get; set; }
+        public IConnectionMultiplexer Multiplexer { get; set; }
 
         /// <summary>
         /// 
@@ -224,6 +226,16 @@ namespace Graphene.Services
         {
             // If the Request was already read before returns it.
             if (Request != null) return Request;
+            string? input = await HttpRequestToString(httpContext, httpRequest);
+            if (input == null) return null;
+            Request = JObject.Parse(input);
+            // Return the Stored JSON Request value.
+            return Request;
+        }
+
+        public async Task<string?> HttpRequestToString(HttpContext? httpContext = null, HttpRequest? httpRequest = null)
+        {
+
             // Get the request for the given params.
             HttpRequest? request = httpRequest ?? httpContext?.Request;
             // If request is null return.
@@ -237,9 +249,7 @@ namespace Graphene.Services
             // Return the request stream cursor to 0 .
             request.Body.Position = 0;
             // Parse and store the value as JSON object.
-            Request = JObject.Parse(input);
-            // Return the Stored JSON Request value.
-            return Request;
+            return input;
         }
 
         /// <summary>

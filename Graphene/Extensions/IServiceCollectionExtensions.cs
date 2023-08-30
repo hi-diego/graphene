@@ -12,11 +12,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using StackExchange.Redis;
 
 namespace Graphene.Extensions
 {
@@ -57,8 +54,11 @@ namespace Graphene.Extensions
                 var name = typeof(T).Name;
                 // 2) "GrapheneCacheBlog-f311addd-39e8-40d5-aadd-5ba127620020"
                 // Get the redis connection string from the correspondent appsettins.json
-                options.InstanceName = name;
+                // options.InstanceName = name + ":";
             });
+            builder.Services.AddSingleton<IConnectionMultiplexer>(
+                sp => ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("redis")))
+            );
             // Add IGrapheneDatabaseContext and explicitly resolve it to the provided DbContext type.
             builder.Services.AddScoped<IGrapheneDatabaseContext>((IServiceProvider provider) => provider.GetService<T>());
             // Resolve IGrapheneDatabaseContext explicitly and Create the Graph Singleton to cache the Types to resolve the Api 404 Error quickly.

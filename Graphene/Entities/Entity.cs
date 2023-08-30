@@ -52,6 +52,12 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
+        // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        // public virtual Guid Uid { get; set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// 
+        /// </summary>
         [NotMapped]
         public virtual string _Entity { get; set; }
 

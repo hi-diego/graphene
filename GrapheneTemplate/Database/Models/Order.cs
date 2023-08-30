@@ -36,7 +36,7 @@ namespace GrapheneTemplate.Database.Models
         //[JsonIgnore]
         [ValidForeignKey("User")]
         [ForeignKey(nameof(User))]
-        [JsonConverter(typeof(GuidConverter<User>))]
+        [JsonConverter(typeof(RedisGuidReplaceConverter<User>))]
         public virtual int? CreatedById { get; set; }
         /// <summary>
         /// 
@@ -51,7 +51,7 @@ namespace GrapheneTemplate.Database.Models
         //[JsonIgnore]
         [ValidForeignKey("Product")]
         [ForeignKey(nameof(Product))]
-        [JsonConverter(typeof(GuidConverter<Product>))]
+        [JsonConverter(typeof(RedisGuidReplaceConverter<Product>))]
         public virtual int? ProductId { get; set; }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace GrapheneTemplate.Database.Models
         /// </summary>
         [ValidForeignKey("Bill")]
         [ForeignKey(nameof(Bill))]
-        [JsonConverter(typeof(GuidConverter<Bill>))]
+        [JsonConverter(typeof(RedisGuidReplaceConverter<Bill>))]
         public virtual int? BillId { get; set; }
 
         /// <summary>

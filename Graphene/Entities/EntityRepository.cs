@@ -6,8 +6,8 @@ using System.Linq.Dynamic.Core;
 using Graphene.Database.Interfaces;
 using Graphene.Entities.Interfaces;
 using Graphene.Graph.Interfaces;
-using Microsoft.Extensions.Caching.Distributed;
-using Graphene.Http.Converters;
+using Graphene.Cache;
+using StackExchange.Redis;
 
 namespace Graphene.Entities
 {
@@ -19,10 +19,10 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
-        public EntityRepository(IGrapheneDatabaseContext dbContext, IGraph graph, IDistributedCache? cache = null)
+        public EntityRepository(IGrapheneDatabaseContext dbContext, IGraph graph, IConnectionMultiplexer _multiplexer = null)
         {
             Graph = graph;
-            _cache = cache;
+            RedisGuidCache = new RedisGuidCache(_multiplexer);
             DatabaseContext = dbContext;
         }
 
@@ -39,7 +39,7 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
-        public IDistributedCache _cache { get; private set; }
+        public RedisGuidCache RedisGuidCache { get; private set; }
 
         /// <summary>
         /// Create a Entity from the JObject and add the resource into the DbContext
@@ -116,8 +116,12 @@ namespace Graphene.Entities
             if (!tracking) set = set.AsNoTracking();
             // Find instance by Entity.Id
             if (id is int) return set.Where(i => (i as Entity).Id.Equals(id));
+            // Search by Guid 
+            Guid guid = Guid.Empty;
+            // Parse id as Guid 
+            Guid.TryParse(id.ToString(), out guid);
             // check for the incremental Id in redis cache for performance 
-            int cacheId = new EntityGuidConverter(entityType, _cache).GetCachedId(id);
+            int cacheId = RedisGuidCache.GetCachedId(guid);
             // if found use the chache id
             if (cacheId > 0) return set.Where(i => (i as Entity).Id.Equals(cacheId));
             // if not query with the guid
@@ -266,9 +270,10 @@ namespace Graphene.Entities
             List<IInstanceLog> logs = BeforeSave(instance);
             if (update) DatabaseContext.Update(instance);
             await DatabaseContext.SaveChangesAsync();
-            EntityGuidConverter.CacheUuids(_cache, instance);
             logs.Where(l => l.InstanceEntityState == EntityState.Added).ToList().ForEach(l => {
-                l.InstanceId = instance.Id;
+                l.InstanceId = l.Instance.Id;
+                l.InstanceUid = l.Instance.Uid;
+                RedisGuidCache.CacheIds(l.Instance);
             });
             AfterSave(instance, logs);
             return instance;
@@ -346,10 +351,9 @@ namespace Graphene.Entities
         {
             var logGraphType = Graph.Find<IInstanceLog>();
             Type logType = logGraphType?.SystemType ?? typeof(InstanceLog);
-            var entries = DatabaseContext.ChangeTracker.Entries().ToList();
-            var logInstance = (IInstanceLog) Activator.CreateInstance(logType); 
+            var entries = DatabaseContext.ChangeTracker.Entries().ToList(); 
             var logs = entries.Where(e => e.State != EntityState.Unchanged)
-                .Select(entry => logInstance.Init(entry, null))
+                .Select(entry => ((IInstanceLog) Activator.CreateInstance(logType)).Init(entry, null))
                 .ToList();
             if (logGraphType != null) DatabaseContext.AddRange(logs);
             return logs;

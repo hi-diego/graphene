@@ -49,7 +49,7 @@ namespace GrapheneTemplate.Database.Models
         //[JsonIgnore]
         [ValidForeignKey("User")]
         [ForeignKey(nameof(User))]
-        [JsonConverter(typeof(GuidConverter<User>))]
+        [JsonConverter(typeof(RedisGuidReplaceConverter<User>))]
         public virtual int? CreatedById { get; set; }
         /// <summary>
         /// 
