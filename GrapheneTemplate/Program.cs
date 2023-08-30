@@ -59,6 +59,7 @@ public class SampleResultFilter : IResultFilter
     {
         // Do something after the result executes.
         var result = (ObjectResult) context.Result;
+        if (result.StatusCode > 300) return;
         string input = JsonConvert.SerializeObject(result.Value);
         string output = new RedisGuidCache(_multiplexer).ReplaceIdsWithGuids(input);
         result.Value = JObject.Parse(output);

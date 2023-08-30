@@ -62,8 +62,9 @@ namespace GrapheneTemplate.Database.Models
         /// <summary>
         /// 
         /// </summary>
+        [ValidForeignKey("Space")]
         [ForeignKey(nameof(Space))]
-        //[JsonConverter(typeof(GuidConverter<Space>))]
+        [JsonConverter(typeof(RedisGuidReplaceConverter<Space>))]
         public int SpaceId { get; set; }
 
         /// <summary>

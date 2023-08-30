@@ -21,9 +21,8 @@ namespace Graphene.Http.Filter
         {
             // if (context.Exception is Microsoft.EntityFrameworkCore.DbUpdateException)
             //    context.Result = new BadRequestObjectResult(new { Message = "You can not delete the resource because multiples: " + Regex.Match(context.Exception.InnerException.Message, "(dbo.)\\w+").Groups.First().Value.Replace("dbo.", "") +" depend on it." });
-            if (context.Exception is StatusCodeException)
-                context.Result = ((StatusCodeException)context.Exception).Result;
-            context.ExceptionHandled = true;
+            if (context.Exception is StatusCodeException) context.Result = ((StatusCodeException)context.Exception).Result;
+            context.ExceptionHandled = false;
         }
     }
 }
