@@ -114,6 +114,7 @@ namespace Graphene.Extensions
                 // Use the default DefaultExceptionFilter so we can throw StatusCodeException handly in any part of the app
                 // this will handle it and return the correspondet result
                 options.Filters.Add(typeof(DefaultExceptionFilter));
+                options.Filters.Add(typeof(RedisCacheGuidFilter));
             })
             // TODO: add an option to use NewtonsoftJson conditionally .
             .AddNewtonsoftJson();
