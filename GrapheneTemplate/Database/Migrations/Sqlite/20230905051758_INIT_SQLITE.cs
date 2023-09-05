@@ -1,79 +1,68 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace GrapheneTemplate.Database.Migrations
+namespace GrapheneTemplate.Database.Migrations.Sqlite
 {
-    public partial class INIT : Migration
+    public partial class INIT_SQLITE : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder.CreateTable(
                 name: "spaces",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    capacity = table.Column<int>(type: "int", nullable: false),
-                    configuration = table.Column<int>(type: "int", nullable: false),
-                    name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    description = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    type = table.Column<int>(type: "int", nullable: false),
-                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
-                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    capacity = table.Column<int>(type: "INTEGER", nullable: false),
+                    configuration = table.Column<int>(type: "INTEGER", nullable: false),
+                    name = table.Column<string>(type: "TEXT", nullable: false),
+                    description = table.Column<string>(type: "TEXT", nullable: false),
+                    type = table.Column<int>(type: "INTEGER", nullable: false),
+                    uuid = table.Column<Guid>(type: "BLOB", nullable: false, defaultValueSql: "randomblob(16)"),
+                    created_at = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_spaces", x => x.id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    email = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
-                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    password = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    email = table.Column<string>(type: "TEXT", nullable: false),
+                    name = table.Column<string>(type: "TEXT", nullable: false),
+                    uuid = table.Column<Guid>(type: "BLOB", nullable: false, defaultValueSql: "randomblob(16)"),
+                    created_at = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    password = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_users", x => x.id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "bills",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    user_id = table.Column<int>(type: "int", nullable: true),
-                    space_id = table.Column<int>(type: "int", nullable: false),
-                    type = table.Column<int>(type: "int", nullable: false),
-                    total = table.Column<double>(type: "double", nullable: false),
-                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
-                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    user_id = table.Column<int>(type: "INTEGER", nullable: true),
+                    space_id = table.Column<int>(type: "INTEGER", nullable: false),
+                    type = table.Column<int>(type: "INTEGER", nullable: false),
+                    total = table.Column<double>(type: "REAL", nullable: false),
+                    uuid = table.Column<Guid>(type: "BLOB", nullable: false, defaultValueSql: "randomblob(16)"),
+                    created_at = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -89,32 +78,26 @@ namespace GrapheneTemplate.Database.Migrations
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "products",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    subcategory = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    category = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    price = table.Column<double>(type: "double", nullable: false),
-                    description = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    packaging = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    available = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    created_by_id = table.Column<int>(type: "int", nullable: true),
-                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
-                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    subcategory = table.Column<string>(type: "TEXT", nullable: true),
+                    category = table.Column<string>(type: "TEXT", nullable: true),
+                    name = table.Column<string>(type: "TEXT", nullable: false),
+                    price = table.Column<double>(type: "REAL", nullable: false),
+                    description = table.Column<string>(type: "TEXT", nullable: true),
+                    packaging = table.Column<string>(type: "TEXT", nullable: false),
+                    available = table.Column<bool>(type: "INTEGER", nullable: false),
+                    created_by_id = table.Column<int>(type: "INTEGER", nullable: true),
+                    uuid = table.Column<Guid>(type: "BLOB", nullable: false, defaultValueSql: "randomblob(16)"),
+                    created_at = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -124,22 +107,21 @@ namespace GrapheneTemplate.Database.Migrations
                         column: x => x.created_by_id,
                         principalTable: "users",
                         principalColumn: "id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "staff",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    role = table.Column<int>(type: "int", nullable: false),
-                    space_id = table.Column<int>(type: "int", nullable: true),
-                    user_id = table.Column<int>(type: "int", nullable: true),
-                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
-                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    role = table.Column<int>(type: "INTEGER", nullable: false),
+                    space_id = table.Column<int>(type: "INTEGER", nullable: true),
+                    user_id = table.Column<int>(type: "INTEGER", nullable: true),
+                    uuid = table.Column<Guid>(type: "BLOB", nullable: false, defaultValueSql: "randomblob(16)"),
+                    created_at = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -154,26 +136,24 @@ namespace GrapheneTemplate.Database.Migrations
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateTable(
                 name: "orders",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    quantity = table.Column<double>(type: "double", nullable: false),
-                    comments = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    status = table.Column<int>(type: "int", nullable: false),
-                    created_by_id = table.Column<int>(type: "int", nullable: true),
-                    product_id = table.Column<int>(type: "int", nullable: true),
-                    bill_id = table.Column<int>(type: "int", nullable: true),
-                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
-                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    quantity = table.Column<double>(type: "REAL", nullable: false),
+                    comments = table.Column<string>(type: "TEXT", nullable: false),
+                    status = table.Column<int>(type: "INTEGER", nullable: false),
+                    created_by_id = table.Column<int>(type: "INTEGER", nullable: true),
+                    product_id = table.Column<int>(type: "INTEGER", nullable: true),
+                    bill_id = table.Column<int>(type: "INTEGER", nullable: true),
+                    uuid = table.Column<Guid>(type: "BLOB", nullable: false, defaultValueSql: "randomblob(16)"),
+                    created_at = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    deleted_at = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -193,8 +173,7 @@ namespace GrapheneTemplate.Database.Migrations
                         column: x => x.created_by_id,
                         principalTable: "users",
                         principalColumn: "id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_bills_id",

@@ -42,7 +42,6 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
-        // [JsonProperty("id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual Guid Uuid { get; set; } = Guid.NewGuid();
 

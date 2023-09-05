@@ -13,7 +13,19 @@ var builder = WebApplication.CreateBuilder(args);
 //         .EnableSensitiveDataLogging()
 //         .EnableDetailedErrors()
 // );
-// builder.UseSqlite<GrapheCache>(options => options);
+
+// var folder = Environment.SpecialFolder.LocalApplicationData;
+// var path = Environment.GetFolderPath(folder);
+// var dbPath = System.IO.Path.Join(path, "data.db");
+// DbContextOptionsBuilder options = new DbContextOptionsBuilder() { };
+builder.Services.AddDbContext<GrapheneCache>(
+    dbContextOptions => dbContextOptions
+        .UseSqlite("Data Source=data.db")
+        .LogTo(Console.WriteLine, LogLevel.Information)
+        .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
+);
+
 // Register Graphene Services after your DatabaseContext.
 builder.Services.AddGraphene<GrapheneCache>(builder);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

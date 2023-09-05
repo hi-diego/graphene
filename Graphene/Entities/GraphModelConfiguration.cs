@@ -21,10 +21,18 @@ namespace Graphene.Entities
         /// <param name="builder"></param>
         public static void Configure(EntityTypeBuilder builder, Type type)
         {
+            // Mysql
+            // builder.Property(nameof(Entity.Uuid))
+            //     .HasColumnType("binary(16)")
+            //     .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
+            // builder.HasIndex(nameof(Entity.Uuid)).IsUnique();
+
+            // Sqlite
             builder.Property(nameof(Entity.Uuid))
-                .HasColumnType("binary(16)")
-                .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
+                .HasColumnType("BLOB")
+                .HasDefaultValueSql("randomblob(16)");
             builder.HasIndex(nameof(Entity.Uuid)).IsUnique();
+
             builder.HasIndex("Id").IsUnique();
             LambdaExpression e = DynamicExpressionParser.ParseLambda(
                 type, typeof(bool),

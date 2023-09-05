@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GrapheneTemplate.Database.Migrations
+namespace GrapheneTemplate.Database.Migrations.Sqlite
 {
     [DbContext(typeof(GrapheneCache))]
     partial class GrapheneCacheModelSnapshot : ModelSnapshot
@@ -15,51 +15,48 @@ namespace GrapheneTemplate.Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.9");
 
             modelBuilder.Entity("GrapheneTemplate.Database.Models.Bill", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("deleted_at");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("modified_at");
 
                     b.Property<int>("SpaceId")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("space_id");
 
                     b.Property<double>("Total")
-                        .HasColumnType("double")
+                        .HasColumnType("REAL")
                         .HasColumnName("total");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("type");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("user_id");
 
-                    b.Property<byte[]>("Uuid")
-                        .IsRequired()
+                    b.Property<Guid>("Uuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)")
+                        .HasColumnType("BLOB")
                         .HasColumnName("uuid")
-                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
+                        .HasDefaultValueSql("randomblob(16)");
 
                     b.HasKey("Id")
                         .HasName("pk_bills");
@@ -81,52 +78,51 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
                     b.Property<int?>("BillId")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("bill_id");
 
                     b.Property<string>("Comments")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("comments");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("created_at");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("created_by_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("deleted_at");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("modified_at");
 
                     b.Property<int?>("ProductId")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("product_id");
 
                     b.Property<double>("Quantity")
-                        .HasColumnType("double")
+                        .HasColumnType("REAL")
                         .HasColumnName("quantity");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("status");
 
-                    b.Property<byte[]>("Uuid")
-                        .IsRequired()
+                    b.Property<Guid>("Uuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)")
+                        .HasColumnType("BLOB")
                         .HasColumnName("uuid")
-                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
+                        .HasDefaultValueSql("randomblob(16)");
 
                     b.HasKey("Id")
                         .HasName("pk_orders");
@@ -150,61 +146,60 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
                     b.Property<bool>("Available")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("available");
 
                     b.Property<string>("Category")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("category");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("created_at");
 
                     b.Property<int?>("CreatedById")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("created_by_id");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("deleted_at");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("description");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("modified_at");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("name");
 
                     b.Property<string>("Packaging")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("packaging");
 
                     b.Property<double>("Price")
-                        .HasColumnType("double")
+                        .HasColumnType("REAL")
                         .HasColumnName("price");
 
                     b.Property<string>("Subcategory")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("subcategory");
 
-                    b.Property<byte[]>("Uuid")
-                        .IsRequired()
+                    b.Property<Guid>("Uuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)")
+                        .HasColumnType("BLOB")
                         .HasColumnName("uuid")
-                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
+                        .HasDefaultValueSql("randomblob(16)");
 
                     b.HasKey("Id")
                         .HasName("pk_products");
@@ -224,49 +219,48 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("capacity");
 
                     b.Property<int>("Configuration")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("configuration");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("deleted_at");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("description");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("modified_at");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("name");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("type");
 
-                    b.Property<byte[]>("Uuid")
-                        .IsRequired()
+                    b.Property<Guid>("Uuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)")
+                        .HasColumnType("BLOB")
                         .HasColumnName("uuid")
-                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
+                        .HasDefaultValueSql("randomblob(16)");
 
                     b.HasKey("Id")
                         .HasName("pk_spaces");
@@ -284,39 +278,38 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("deleted_at");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("modified_at");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("role");
 
                     b.Property<int?>("SpaceId")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("space_id");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("user_id");
 
-                    b.Property<byte[]>("Uuid")
-                        .IsRequired()
+                    b.Property<Guid>("Uuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)")
+                        .HasColumnType("BLOB")
                         .HasColumnName("uuid")
-                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
+                        .HasDefaultValueSql("randomblob(16)");
 
                     b.HasKey("Id")
                         .HasName("pk_staff");
@@ -338,42 +331,41 @@ namespace GrapheneTemplate.Database.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("created_at");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("deleted_at");
 
                     b.Property<string>("Identifier")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("email");
 
                     b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("modified_at");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("name");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("password");
 
-                    b.Property<byte[]>("Uuid")
-                        .IsRequired()
+                    b.Property<Guid>("Uuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)")
+                        .HasColumnType("BLOB")
                         .HasColumnName("uuid")
-                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
+                        .HasDefaultValueSql("randomblob(16)");
 
                     b.HasKey("Id")
                         .HasName("pk_users");
