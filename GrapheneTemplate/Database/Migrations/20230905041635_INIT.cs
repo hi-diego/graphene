@@ -26,7 +26,7 @@ namespace GrapheneTemplate.Database.Migrations
                     description = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     type = table.Column<int>(type: "int", nullable: false),
-                    uid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
+                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -47,7 +47,7 @@ namespace GrapheneTemplate.Database.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    uid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
+                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -70,7 +70,7 @@ namespace GrapheneTemplate.Database.Migrations
                     space_id = table.Column<int>(type: "int", nullable: false),
                     type = table.Column<int>(type: "int", nullable: false),
                     total = table.Column<double>(type: "double", nullable: false),
-                    uid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
+                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -111,7 +111,7 @@ namespace GrapheneTemplate.Database.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     available = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     created_by_id = table.Column<int>(type: "int", nullable: true),
-                    uid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
+                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -136,7 +136,7 @@ namespace GrapheneTemplate.Database.Migrations
                     role = table.Column<int>(type: "int", nullable: false),
                     space_id = table.Column<int>(type: "int", nullable: true),
                     user_id = table.Column<int>(type: "int", nullable: true),
-                    uid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
+                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -170,7 +170,7 @@ namespace GrapheneTemplate.Database.Migrations
                     created_by_id = table.Column<int>(type: "int", nullable: true),
                     product_id = table.Column<int>(type: "int", nullable: true),
                     bill_id = table.Column<int>(type: "int", nullable: true),
-                    uid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
+                    uuid = table.Column<byte[]>(type: "binary(16)", nullable: false, defaultValueSql: "(unhex(replace(uuid(),'-','')))"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -208,15 +208,15 @@ namespace GrapheneTemplate.Database.Migrations
                 column: "space_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_bills_uid",
-                table: "bills",
-                column: "uid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_bills_user_id",
                 table: "bills",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_bills_uuid",
+                table: "bills",
+                column: "uuid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_orders_bill_id",
@@ -240,9 +240,9 @@ namespace GrapheneTemplate.Database.Migrations
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_orders_uid",
+                name: "IX_orders_uuid",
                 table: "orders",
-                column: "uid",
+                column: "uuid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -257,9 +257,9 @@ namespace GrapheneTemplate.Database.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_products_uid",
+                name: "IX_products_uuid",
                 table: "products",
-                column: "uid",
+                column: "uuid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -269,9 +269,9 @@ namespace GrapheneTemplate.Database.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_spaces_uid",
+                name: "IX_spaces_uuid",
                 table: "spaces",
-                column: "uid",
+                column: "uuid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -286,15 +286,15 @@ namespace GrapheneTemplate.Database.Migrations
                 column: "space_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_staff_uid",
-                table: "staff",
-                column: "uid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_staff_user_id",
                 table: "staff",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_staff_uuid",
+                table: "staff",
+                column: "uuid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_users_id",
@@ -303,9 +303,9 @@ namespace GrapheneTemplate.Database.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_users_uid",
+                name: "IX_users_uuid",
                 table: "users",
-                column: "uid",
+                column: "uuid",
                 unique: true);
         }
 

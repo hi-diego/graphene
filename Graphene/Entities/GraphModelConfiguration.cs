@@ -21,10 +21,10 @@ namespace Graphene.Entities
         /// <param name="builder"></param>
         public static void Configure(EntityTypeBuilder builder, Type type)
         {
-            builder.Property("Uid")
+            builder.Property(nameof(Entity.Uuid))
                 .HasColumnType("binary(16)")
                 .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
-            builder.HasIndex("Uid").IsUnique();
+            builder.HasIndex(nameof(Entity.Uuid)).IsUnique();
             builder.HasIndex("Id").IsUnique();
             LambdaExpression e = DynamicExpressionParser.ParseLambda(
                 type, typeof(bool),

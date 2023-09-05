@@ -50,16 +50,16 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("type");
 
-                    b.Property<byte[]>("Uid")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)")
-                        .HasColumnName("uid")
-                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
-
                     b.Property<int?>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
+
+                    b.Property<byte[]>("Uuid")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("binary(16)")
+                        .HasColumnName("uuid")
+                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
 
                     b.HasKey("Id")
                         .HasName("pk_bills");
@@ -69,10 +69,10 @@ namespace GrapheneTemplate.Database.Migrations
 
                     b.HasIndex("SpaceId");
 
-                    b.HasIndex("Uid")
-                        .IsUnique();
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex("Uuid")
+                        .IsUnique();
 
                     b.ToTable("bills");
                 });
@@ -121,11 +121,11 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("status");
 
-                    b.Property<byte[]>("Uid")
+                    b.Property<byte[]>("Uuid")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("binary(16)")
-                        .HasColumnName("uid")
+                        .HasColumnName("uuid")
                         .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
 
                     b.HasKey("Id")
@@ -140,7 +140,7 @@ namespace GrapheneTemplate.Database.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("Uid")
+                    b.HasIndex("Uuid")
                         .IsUnique();
 
                     b.ToTable("orders");
@@ -199,11 +199,11 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("subcategory");
 
-                    b.Property<byte[]>("Uid")
+                    b.Property<byte[]>("Uuid")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("binary(16)")
-                        .HasColumnName("uid")
+                        .HasColumnName("uuid")
                         .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
 
                     b.HasKey("Id")
@@ -214,7 +214,7 @@ namespace GrapheneTemplate.Database.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("Uid")
+                    b.HasIndex("Uuid")
                         .IsUnique();
 
                     b.ToTable("products");
@@ -261,11 +261,11 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("type");
 
-                    b.Property<byte[]>("Uid")
+                    b.Property<byte[]>("Uuid")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("binary(16)")
-                        .HasColumnName("uid")
+                        .HasColumnName("uuid")
                         .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
 
                     b.HasKey("Id")
@@ -274,7 +274,7 @@ namespace GrapheneTemplate.Database.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("Uid")
+                    b.HasIndex("Uuid")
                         .IsUnique();
 
                     b.ToTable("spaces");
@@ -307,16 +307,16 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("space_id");
 
-                    b.Property<byte[]>("Uid")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("binary(16)")
-                        .HasColumnName("uid")
-                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
-
                     b.Property<int?>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
+
+                    b.Property<byte[]>("Uuid")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("binary(16)")
+                        .HasColumnName("uuid")
+                        .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
 
                     b.HasKey("Id")
                         .HasName("pk_staff");
@@ -326,10 +326,10 @@ namespace GrapheneTemplate.Database.Migrations
 
                     b.HasIndex("SpaceId");
 
-                    b.HasIndex("Uid")
-                        .IsUnique();
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex("Uuid")
+                        .IsUnique();
 
                     b.ToTable("staff");
                 });
@@ -368,11 +368,11 @@ namespace GrapheneTemplate.Database.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("password");
 
-                    b.Property<byte[]>("Uid")
+                    b.Property<byte[]>("Uuid")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("binary(16)")
-                        .HasColumnName("uid")
+                        .HasColumnName("uuid")
                         .HasDefaultValueSql("(unhex(replace(uuid(),'-','')))");
 
                     b.HasKey("Id")
@@ -381,7 +381,7 @@ namespace GrapheneTemplate.Database.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("Uid")
+                    b.HasIndex("Uuid")
                         .IsUnique();
 
                     b.ToTable("users");
