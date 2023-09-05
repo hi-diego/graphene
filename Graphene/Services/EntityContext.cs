@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json.Linq;
 using System.Security.Claims;
+using Graphene.Cache;
 using StackExchange.Redis;
 
 namespace Graphene.Services
@@ -267,26 +268,26 @@ namespace Graphene.Services
             var actionName = descriptor.ActionName;
             // var jsonBody = await HttpRequestToJson();
             var entityName = actionContext.RouteData?.Values["entity"]?.ToString()?.DbSetName();
-            if (entityName == null) return null;
+            string? id = actionContext.RouteData?.Values["id"]?.ToString();
+            int cachedId = 0;
+            Guid resourceGuid = Guid.Empty;
+            if (id != null)  (cachedId, entityName, resourceGuid) = FetchId(id);
+            Id = cachedId;
+            Guid = resourceGuid;
             var graphType = Graph.Find(entityName);
             if (graphType == null) return new NotFoundResult();
-            bool? idParam = actionContext.RouteData?.Values.ContainsKey("id");
-            if (idParam == true)
-            {
-                string? id = actionContext.RouteData?.Values["id"]?.ToString();
-                int resourceId = 0;
-                // Maybe is not a good idea to search in the API by Autoincremental ID
-                // Int32.TryParse(id, out resourceId);
-                Guid resourceGuid = new Guid();
-                Guid.TryParse(id, out resourceGuid);
-                bool hasGuid = !resourceGuid.Equals(new Guid());
-                if (resourceId == 0 && !hasGuid) return new NotFoundResult();
-                Id = resourceId;
-                Guid = resourceGuid;
-            }
             GraphType = graphType;
             ActionName = actionName;
             return null;
+        }
+
+        public Tuple<int, string, Guid> FetchId (string id)
+        {
+            Guid resourceGuid;
+            if (!Guid.TryParse(id, out resourceGuid)) resourceGuid = id.FromBase64();
+            var redisGuidCache = new RedisGuidCache(Multiplexer);
+            var cached = redisGuidCache.GetCached(resourceGuid);
+            return new Tuple<int, string, Guid>(cached.Item1, cached.Item2, resourceGuid);
         }
 
         /// <summary>

@@ -35,7 +35,7 @@ namespace Graphene.Extensions
             builder.Services.AddScoped<AuthorizationService>();
             builder.Services.AddScoped<AuthorizationFilter>();
             builder.Services.AddScoped<AuthorizeActionFilter>();
-            builder.Services.AddScoped<ResourceFilter>();
+            // builder.Services.AddScoped<ResourceFilter>();
             // TODO USE AuthorizationService or IAuthorizationHandler
             // builder.Services.AddSingleton<IAuthorizationHandler, MyHandler1>();
             //builder.Services.AddScoped<IAuthorizationService, AuthorizationService<T>>();

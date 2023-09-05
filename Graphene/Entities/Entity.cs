@@ -5,13 +5,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Graphene.Extensions;
 
 namespace Graphene.Entities
 {
@@ -49,6 +45,12 @@ namespace Graphene.Entities
         [JsonProperty("id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual Guid Uid { get; set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [NotMapped]
+        public virtual string? UrlId { get => Uid.ToBase64(); }
 
         /// <summary>
         /// 

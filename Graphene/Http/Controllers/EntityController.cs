@@ -13,7 +13,6 @@ namespace Graphene.Http.Controllers
     // [Authorize]
     [ApiController]
     [ServiceFilter(typeof(AuthorizationFilter))]
-    [ServiceFilter(typeof(ResourceFilter))]
     public abstract class EntityController : ControllerBase
     {
         /// <summary>
@@ -33,6 +32,15 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         public IEntityContext EC { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [HttpGet("/x/{id}")]
+        public IActionResult FindResource([FindEntity] Entity instance)
+        {
+            return Ok(instance);
+        }
 
 
         /// <summary>

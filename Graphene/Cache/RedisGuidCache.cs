@@ -21,6 +21,19 @@ namespace Graphene.Cache
             return id;
         }
 
+        public Tuple<int, string>? GetCached (Guid guid)
+        {
+            string key = guid.ToString();
+            string? value = Redis.StringGet(key).ToString();
+            if (value == null) return null;
+            string? stringId = value.Split(":").Last();
+            string? entityName = value.Split(":").First();
+            int id = stringId == null
+                ? 0
+                : int.Parse(stringId);
+            return new Tuple<int, string>(id, entityName);
+        }
+
         public Guid GetCachedGuid (int id, string entityName)
         {
             string key = GetIdKey(id, entityName);
@@ -47,6 +60,9 @@ namespace Graphene.Cache
             string id = (string)instance.Id.ToString();
             Redis.StringSetAsync(uid, GetIdKey(instance));
             Redis.StringSetAsync(GetIdKey(instance), uid);
+
+            // Redis.SetAdd(uid, GetIdKey(instance));
+            // Redis.SetAdd(GetIdKey(instance), uid);
         }
 
         public void CacheManyIds (IEnumerable<Entity> instances)
