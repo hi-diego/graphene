@@ -89,7 +89,7 @@ namespace Graphene.Http.Controllers
             // Persist the given request instance
             var instance = (Entity) await EC.Repository.Create(request);
             // return the new created Instance with 201 status code and the URL link on where to find the new created resource.
-            return Created($"{HttpContext.Request.GetEncodedUrl()}/{instance.Uid}", instance);
+            return Created($"{HttpContext.Request.GetEncodedUrl()}/{instance.Uuid}", instance);
         }
 
         /// <summary>

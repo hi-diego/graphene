@@ -56,7 +56,7 @@ namespace Graphene.Cache
 
         public void CacheIds (Entity instance)
         {
-            string uid = (string)instance.Uid.ToString();
+            string uid = (string)instance.Uuid.ToString();
             string id = (string)instance.Id.ToString();
             Redis.StringSetAsync(uid, GetIdKey(instance));
             Redis.StringSetAsync(GetIdKey(instance), uid);

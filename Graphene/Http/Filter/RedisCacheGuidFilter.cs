@@ -28,7 +28,6 @@ namespace Graphene.Http.Filter
             // Do something after the result executes.
             var result = (ObjectResult) context.Result;
             if (result.StatusCode > 300) return;
-            DefaultContractResolver contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
             string input = JsonConvert.SerializeObject(result.Value, Formatting.Indented, _jsonSerializerSettings);
             string output = new RedisGuidCache(_multiplexer).ReplaceIdsWithGuids(input);
             result.Value = JObject.Parse(output);

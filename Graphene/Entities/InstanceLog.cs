@@ -77,7 +77,7 @@ namespace Graphene.Entities
             Event = entry.State.ToString();
             CreatedAt = DateTime.Now;
             Instance = ((Entity)entry.Entity);
-            InstanceUid = ((Entity)entry.Entity).Uid;
+            InstanceUid = ((Entity)entry.Entity).Uuid;
             return this;
         }
     }

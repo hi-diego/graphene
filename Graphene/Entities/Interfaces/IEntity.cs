@@ -20,7 +20,7 @@ namespace Graphene.Entities.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        public Guid Uid { get; set; }
+        public Guid Uuid { get; set; }
 
         /// <summary>
         /// 

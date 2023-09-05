@@ -125,7 +125,7 @@ namespace Graphene.Entities
             // if found use the chache id
             if (cacheId > 0) return set.Where(i => (i as Entity).Id.Equals(cacheId));
             // if not query with the guid
-            return set = set.Where(i => (i as Entity).Uid.Equals(id));
+            return set = set.Where(i => (i as Entity).Uuid.Equals(id));
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Graphene.Entities
             // Generate and Juxtapoze the dynamic includeds by executing the static includeMethod from the EntityFrameworkQueryableExtensions.
             set = Graph.SetIncludes(set, entityType, includes);
             // Find instance by Entity.Id
-            set = set.Where(i => (i as Entity).Uid.Equals(guid));
+            set = set.Where(i => (i as Entity).Uuid.Equals(guid));
             // Set the AsNoTracking option value.
             return tracking
                 ? await set.Includes(load).FirstOrDefaultAsync()
@@ -272,7 +272,7 @@ namespace Graphene.Entities
             await DatabaseContext.SaveChangesAsync();
             logs.Where(l => l.InstanceEntityState == EntityState.Added).ToList().ForEach(l => {
                 l.InstanceId = l.Instance.Id;
-                l.InstanceUid = l.Instance.Uid;
+                l.InstanceUid = l.Instance.Uuid;
                 RedisGuidCache.CacheIds(l.Instance);
             });
             AfterSave(instance, logs);
