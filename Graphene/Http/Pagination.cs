@@ -79,7 +79,7 @@ namespace Graphene.Http
             if (graph != null) query.Includes(pagination.Load, graph, entityType).AsNoTracking();
             // DAANGER , this NEXT LINE IS CRazy, wee need to cache the count of each table so do not perform count on tables that have more than 100,000 records
             pagination.Total = query.Count();
-            pagination.Pages = pagination.Total / pagination.Size + (pagination.Total % pagination.Size);
+            pagination.Pages = (pagination.Total / pagination.Size) + ((pagination.Total % pagination.Size) > 0 ? 1 : 0);
             pagination.Data = await query.Skip((pagination.Page - 1) * pagination.Size).Take(pagination.Size).ToArrayAsync();
             return pagination;
         }

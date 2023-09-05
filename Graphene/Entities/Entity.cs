@@ -42,15 +42,15 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty("id")]
+        // [JsonProperty("id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual Guid Uid { get; set; } = Guid.NewGuid();
 
         /// <summary>
         /// 
         /// </summary>
-        [NotMapped]
-        public virtual string? UrlId { get => Uid.ToBase64(); }
+        // [NotMapped]
+        // public virtual string? UrlId { get => Uid.ToBase64(); }
 
         /// <summary>
         /// 
