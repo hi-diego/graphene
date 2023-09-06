@@ -3,6 +3,7 @@ using Graphene.Database.Extensions;
 using Graphene.Database.Interfaces;
 using Graphene.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace GrapheneTemplate.Database
 {
@@ -14,7 +15,7 @@ namespace GrapheneTemplate.Database
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<Order> Order { get; set; }
+        public DbSet<Models.Order> Order { get; set; }
         
         /// <summary>
         /// 
@@ -83,13 +84,17 @@ namespace GrapheneTemplate.Database
         //    // Declare the models that you want to expose in the API.
         //    SetDictionary = GetSets();
         //}
+
+        public string DbName { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
-        public GrapheneCache(DbContextOptions<GrapheneCache> options) : base(options)
+        public GrapheneCache(DbContextOptions<GrapheneCache> options, IConnectionMultiplexer multiplexer, IHttpContextAccessor accessor) : base(options)
         {
             // Declare the models that you want to expose in the API.
             SetDictionary = GetSets();
+            DbName = accessor?.HttpContext?.Request.Host.Host;
         }
         /// <summary>
         /// 
@@ -107,7 +112,7 @@ namespace GrapheneTemplate.Database
                 { typeof(Bill), () => Bill },
                 { typeof(Product), () => Product },
                 { typeof(Space), () => Space },
-                { typeof(Order), () => Order },
+                { typeof(Models.Order), () => Order },
                 { typeof(Staff), () => Staff },
             };
         }
@@ -124,6 +129,11 @@ namespace GrapheneTemplate.Database
             //     .HasValue<Location>(Models.Space.SpaceTypes.Location)
             //     .HasValue<DinnerTable>(Models.Space.SpaceTypes.DinnerTable)
             //     .HasValue<PayDesk>(Models.Space.SpaceTypes.PayDesk);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if ((System.DateTime.Now.Millisecond % 2 == 0)) optionsBuilder.UseSqlite($"Data Source={DbName}.db");
         }
     }
 }
