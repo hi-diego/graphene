@@ -1,16 +1,13 @@
 ﻿using Graphene.Database.Interfaces;
 using Graphene.Graph.Interfaces;
-using Graphene.Entities;
 using Graphene.Entities.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Graphene.Services
 {
@@ -22,11 +19,12 @@ namespace Graphene.Services
         /// <summary>
         /// 
         /// </summary>
-        public AuthenticationService(IGrapheneDatabaseContext database, IConfiguration configuration, IGraph graph)
+        public AuthenticationService(IGrapheneDatabaseContext database, IConfiguration configuration, IGraph graph, IOptions<JsonOptions> jsonOptions)
         {
             Configuration = configuration;
             Database = database;
             Graph = graph;
+            _jsonOptions = jsonOptions;
         }
         /// <summary>
         /// 
@@ -40,6 +38,9 @@ namespace Graphene.Services
         /// 
         /// </summary>
         public IGraph Graph { get; }
+
+        private IOptions<JsonOptions> _jsonOptions;
+
         /// <summary>
         /// 
         /// </summary>
@@ -62,7 +63,7 @@ namespace Graphene.Services
             var claims = new[] {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Identifier),
-                new Claim(ClaimTypes.UserData, user.ToJson())
+                new Claim(ClaimTypes.UserData, user.ToJson(_jsonOptions.Value.JsonSerializerOptions))
             };
             var tokenDescriptor = new SecurityTokenDescriptor
             {

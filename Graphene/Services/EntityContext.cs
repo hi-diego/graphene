@@ -13,6 +13,7 @@ using System.Text.Json.Nodes;
 using Graphene.Cache;
 using StackExchange.Redis;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 
 namespace Graphene.Services
 {
@@ -142,12 +143,12 @@ namespace Graphene.Services
         /// </summary>
         /// <param name="graph"></param>
         /// <param name="db"></param>
-        public EntityContext(IGraph graph, IGrapheneDatabaseContext db, IConnectionMultiplexer multiplexer)
+        public EntityContext(IGraph graph, IGrapheneDatabaseContext db, IConnectionMultiplexer multiplexer, IOptions<JsonOptions> jsonOptions)
         {
             Multiplexer = multiplexer;
             Graph = graph;
             DbContext = db;
-            Repository = new EntityRepository(DbContext, Graph, Multiplexer);
+            Repository = new EntityRepository(DbContext, Graph, jsonOptions, Multiplexer);
         }
 
         /// <summary>

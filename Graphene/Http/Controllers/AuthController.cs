@@ -6,15 +6,10 @@ using Graphene.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 
 namespace Graphene.Http.Controllers
 {
@@ -28,11 +23,12 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         /// <param name="databaseContext"></param>
-        public AuthController(IGrapheneDatabaseContext dbContext, IConfiguration configuration, IGraph graph)
+        public AuthController(IGrapheneDatabaseContext dbContext, IConfiguration configuration, IGraph graph, IOptions<JsonOptions> jsonOptions)
         {
             Configuration = configuration;
             DatabaseContext = dbContext;
             Graph = graph;
+            _jsonOptions = jsonOptions;
         }
         /// <summary>
         /// 
@@ -46,6 +42,9 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         public IGraph Graph { get; }
+
+        private IOptions<JsonOptions> _jsonOptions;
+
         /// <summary>
         /// 
         /// </summary>
@@ -55,7 +54,7 @@ namespace Graphene.Http.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             if (!TryValidateModel(request)) return BadRequest(ModelState);
-            IAuthenticable? user = await (new AuthenticationService(DatabaseContext, Configuration, Graph))
+            IAuthenticable? user = await (new AuthenticationService(DatabaseContext, Configuration, Graph, _jsonOptions))
                 .Auth(request.Email, request.Password, request.Load);
             if (user == null) return Unauthorized();
             return Ok(user);

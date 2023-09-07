@@ -7,6 +7,8 @@ using Graphene.Entities.Interfaces;
 using Graphene.Graph.Interfaces;
 using Graphene.Cache;
 using StackExchange.Redis;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Graphene.Entities
 {
@@ -15,14 +17,17 @@ namespace Graphene.Entities
     /// </summary>
     public class EntityRepository
     {
+        private readonly IOptions<JsonOptions> _jsonOptions;
+
         /// <summary>
         /// 
         /// </summary>
-        public EntityRepository(IGrapheneDatabaseContext dbContext, IGraph graph, IConnectionMultiplexer _multiplexer = null)
+        public EntityRepository(IGrapheneDatabaseContext dbContext, IGraph graph, IOptions<JsonOptions> jsonOptions, IConnectionMultiplexer _multiplexer = null)
         {
             Graph = graph;
             RedisGuidCache = new RedisGuidCache(_multiplexer);
             DatabaseContext = dbContext;
+            _jsonOptions = jsonOptions;
         }
 
         /// <summary>
@@ -237,7 +242,7 @@ namespace Graphene.Entities
         /// <param name="id"></param>
         public async Task<Entity> Update(Entity instance, object data, bool save = true)
         {
-            instance = instance.Update(data);
+            instance = instance.Update(data, _jsonOptions.Value.JsonSerializerOptions);
             try { DatabaseContext.Update(instance); }
             catch (Exception e) { var f = e; }
             if (save) await Save(instance, false);
@@ -339,7 +344,7 @@ namespace Graphene.Entities
             Type logType = logGraphType?.SystemType ?? typeof(InstanceLog);
             var entries = DatabaseContext.ChangeTracker.Entries().ToList(); 
             var logs = entries.Where(e => e.State != EntityState.Unchanged)
-                .Select(entry => ((IInstanceLog) Activator.CreateInstance(logType)).Init(entry, null))
+                .Select(entry => ((IInstanceLog) Activator.CreateInstance(logType)).Init(entry, null, _jsonOptions.Value.JsonSerializerOptions))
                 .ToList();
             if (logGraphType != null) DatabaseContext.AddRange(logs);
             return logs;

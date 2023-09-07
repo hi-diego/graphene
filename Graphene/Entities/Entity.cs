@@ -102,28 +102,8 @@ namespace Graphene.Entities
         /// </summary>
         /// <param name="json"></param>
         /// <returns></returns>
-        public virtual Entity Update(object instance)
+        public virtual Entity Update(object instance, JsonSerializerOptions serializeOptions)
         {
-            /*
-            JsonObject json = (JsonObject)JsonObject.Parse(System.Text.Json.JsonSerializer.Serialize(instance, this.GetType()))!;
-            JsonObject currentJson = (JsonObject)JsonObject.Parse(System.Text.Json.JsonSerializer.Serialize(this, this.GetType()))!;
-            var outputBuffer = new ArrayBufferWriter<byte>();
-            var jsonWriter = new Utf8JsonWriter(outputBuffer, new JsonWriterOptions { Indented = true });
-            jsonWriter.WriteStartObject();
-            foreach (var kv in json.AsEnumerable())
-            {
-                if (currentJson.ContainsKey(kv.Key)) currentJson.Remove(kv.Key);
-                currentJson[kv.Key] = kv.Value.AsValue();
-                currentJson.Add(kv.Key, kv.Value);
-            }
-            jsonWriter.WriteEndObject();
-            return (BaseEntity) currentJson.Deserialize(this.GetType());
-            */
-            var serializeOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            };
             var newJsonString = System.Text.Json.JsonSerializer.Serialize(instance, instance.GetType(), serializeOptions);
             var originalJsonString = System.Text.Json.JsonSerializer.Serialize(this, this.GetType(), serializeOptions);
             var merged = SimpleObjectMerge(originalJsonString, newJsonString);
@@ -175,9 +155,9 @@ namespace Graphene.Entities
         /// 
         /// </summary>
         /// <returns></returns>
-        public string ToJson()
+        public string ToJson(JsonSerializerOptions serializeOptions)
         {
-            return System.Text.Json.JsonSerializer.Serialize(this, this.GetType());
+            return System.Text.Json.JsonSerializer.Serialize(this, this.GetType(), serializeOptions);
         }
 
         /// <summary>

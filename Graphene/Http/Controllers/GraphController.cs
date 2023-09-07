@@ -1,16 +1,8 @@
-﻿using Graphene.Database;
-using Graphene.Database.Interfaces;
-using Graphene.Graph;
+﻿using Graphene.Database.Interfaces;
 using Graphene.Graph.Interfaces;
-using Graphene.Http.Exceptions;
 using Graphene.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Graphene.Http.Controllers
 {
@@ -35,10 +27,10 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         /// <param name="databaseContext"></param>
-        public GraphController(IGrapheneDatabaseContext databaseContext, IGraph graph)
+        public GraphController(IGrapheneDatabaseContext databaseContext, IGraph graph, IOptions<JsonOptions> jsonOptions)
         {
             DatabaseContext = databaseContext;
-            EntityRepository = new EntityRepository(databaseContext, graph);
+            EntityRepository = new EntityRepository(databaseContext, graph, jsonOptions);
         }
 
         /// <summary>

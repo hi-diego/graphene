@@ -34,6 +34,9 @@ namespace GrapheneTemplate.Database.Models
         /// </summary>
         [InverseProperty(nameof(Models.Order.CreatedBy))]
         public IEnumerable<Order> OrderHistory { get; set; } = new List<Order>();
-        
+
+        [InverseProperty(nameof(Models.Bill.User))]
+        public IEnumerable<Bill> Bills { get; set; } = new List<Bill>();
+
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Graphene.Entities
@@ -62,12 +63,12 @@ namespace Graphene.Entities
         /// <param name="entry"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public IInstanceLog Init(EntityEntry entry, int? userId = null)
+        public IInstanceLog Init(EntityEntry entry, int? userId = null, JsonSerializerOptions serializeOptions = null)
         {
             Entity entity = ((Entity)entry.Entity);
-            var to = entity.ToJson();
+            var to = entity.ToJson(serializeOptions);
             var copy = entry.OriginalValues.Clone().ToObject();
-            var from = ((Entity)copy).ToJson();
+            var from = ((Entity)copy).ToJson(serializeOptions);
             InstanceEntityState = entry.State;
             //UserId = userId;
             Entity = entry.Entity.GetType().Name;

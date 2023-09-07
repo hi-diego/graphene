@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Graphene.Entities.Interfaces
@@ -73,6 +74,6 @@ namespace Graphene.Entities.Interfaces
         /// <typeparam name="T"></typeparam>
         /// <param name="entry"></param>
         /// <returns></returns>
-        IInstanceLog Init(EntityEntry entry, int? userId = null);
+        IInstanceLog Init(EntityEntry entry, int? userId = null, JsonSerializerOptions serializeOptions = null);
     }
 }

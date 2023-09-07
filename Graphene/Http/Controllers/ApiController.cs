@@ -6,13 +6,14 @@ using Graphene.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
+using Microsoft.Extensions.Options;
 
 namespace Graphene.Http.Controllers
 {
@@ -27,11 +28,11 @@ namespace Graphene.Http.Controllers
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="configuration"></param>
-        public ApiController(IGrapheneDatabaseContext dbContext, IConfiguration configuration, IGraph graph)
+        public ApiController(IGrapheneDatabaseContext dbContext, IConfiguration configuration, IGraph graph, IOptions<JsonOptions> jsonOptions)
         {
             Configuration = configuration;
             DatabaseContext = dbContext;
-            EntityRepository = new EntityRepository(dbContext, graph);
+            EntityRepository = new EntityRepository(dbContext, graph, jsonOptions);
             Graph = graph;
         }
 

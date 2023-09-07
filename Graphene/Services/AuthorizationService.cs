@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
+using Microsoft.Extensions.Options;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +29,11 @@ namespace Graphene.Services
         /// 
         /// </summary>
         /// <param name="Database"></param>
-        public AuthorizationService(IGrapheneDatabaseContext databaseContext, IGraph graph)
+        public AuthorizationService(IGrapheneDatabaseContext databaseContext, IGraph graph, IOptions<JsonOptions> jsonOptions)
         {
             Graph = graph;
             DatabaseContext = databaseContext;
-            Repository = new EntityRepository(databaseContext, graph);
+            Repository = new EntityRepository(databaseContext, graph, jsonOptions);
         }
 
         /// <summary>
