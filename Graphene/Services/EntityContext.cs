@@ -287,7 +287,9 @@ namespace Graphene.Services
             if (!Guid.TryParse(id, out resourceGuid)) resourceGuid = id.FromBase64();
             var redisGuidCache = new RedisGuidCache(Multiplexer);
             var cached = redisGuidCache.GetCached(resourceGuid);
-            return new Tuple<int, string, Guid>(cached.Item1, cached.Item2, resourceGuid);
+            return cached == null
+                ? new Tuple<int, string, Guid>(0, resourceGuid.ToString(), resourceGuid)
+                : new Tuple<int, string, Guid>(cached.Item1, cached.Item2, resourceGuid);
         }
 
         /// <summary>

@@ -110,14 +110,15 @@ namespace Graphene.Extensions
             // We will need the Http contrext accesort inmultples parts of the app
             builder.Services.AddHttpContextAccessor();
             // Use MVC logic
-            builder.Services.AddMvc(options => {
+            builder.Services.AddMvc(options =>
+            {
                 // Use the default DefaultExceptionFilter so we can throw StatusCodeException handly in any part of the app
                 // this will handle it and return the correspondet result
                 options.Filters.Add(typeof(DefaultExceptionFilter));
                 options.Filters.Add(typeof(RedisCacheGuidFilter));
-            })
+            });
             // TODO: add an option to use NewtonsoftJson conditionally .
-            .AddNewtonsoftJson();
+            // .AddNewtonsoftJson();
             // Configure the ConfigureJsonOptions Servise so we can have the Pipeline
             // services on the Converter Json Serialization.
             builder.Services.ConfigureOptions<ConfigureJsonOptions>();

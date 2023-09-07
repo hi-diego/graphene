@@ -30,7 +30,7 @@ namespace Graphene.Http.Filter
             if (result.StatusCode > 300) return;
             string input = JsonConvert.SerializeObject(result.Value, Formatting.Indented, _jsonSerializerSettings);
             string output = new RedisGuidCache(_multiplexer).ReplaceIdsWithGuids(input);
-            result.Value = JObject.Parse(output);
+            // result.Value = JObject.Parse(output);
         }
 
         public void OnResultExecuted(ResultExecutedContext context)

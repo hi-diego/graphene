@@ -4,20 +4,21 @@ using Graphene.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 // Register DatabaseContext Mysql
-// var connectionString = builder.Configuration.GetConnectionString("mysql");
-// var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
-// builder.Services.AddDbContext<GrapheneCache>(
-//     dbContextOptions => dbContextOptions
-//         .UseMySql(connectionString, serverVersion)
-//         .LogTo(Console.WriteLine, LogLevel.Information)
-//         .EnableSensitiveDataLogging()
-//         .EnableDetailedErrors()
-// );
+var connectionString = builder.Configuration.GetConnectionString("mysql");
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
+builder.Services.AddDbContext<GrapheneCache>(
+    dbContextOptions => dbContextOptions
+        .UseMySql(connectionString, serverVersion)
+        .LogTo(Console.WriteLine, LogLevel.Information)
+        .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
+);
 
 // var folder = Environment.SpecialFolder.LocalApplicationData;
 // var path = Environment.GetFolderPath(folder);
 // var dbPath = System.IO.Path.Join(path, "data.db");
 // DbContextOptionsBuilder options = new DbContextOptionsBuilder() { };
+/*
 builder.Services.AddDbContext<GrapheneCache>(
     dbContextOptions => dbContextOptions
         .UseSqlite("Data Source=data.db")
@@ -25,6 +26,7 @@ builder.Services.AddDbContext<GrapheneCache>(
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 );
+*/
 
 // Register Graphene Services after your DatabaseContext.
 builder.Services.AddGraphene<GrapheneCache>(builder);

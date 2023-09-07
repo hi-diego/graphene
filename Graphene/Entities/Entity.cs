@@ -8,6 +8,11 @@ using Newtonsoft.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Graphene.Extensions;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Buffers;
+using System.Text;
+using System.Diagnostics;
 
 namespace Graphene.Entities
 {
@@ -103,6 +108,91 @@ namespace Graphene.Entities
             json.Merge(changes, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
             dynamic updated = json.ToObject(GetType());
             return updated;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public virtual string Update(string jsonString)
+        {
+            JsonObject json = (JsonObject)JsonObject.Parse(jsonString)!;
+            JsonObject currentJson = (JsonObject) JsonObject.Parse(System.Text.Json.JsonSerializer.Serialize(this, this.GetType()))!;
+            foreach (var kv in json.AsEnumerable())
+            {
+                currentJson.Add(kv.Key, kv.Value);
+            }
+            return currentJson.ToJsonString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public virtual BaseEntity Update(BaseEntity instance)
+        {
+            /*
+            JsonObject json = (JsonObject)JsonObject.Parse(System.Text.Json.JsonSerializer.Serialize(instance, this.GetType()))!;
+            JsonObject currentJson = (JsonObject)JsonObject.Parse(System.Text.Json.JsonSerializer.Serialize(this, this.GetType()))!;
+            var outputBuffer = new ArrayBufferWriter<byte>();
+            var jsonWriter = new Utf8JsonWriter(outputBuffer, new JsonWriterOptions { Indented = true });
+            jsonWriter.WriteStartObject();
+            foreach (var kv in json.AsEnumerable())
+            {
+                if (currentJson.ContainsKey(kv.Key)) currentJson.Remove(kv.Key);
+                currentJson[kv.Key] = kv.Value.AsValue();
+                currentJson.Add(kv.Key, kv.Value);
+            }
+            jsonWriter.WriteEndObject();
+            return (BaseEntity) currentJson.Deserialize(this.GetType());
+            */
+            var newJsonString = System.Text.Json.JsonSerializer.Serialize(instance, instance.GetType());
+            var originalJsonString = System.Text.Json.JsonSerializer.Serialize(this, this.GetType());
+            var merged = SimpleObjectMerge(originalJsonString, newJsonString);
+            return (BaseEntity) System.Text.Json.JsonSerializer.Deserialize(merged, this.GetType());
+        }
+
+
+
+        public static string SimpleObjectMerge(string originalJson, string newContent)
+        {
+            var outputBuffer = new ArrayBufferWriter<byte>();
+
+            using (JsonDocument jDoc1 = JsonDocument.Parse(originalJson))
+            using (JsonDocument jDoc2 = JsonDocument.Parse(newContent))
+            using (var jsonWriter = new Utf8JsonWriter(outputBuffer, new JsonWriterOptions { Indented = false }))
+            {
+                JsonElement root1 = jDoc1.RootElement;
+                JsonElement root2 = jDoc2.RootElement;
+
+                // Assuming both JSON strings are single JSON objects (i.e. {...})
+                Debug.Assert(root1.ValueKind == JsonValueKind.Object);
+                Debug.Assert(root2.ValueKind == JsonValueKind.Object);
+
+                jsonWriter.WriteStartObject();
+
+                // Write all the properties of the first document that don't conflict with the second
+                foreach (System.Text.Json.JsonProperty property in root1.EnumerateObject())
+                {
+                    if (!root2.TryGetProperty(property.Name, out _))
+                    {
+                        property.WriteTo(jsonWriter);
+                    }
+                }
+
+                // Write all the properties of the second document (including those that are duplicates which were skipped earlier)
+                // The property values of the second document completely override the values of the first
+                foreach (System.Text.Json.JsonProperty property in root2.EnumerateObject())
+                {
+                    property.WriteTo(jsonWriter);
+                }
+
+                jsonWriter.WriteEndObject();
+            }
+
+            return Encoding.UTF8.GetString(outputBuffer.WrittenSpan);
         }
 
         /// <summary>

@@ -133,7 +133,7 @@ namespace GrapheneTemplate.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if ((System.DateTime.Now.Millisecond % 2 == 0)) optionsBuilder.UseSqlite($"Data Source={DbName}.db");
+            // if ((System.DateTime.Now.Millisecond % 2 == 0)) optionsBuilder.UseSqlite($"Data Source={DbName}.db");
         }
     }
 }
