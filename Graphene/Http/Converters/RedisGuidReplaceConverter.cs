@@ -22,7 +22,8 @@ namespace Graphene.Http.Converters
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             int id = 0;
-            Int32.TryParse((string)reader.GetString(), out id);
+            string readerValue = (string)reader.GetString();
+            Int32.TryParse(readerValue, out id);
             return id;
         }
 

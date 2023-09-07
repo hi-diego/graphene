@@ -2,12 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using StackExchange.Redis;
-
 using Graphene.Cache;
 using Graphene.Http.Exceptions;
-using System.Text.Json.Serialization;
+using Microsoft.Extensions.Options;
 
 namespace Graphene.Http.Binders
 {
@@ -23,11 +21,13 @@ namespace Graphene.Http.Binders
     {
         private readonly IEntityContext _context;
         private readonly IConnectionMultiplexer _multiplexer;
+        private readonly IOptions<JsonOptions> _jsonOptions;
 
-        public EntityRequestModelBinder(IEntityContext context, IConnectionMultiplexer multiplexer)
+        public EntityRequestModelBinder(IEntityContext context, IConnectionMultiplexer multiplexer, IOptions<JsonOptions> jsonOptions)
         {
             _context = context;
             _multiplexer = multiplexer;
+            _jsonOptions = jsonOptions;
         }
 
         public Task BindModelAsync(ModelBindingContext bindingContext)
@@ -38,7 +38,7 @@ namespace Graphene.Http.Binders
             var cleanRequest = new RedisGuidCache(_multiplexer).ReplaceGuidsWithIds(requestWithGuids);
             try
             {
-                var result = JsonSerializer.Deserialize(cleanRequest, _context.GraphType.SystemType);
+                var result = JsonSerializer.Deserialize(cleanRequest, _context.GraphType.SystemType, _jsonOptions.Value.JsonSerializerOptions);
                 bindingContext.Result = ModelBindingResult.Success(result);
             }
             catch (Exception e)

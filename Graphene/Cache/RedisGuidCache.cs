@@ -124,7 +124,7 @@ namespace Graphene.Cache
             return output;
         }
         public static string FormatId (string entityName, object? id) => ReplaceString($"{entityName}:{id}");
-        public static string Separator () => "ᴙ";
+        public static string Separator () => "REDIS_REPLACE";
         public static string ReplaceString (string value) => $"{Separator()}{value}";
         public static string SubPattern() => @"\w*:\d*";
         public static string Pattern() => ReplaceString($"({SubPattern()})");

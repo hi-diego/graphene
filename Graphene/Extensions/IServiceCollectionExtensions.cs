@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using StackExchange.Redis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Graphene.Extensions
 {
@@ -116,12 +118,11 @@ namespace Graphene.Extensions
                 // this will handle it and return the correspondet result
                 options.Filters.Add(typeof(DefaultExceptionFilter));
                 options.Filters.Add(typeof(RedisCacheGuidFilter));
+            }).AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
-            // TODO: add an option to use NewtonsoftJson conditionally .
-            // .AddNewtonsoftJson();
-            // Configure the ConfigureJsonOptions Servise so we can have the Pipeline
-            // services on the Converter Json Serialization.
-            // builder.Services.ConfigureOptions<ConfigureJsonOptions>();
             // CORS: allow everything if we are in local Development enviroment
             builder.Services.AddCors(options => options.AddPolicy(name: "development", policy => {
                     policy.AllowAnyOrigin();
