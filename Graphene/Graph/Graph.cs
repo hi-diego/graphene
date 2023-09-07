@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
 using Graphene.Services;
 using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json.Linq;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;

@@ -6,7 +6,7 @@ using Graphene.Http.Exceptions;
 using Graphene.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,18 +52,18 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
-        [Authorize]
-        public ActionResult Graph([FromBody] JObject request)
-        {
+        //[HttpPost]
+        //[Authorize]
+        //public ActionResult Graph([FromBody] object request)
+        //{
             // User user = ApiController.GetUser(User);
-            Entity entity = request.ToObject<Entity>();
-            GraphType graphType = EntityRepository.Graph.Find(entity._Entity);
-            if (graphType == null) return NotFound();
-            dynamic instance = request.ToObject(graphType.SystemType);
-            if (!TryValidateModel(instance, graphType.PascalName)) return BadRequest(ModelState);
-            try { return Ok(EntityRepository.TrackGraph(instance, null)); }
-            catch (Exception e) { return BadRequest(e.Message); }
-        }
+            //Entity entity = request.ToObject<Entity>();
+            //GraphType graphType = EntityRepository.Graph.Find(entity._Entity);
+            //if (graphType == null) return NotFound();
+            //dynamic instance = request.ToObject(graphType.SystemType);
+            //if (!TryValidateModel(instance, graphType.PascalName)) return BadRequest(ModelState);
+            //try { return Ok(EntityRepository.TrackGraph(instance, null)); }
+            //catch (Exception e) { return BadRequest(e.Message); }
+        //}
     }
 }

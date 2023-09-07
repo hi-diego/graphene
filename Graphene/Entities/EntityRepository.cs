@@ -1,7 +1,6 @@
 ﻿using Graphene.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Newtonsoft.Json.Linq;
 using System.Linq.Dynamic.Core;
 using Graphene.Database.Interfaces;
 using Graphene.Entities.Interfaces;
@@ -48,23 +47,10 @@ namespace Graphene.Entities
         /// <param name="request"></param>
         /// <param name="entityName"></param>
         /// <returns></returns>
-        public async Task<object> Create(string entityName, JObject data, bool save = true)
+        public async Task<object> Create(string entityName, object data, bool save = true)
         {
-            dynamic instance = data.ToObject(Graph.Find(entityName.DbSetName()).SystemType);
-            return save ? await Create(instance) : instance;
-        }
-
-        /// <summary>
-        /// Create a Entity from the JObject and add the resource into the DbContext
-        /// and Persist the changes with SaveChanges if the save flag is provided.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="entityName"></param>
-        /// <returns></returns>
-        public object Generate(Type type, JObject data)
-        {
-            dynamic instance = data.ToObject(type);
-            return instance;
+            // dynamic instance = data.ToObject(Graph.Find(entityName.DbSetName()).SystemType);
+            return save ? await Create(data) : data;
         }
 
         /// <summary>
@@ -220,7 +206,7 @@ namespace Graphene.Entities
         /// <param name="instance"></param>
         /// <param name="request"></param>
         /// <param name="id"></param>
-        public async Task<Entity> Update(JObject data, string entityName, int id, bool save = true)
+        public async Task<Entity> Update(object data, string entityName, int id, bool save = true)
         {
             Entity instance = await Find(entityName, id, false);
             if (instance == null) return instance;
@@ -235,7 +221,7 @@ namespace Graphene.Entities
         /// <param name="instance"></param>
         /// <param name="request"></param>
         /// <param name="id"></param>
-        public async Task<Entity> Edit(Entity instance, JObject data)
+        public async Task<Entity> Edit(Entity instance, object data)
         {
             if (instance == null) return instance;
             return await Update(instance, data, true); ;
@@ -249,13 +235,13 @@ namespace Graphene.Entities
         /// <param name="instance"></param>
         /// <param name="request"></param>
         /// <param name="id"></param>
-        public async Task<Entity> Update(Entity instance, JObject data, bool save = true)
+        public async Task<Entity> Update(Entity instance, object data, bool save = true)
         {
-            Entity changed = instance.Update(data);
-            try { DatabaseContext.Update(changed); }
+            instance = instance.Update(data);
+            try { DatabaseContext.Update(instance); }
             catch (Exception e) { var f = e; }
-            if (save) await Save(changed, false);
-            return changed;
+            if (save) await Save(instance, false);
+            return instance;
         }
 
         /// <summary>

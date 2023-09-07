@@ -1,13 +1,14 @@
 ﻿using Graphene.Database.Interfaces;
 using Graphene.Entities.Interfaces;
 using Graphene.Services;
-using Newtonsoft.Json.Linq;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Graphene.Entities
@@ -41,7 +42,7 @@ namespace Graphene.Entities
             if (identity == null) return null;
             Claim claim = identity.Claims.Where(c => c.Type == ClaimTypes.UserData).FirstOrDefault();
             if (claim == null) return null;
-            return JObject.Parse(claim.Value).ToObject<Authenticable>();
+            return JsonSerializer.Deserialize<Authenticable>(claim.Value);
         }
         /// <summary>
         /// 

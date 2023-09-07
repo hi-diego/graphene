@@ -4,17 +4,15 @@ using Graphene.Entities.Interfaces;
 using Graphene.Extensions;
 using Graphene.Graph;
 using Graphene.Graph.Interfaces;
-using Graphene.Http;
-using Graphene.Http.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json.Linq;
 using System.Security.Claims;
+using System.Text.Json.Nodes;
 using Graphene.Cache;
 using StackExchange.Redis;
+using System.Text.Json;
 
 namespace Graphene.Services
 {
@@ -37,7 +35,7 @@ namespace Graphene.Services
         /// <summary>
         /// The equivalent Json object of the request.
         /// </summary>
-        public JObject? Request { get; set; }
+        public JsonNode? Request { get; set; }
 
         /// <summary>
         /// 
@@ -89,7 +87,7 @@ namespace Graphene.Services
         /// in a JSON format.
         /// </summary>
         /// <returns></returns>
-        public Task<JObject?> HttpRequestToJson(HttpContext? httpContext = null, HttpRequest? httpRequest = null);
+        public Task<JsonNode?> HttpRequestToJson(HttpContext? httpContext = null, HttpRequest? httpRequest = null);
 
         public Task<string?> HttpRequestToString(HttpContext? httpContext = null, HttpRequest? httpRequest = null);
 
@@ -169,12 +167,12 @@ namespace Graphene.Services
         /// <summary>
         /// To Read the RequestJson and deconstruct it for future purpuses on the Graphene Pipeline.
         /// </summary>
-        public JObject? Request { get; set; }
+        public JsonNode? Request { get; set; }
 
         /// <summary>
         /// To Read the RequestJson and deconstruct it for future purpuses on the Graphene Pipeline.
         /// </summary>
-        public object? RequestInstance { get => GraphType != null ? Request?.ToObject(GraphType.SystemType) : null; }
+        public object? RequestInstance { get => null; }
 
         /// <summary>
         /// To Read the RequestJson and deconstruct it for future purpuses on the Graphene Pipeline.
@@ -223,13 +221,13 @@ namespace Graphene.Services
         /// in a JSON format.
         /// </summary>
         /// <returns></returns>
-        public async Task<JObject?> HttpRequestToJson(HttpContext? httpContext = null, HttpRequest? httpRequest = null)
+        public async Task<JsonNode?> HttpRequestToJson(HttpContext? httpContext = null, HttpRequest? httpRequest = null)
         {
             // If the Request was already read before returns it.
             if (Request != null) return Request;
             string? input = await HttpRequestToString(httpContext, httpRequest);
             if (input == null) return null;
-            Request = JObject.Parse(input);
+            Request = JsonNode.Parse(input);
             // Return the Stored JSON Request value.
             return Request;
         }
@@ -304,7 +302,7 @@ namespace Graphene.Services
             // If it was already fetched return it.
             if (Instance != null) return Instance;
             InstanceQuery = BuildQuery(load);
-            Instance = await InstanceQuery.FirstOrDefaultAsync();
+            Instance = await InstanceQuery.AsNoTracking().FirstOrDefaultAsync();
             return Instance;
         }
 
@@ -313,7 +311,7 @@ namespace Graphene.Services
             // If it was already fetched return it.
             if (Instance != null) return Instance;
             InstanceQuery = BuildQuery(load);
-            Instance = InstanceQuery.FirstOrDefault();
+            Instance = InstanceQuery.AsNoTracking().FirstOrDefault();
             return Instance;
         }
 

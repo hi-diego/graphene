@@ -5,7 +5,7 @@ using Graphene.Services;
 using GrapheneTemplate.Database.Models;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
+
 using System.Security.Cryptography;
 using System.Text;
 

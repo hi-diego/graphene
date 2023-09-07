@@ -6,7 +6,7 @@ using Graphene.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,6 +14,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Graphene.Http.Controllers
 {
@@ -69,7 +70,7 @@ namespace Graphene.Http.Controllers
         {
             ClaimsIdentity? identity = (ClaimsIdentity?) User.Identity;
             Claim? claim = identity?.Claims.Where(c => c.Type == ClaimTypes.UserData).FirstOrDefault();
-            Authenticable? user = JObject.Parse(claim?.Value ?? "{}")?.ToObject<Authenticable>();
+            Authenticable user = (Authenticable) JsonSerializer.Deserialize(claim?.Value ?? "{}", typeof(Authenticable));
             return Ok(Graph.GetIAuthenticable(DatabaseContext, user.Identifier, pagination.Load));
         }
         /// <summary>

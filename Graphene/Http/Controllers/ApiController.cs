@@ -6,7 +6,7 @@ using Graphene.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,51 +95,6 @@ namespace Graphene.Http.Controllers
         }
 
         /// <summary>
-        /// Retrives the Body of the Current HTTP Request
-        /// in a JSON format.
-        /// </summary>
-        /// <returns></returns>
-        [NonAction]
-        public JObject GetJsonRequest()
-        {
-            return ToJson(Request);
-        }
-
-        /// <summary>
-        /// Retrives the Body of the Current HTTP Request
-        /// in a JSON format.
-        /// </summary>
-        /// <returns></returns>
-        [NonAction]
-        public static JObject ToJson(HttpRequest request)
-        {
-            if (request == null) return null;
-            request.EnableBuffering();
-            if (request.Body.CanSeek) request.Body.Position = 0;
-            string input = (new StreamReader(request.Body)).ReadToEndAsync().GetAwaiter().GetResult();
-            if (input == "" || input == null) return null;
-            if (request.Body.CanSeek) request.Body.Position = 0;
-            return JObject.Parse(input);
-        }
-
-        /// <summary>
-        /// Retrives the Body of the Current HTTP Request
-        /// in a JSON format.
-        /// </summary>
-        /// <returns></returns>
-        [NonAction]
-        public static async Task<JObject> ToJsonAsync(HttpRequest request)
-        {
-            if (request == null) return null;
-            request.EnableBuffering();
-            if (request.Body.CanSeek) request.Body.Position = 0;
-            string input = await (new StreamReader(request.Body)).ReadToEndAsync();
-            if (input == "" || input == null) return null;
-            if (request.Body.CanSeek) request.Body.Position = 0;
-            return JObject.Parse(input);
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="entity"></param>
@@ -174,7 +129,7 @@ namespace Graphene.Http.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("{entity}")]
-        public async Task<ActionResult> Add(string entity, [FromBody] JObject request)
+        public async Task<ActionResult> Add(string entity, [FromBody] object request)
         {
             if (!Graph.Exists(DatabaseContext, ref entity)) return NotFound();
             object instance = await EntityRepository.Create(entity, request, false);
@@ -190,7 +145,7 @@ namespace Graphene.Http.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPatch("{entity}/{id}")]
-        public async Task<ActionResult> Edit(string entity, int id, [FromBody] JObject request)
+        public async Task<ActionResult> Edit(string entity, int id, [FromBody] object request)
         {
             // DatabaseContext.AuthUser = GetUser();
             Entity instance = await EntityRepository.Update(request, entity, id, false);

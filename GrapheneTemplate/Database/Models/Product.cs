@@ -1,7 +1,7 @@
 using Graphene.Entities;
 using Graphene.Http.Converters;
 using Graphene.Http.Validation;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GrapheneTemplate.Database.Models
@@ -10,9 +10,7 @@ namespace GrapheneTemplate.Database.Models
     /// 
     /// </summary>
     public class Product : Entity
-    {
-        
-        
+    {   
         public string? Subcategory { get; set;} = "default";
         public string? Category { get; set;} = "default";
 

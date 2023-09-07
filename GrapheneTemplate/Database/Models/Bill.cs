@@ -1,12 +1,8 @@
-﻿using Graphene.Database;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Graphene.Entities;
 using Graphene.Http.Converters;
 using Graphene.Http.Validation;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json.Serialization;
 
 namespace GrapheneTemplate.Database.Models
 {

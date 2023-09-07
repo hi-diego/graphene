@@ -121,7 +121,7 @@ namespace Graphene.Extensions
             // .AddNewtonsoftJson();
             // Configure the ConfigureJsonOptions Servise so we can have the Pipeline
             // services on the Converter Json Serialization.
-            builder.Services.ConfigureOptions<ConfigureJsonOptions>();
+            // builder.Services.ConfigureOptions<ConfigureJsonOptions>();
             // CORS: allow everything if we are in local Development enviroment
             builder.Services.AddCors(options => options.AddPolicy(name: "development", policy => {
                     policy.AllowAnyOrigin();

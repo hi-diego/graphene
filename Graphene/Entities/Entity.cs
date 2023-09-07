@@ -2,9 +2,8 @@
 using Graphene.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Graphene.Extensions;
@@ -102,36 +101,7 @@ namespace Graphene.Entities
         /// </summary>
         /// <param name="json"></param>
         /// <returns></returns>
-        public virtual Entity Update(JObject changes)
-        {
-            JObject json = JObject.FromObject(this);
-            json.Merge(changes, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-            dynamic updated = json.ToObject(GetType());
-            return updated;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="json"></param>
-        /// <returns></returns>
-        public virtual string Update(string jsonString)
-        {
-            JsonObject json = (JsonObject)JsonObject.Parse(jsonString)!;
-            JsonObject currentJson = (JsonObject) JsonObject.Parse(System.Text.Json.JsonSerializer.Serialize(this, this.GetType()))!;
-            foreach (var kv in json.AsEnumerable())
-            {
-                currentJson.Add(kv.Key, kv.Value);
-            }
-            return currentJson.ToJsonString();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="json"></param>
-        /// <returns></returns>
-        public virtual BaseEntity Update(BaseEntity instance)
+        public virtual Entity Update(object instance)
         {
             /*
             JsonObject json = (JsonObject)JsonObject.Parse(System.Text.Json.JsonSerializer.Serialize(instance, this.GetType()))!;
@@ -148,10 +118,15 @@ namespace Graphene.Entities
             jsonWriter.WriteEndObject();
             return (BaseEntity) currentJson.Deserialize(this.GetType());
             */
-            var newJsonString = System.Text.Json.JsonSerializer.Serialize(instance, instance.GetType());
-            var originalJsonString = System.Text.Json.JsonSerializer.Serialize(this, this.GetType());
+            var serializeOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            };
+            var newJsonString = System.Text.Json.JsonSerializer.Serialize(instance, instance.GetType(), serializeOptions);
+            var originalJsonString = System.Text.Json.JsonSerializer.Serialize(this, this.GetType(), serializeOptions);
             var merged = SimpleObjectMerge(originalJsonString, newJsonString);
-            return (BaseEntity) System.Text.Json.JsonSerializer.Deserialize(merged, this.GetType());
+            return (Entity) System.Text.Json.JsonSerializer.Deserialize(merged, this.GetType(), serializeOptions);
         }
 
 
@@ -162,7 +137,7 @@ namespace Graphene.Entities
 
             using (JsonDocument jDoc1 = JsonDocument.Parse(originalJson))
             using (JsonDocument jDoc2 = JsonDocument.Parse(newContent))
-            using (var jsonWriter = new Utf8JsonWriter(outputBuffer, new JsonWriterOptions { Indented = false }))
+            using (var jsonWriter = new Utf8JsonWriter(outputBuffer, new JsonWriterOptions { Indented = false,  }))
             {
                 JsonElement root1 = jDoc1.RootElement;
                 JsonElement root2 = jDoc2.RootElement;
@@ -201,11 +176,7 @@ namespace Graphene.Entities
         /// <returns></returns>
         public string ToJson()
         {
-            DefaultContractResolver contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            return JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings {
-                ContractResolver = contractResolver,
-                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            });
+            return System.Text.Json.JsonSerializer.Serialize(this, this.GetType());
         }
 
         /// <summary>

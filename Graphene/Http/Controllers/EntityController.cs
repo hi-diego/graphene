@@ -5,7 +5,7 @@ using Graphene.Services;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
+
 
 namespace Graphene.Http.Controllers
 {
@@ -67,7 +67,7 @@ namespace Graphene.Http.Controllers
         /// 
         /// </summary>
         [HttpPatch("/{entity}/{id}")]
-        public async Task<IActionResult> Update([FindEntity] Entity resource, [FromBody] JObject request)
+        public async Task<IActionResult> Update([FindEntity] Entity resource, [FromBody] object request)
         {
             if (!TryValidateModel(request)) return BadRequest(ModelState);
             var resourceUpdated = await EC.Repository.Edit(resource, request);
