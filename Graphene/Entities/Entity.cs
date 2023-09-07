@@ -24,6 +24,7 @@ namespace Graphene.Entities
         /// 
         /// </summary>
         [Key]
+        [JsonIgnore]
         public override int Id { get; set; }
     }
     /// <summary>
