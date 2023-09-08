@@ -40,13 +40,6 @@ namespace Graphene.Entities
         /// <summary>
         /// 
         /// </summary>
-        [JsonIgnore]
-        [NotMapped]
-        public virtual bool SerializeId { get; set; } = false;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual Guid Uuid { get; set; } = Guid.NewGuid();
 
@@ -245,15 +238,6 @@ namespace Graphene.Entities
         public static IQueryable<dynamic> DynamicQueryableOf<T>(T instance) where T : class
         {
             return (new List<T>() { instance }).AsQueryable();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool ShouldSerializeId()
-        {
-            return SerializeId;
         }
     }
 }

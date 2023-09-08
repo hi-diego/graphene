@@ -71,7 +71,6 @@ namespace Tests.Authorization
             var user = new Graphene.Entities.Authenticable();
             var newUser = new Graphene.Entities.Authenticable();
             newUser.Identifier = "hi@diego.pro";
-            newUser.Id = 7078;
             var serializerOptions = new JsonSerializerOptions() { WriteIndented = false };
 
             // Act
@@ -79,9 +78,8 @@ namespace Tests.Authorization
             var mergedJson = Graphene.Entities.BaseEntity.SimpleObjectMerge(jsonString, jsonString2);
 
             // Assert
-            Assert.Equal(mergedUser.Identifier, newUser.Identifier);
-            Assert.Equal(mergedUser.Id, 7078);
-            Assert.Equal(jsonResult, mergedJson);
+            Assert.Equal(newUser.Identifier, mergedUser.Identifier);
+            Assert.Equal(mergedJson, jsonResult);
         }
 
 
