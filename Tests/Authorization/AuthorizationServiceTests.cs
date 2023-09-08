@@ -7,6 +7,7 @@ using Xunit;
 using Graphene;
 using Graphene.Services;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json;
 
 namespace Tests.Authorization
 {
@@ -71,9 +72,10 @@ namespace Tests.Authorization
             var newUser = new Graphene.Entities.Authenticable();
             newUser.Identifier = "hi@diego.pro";
             newUser.Id = 7078;
+            var serializerOptions = new JsonSerializerOptions() { WriteIndented = false };
 
             // Act
-            var mergedUser = (Graphene.Entities.Authenticable) user.Update(newUser);
+            var mergedUser = (Graphene.Entities.Authenticable) user.Update(newUser, serializerOptions);
             var mergedJson = Graphene.Entities.BaseEntity.SimpleObjectMerge(jsonString, jsonString2);
 
             // Assert
